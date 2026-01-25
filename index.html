@@ -182,17 +182,18 @@
     }
 
     // --- ESCALAS ---
-    function addEscala(data="", inT="", outT="") {
-        const div = document.createElement('div');
-        div.className = 'escala-item';
-        div.innerHTML = `
-            <div class="form-group"><label>Data</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Início</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Fim</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
-            <button class="btn-del-escala" onclick="this.parentElement.remove();salvarDados()">Excluir</button>
-        `;
-        document.getElementById('lista-escalas').appendChild(div);
-    }
+    function addEscala(data="", inT="", dataF="", outT="") {
+    const div = document.createElement('div');
+    div.className = 'escala-item';
+    div.innerHTML = `
+        <div class="form-group"><label>Data Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
+        <div class="form-group"><label>Hora Início</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
+        <div class="form-group"><label>Data Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
+        <div class="form-group"><label>Hora Fim</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
+        <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Remover</button>
+    `;
+    document.getElementById('lista-escalas').appendChild(div);
+}
 
     // --- EXAMES ---
     function addExame() {
@@ -283,13 +284,19 @@
     function del(t, id) { if(confirm('Excluir?')){ db[t] = db[t].filter(i => i.id !== id); salvarDados(); } }
 
     function salvarDados() {
-        db.user = document.getElementById('userName').value;
-        db.escalas = Array.from(document.querySelectorAll('.escala-item')).map(it => ({
-            data: it.querySelector('.sc-data').value, in: it.querySelector('.sc-in').value, out: it.querySelector('.sc-out').value
-        }));
-        localStorage.setItem('radiologia_v11_edit', JSON.stringify(db));
-        render();
-    }
+    db.user = document.getElementById('userName').value;
+    db.escalas = [];
+    document.querySelectorAll('.escala-item').forEach(item => {
+        db.escalas.push({
+            data: item.querySelector('.sc-data').value,
+            in: item.querySelector('.sc-in').value,
+            dataF: item.querySelector('.sc-data-f').value, // Novo campo
+            out: item.querySelector('.sc-out').value
+        });
+    });
+    localStorage.setItem('radiologiaDB', JSON.stringify(db));
+    render();
+}
 
     function render() {
         document.querySelector('#tbl-exames tbody').innerHTML = db.exames.map(ex => `
@@ -311,27 +318,32 @@
             </tr>`).join('');
     }
 
-    function calcDiff(s, e) {
-        if(!s || !e) return "00:00";
-        let [h1, m1] = s.split(':').map(Number), [h2, m2] = e.split(':').map(Number);
-        let min1 = h1 * 60 + m1, min2 = h2 * 60 + m2;
-        if(min2 < min1) min2 += 1440;
-        let d = min2 - min1;
-        return `${String(Math.floor(d/60)).padStart(2,'0')}:${String(d%60).padStart(2,'0')}`;
-    }
-
+   // Calcula diferença entre datas e horas (Retorna total em minutos)
+function calcDiffFull(d1, t1, d2, t2) {
+    if(!d1 || !t1 || !d2 || !t2) return 0;
+    const start = new Date(`${d1}T${t1}`);
+    const end = new Date(`${d2}T${t2}`);
+    const diffMs = end - start;
+    return diffMs > 0 ? Math.floor(diffMs / 60000) : 0;
+}
+// Formata minutos em "00:00" ou "Xh Ym"
+function fmtMinutos(totalMinutos) {
+    let h = Math.floor(totalMinutos / 60);
+    let m = totalMinutos % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
     function fmtD(d) { if(!d) return ""; const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; }
 
     function carregar() {
-        const saved = localStorage.getItem('radiologia_v11_edit');
-        if(saved) {
-            db = JSON.parse(saved);
-            document.getElementById('userName').value = db.user || "";
-            document.getElementById('lista-escalas').innerHTML = "";
-            if(db.escalas) db.escalas.forEach(e => addEscala(e.data, e.in, e.out));
-            render();
-        }
+    const saved = localStorage.getItem('radiologiaDB');
+    if(saved) {
+        db = JSON.parse(saved);
+        document.getElementById('userName').value = db.user;
+        // Atualizado para passar os 4 parâmetros
+        db.escalas.forEach(e => addEscala(e.data, e.in, e.dataF || e.data, e.out));
+        render();
     }
+}
 
     function fazerBackup() {
         const blob = new Blob([JSON.stringify(db)], {type: "application/json"});
@@ -352,22 +364,33 @@
     }
 
     function imprimirRelatorio() {
-        document.getElementById('pr-nome').innerText = db.user.toUpperCase();
-        document.getElementById('pr-periodo').innerText = db.escalas.map(e => `${fmtD(e.data)} (${e.in}-${e.out})`).join(' | ');
-        document.querySelector('#pr-tbl-ex tbody').innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td></tr>`).join('');
-        document.getElementById('pr-qtd-co').innerText = db.corridas.length;
-        document.getElementById('pr-km-co').innerText = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0).toFixed(1);
-        
-        let totalT = 0; db.exames.forEach(e => { let [h, m] = e.tempo.split(':').map(Number); totalT += h*60+m; });
-        document.getElementById('pr-total-trabalho').innerText = `${Math.floor(totalT/60)}h ${totalT%60}m`;
-        
-        let totalE = 0; db.escalas.forEach(e => { let [h, m] = calcDiff(e.in, e.out).split(':').map(Number); totalE += h*60+m; });
-        document.getElementById('pr-total-escala').innerText = `${Math.floor(totalE/60)}h ${totalE%60}m`;
+    document.getElementById('pr-nome').innerText = db.user.toUpperCase();
+    // Ajuste na exibição do período no PDF
+    document.getElementById('pr-periodo').innerText = db.escalas.map(e => 
+        `${fmtD(e.data)} ${e.in} até ${fmtD(e.dataF)} ${e.out}`
+    ).join(' | ');
+    
+    const tbody = document.querySelector('#pr-tbl-ex tbody');
+    tbody.innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td></tr>`).join('');
+    
+    document.getElementById('pr-qtd-co').innerText = db.corridas.length;
+    document.getElementById('pr-km-co').innerText = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0).toFixed(1);
+    
+    // Soma horas trabalhadas (Exames)
+    let totalMinTrabalho = db.exames.reduce((acc, ex) => {
+        let [h, m] = ex.tempo.split(':').map(Number);
+        return acc + (h * 60 + m);
+    }, 0);
+    document.getElementById('pr-total-trabalho').innerText = `${Math.floor(totalMinTrabalho/60)}h ${totalMinTrabalho%60}m`;
+    
+    // Soma total de Sobreaviso (Escalas)
+    let totalMinEscala = db.escalas.reduce((acc, e) => {
+        return acc + calcDiffFull(e.data, e.in, e.dataF, e.out);
+    }, 0);
+    document.getElementById('pr-total-escala').innerText = `${Math.floor(totalMinEscala/60)}h ${totalMinEscala%60}m`;
 
-        document.getElementById('print-relatorio').classList.add('active');
-        document.getElementById('print-requisicoes').classList.remove('active');
-        window.print();
-    }
+    window.printRelatorio();
+}
 
     function imprimirTodasFichas() {
         const area = document.getElementById('print-requisicoes');

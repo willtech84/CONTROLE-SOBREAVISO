@@ -5,345 +5,362 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SOBREAVISO RADIOLOGIA</title>
     
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0056b3">
-
     <style>
-        :root {
-            --primary: #0056b3;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #fd7e14;
-            --info: #17a2b8;
-            --bg: #f0f2f5;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #333; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 10px; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         
-        #app-content { display: block; padding: 10px; padding-bottom: 40px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .app-header h2 { margin: 0; color: #0056b3; font-size: 1.3rem; }
         
-        .app-header { display: flex; flex-direction: column; gap: 15px; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; margin-bottom: 15px; }
-        @media (min-width: 768px) { .app-header { flex-direction: row; justify-content: space-between; align-items: center; } }
+        .user-config { background: #e7f3ff; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+        .user-config input { flex: 1; padding: 8px; border: 1px solid #b6d4fe; border-radius: 4px; }
+
+        .system-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-sys { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85em; color: white; }
+        .btn-backup { background-color: #fd7e14; }
+        .btn-restore { background-color: #20c997; }
+        .btn-print { background-color: #6610f2; }
+        .btn-requisicao { background-color: #e83e8c; }
+
+        .escalas-container { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 20px; }
+        .escala-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end; flex-wrap: wrap; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label { font-weight: bold; font-size: 0.75rem; color: #555; }
+        input { padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; }
+
+        .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 15px; }
+        .tab-btn { padding: 10px 15px; cursor: pointer; border: none; background: none; font-weight: bold; color: #666; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: #0056b3; border-bottom-color: #0056b3; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         
-        .header-title h2 { margin: 0; color: var(--primary); font-size: 1.4rem; text-align: center; }
-        
-        .system-controls { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        @media (min-width: 768px) { .system-controls { display: flex; } }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { border: 1px solid #dee2e6; padding: 8px; text-align: left; }
+        th { background: #0056b3; color: white; }
 
-        .btn-sys { border: none; padding: 10px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-backup { background: var(--warning); }
-        .btn-restore { background: #20c997; }
-        .btn-print { background: #6610f2; }
-        .btn-requisicao { background: #e83e8c; }
+        .btn-mini { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; color: white; font-size: 0.7rem; }
 
-        .user-config { background: #e7f3ff; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
-        @media (min-width: 600px) { .user-config { flex-direction: row; align-items: center; } }
-        .user-config input { flex: 1; padding: 10px; border: 1px solid #b6d4fe; border-radius: 6px; font-size: 1rem; }
-
-        .escalas-container { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 10px; margin-bottom: 15px; }
-        .escala-item { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); align-items: end; }
-        @media (min-width: 768px) { .escala-item { grid-template-columns: 2fr 1fr 1fr auto; } }
-        .btn-del-escala { background: var(--danger); color: white; border: none; border-radius: 6px; padding: 10px; cursor: pointer; }
-
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 12px; cursor: pointer; border: none; background: #eee; font-weight: bold; color: #666; border-radius: 8px 8px 0 0; }
-        .tab-btn.active { background: var(--primary); color: white; }
-
-        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        @media (min-width: 768px) { .grid-inputs { grid-template-columns: repeat(3, 1fr); } }
-        
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-weight: bold; font-size: 0.75rem; color: #666; text-transform: uppercase; }
-        .form-group input { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; width: 100%; }
-
-        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        th { background: #f4f7fa; color: var(--primary); }
-        
-        .btn-add-main { background: var(--success); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; width: 100%; margin-bottom: 20px; }
-        .actions { display: flex; gap: 10px; }
-        .btn-edit { color: var(--info); cursor: pointer; background: none; border: none; font-size: 1.1rem; }
-        .btn-del { color: var(--danger); cursor: pointer; background: none; border: none; font-size: 1.1rem; }
+        #print-relatorio, #print-requisicoes { display: none; }
 
         @media print {
-            body { background: white !important; }
-            #app-content { display: none !important; }
-            #print-relatorio.active, #print-requisicoes.active { display: block !important; }
-            .table-print { width: 100%; border-collapse: collapse; }
-            .table-print th, .table-print td { border: 1px solid black !important; padding: 6px; font-size: 10pt; }
-            .ficha { width: 100%; height: 8.8cm; border: 1.5px solid black; padding: 15px; page-break-inside: avoid; margin-bottom: 10px; }
+            @page { margin: 0.5cm; size: A4; }
+            body { background: white; padding: 0; }
+            .container, button, .system-controls, .user-config, .escalas-container, .tabs, .grid-inputs { display: none !important; }
+            
+            #print-relatorio.active { display: block; width: 100%; }
+            .rel-header { text-align: center; border: 2px solid black; padding: 10px; margin-bottom: 15px; }
+            .table-print { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+            .table-print th, .table-print td { border: 1px solid black !important; padding: 5px; font-size: 8pt; }
+            .row-corrida { background-color: #eee !important; font-weight: bold; }
+            
+            #print-requisicoes.active { display: block; width: 100%; }
+            .ficha { 
+                width: 100%; 
+                height: 9.2cm; 
+                border: 1px dashed black; 
+                padding: 15px;
+                margin-bottom: 0.2cm;
+                page-break-inside: avoid;
+                position: relative;
+            }
+            .ficha-header { text-align: center; font-weight: bold; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
         }
     </style>
 </head>
 <body>
 
-<div id="app-content">
-    <div class="container">
-        <header class="app-header">
-            <div class="header-title"><h2>SOBREAVISO RADIOLOGIA</h2></div>
-            <div class="system-controls">
-                <button class="btn-sys btn-backup" onclick="fazerBackup()">💾 Backup</button>
-                <button class="btn-sys btn-restore" onclick="document.getElementById('fileInput').click()">📂 Abrir</button>
-                <button class="btn-sys btn-print" onclick="imprimirRelatorio()">🖨️ PDF</button>
-                <button class="btn-sys btn-requisicao" onclick="imprimirTodasFichas()">📄 Fichas</button>
-                <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
-            </div>
-        </header>
-
-        <section class="user-config">
-            <label>PROFISSIONAL:</label>
-            <input type="text" id="userName" placeholder="NOME COMPLETO" oninput="salvarDados()">
-        </section>
-
-        <section class="escalas-container">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <label style="font-weight:bold; color:#856404; font-size:0.8rem;">PERÍODOS DE ESCALA</label>
-                <button onclick="addEscala()" style="background:#856404; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">+ Adicionar Escala</button>
-            </div>
-            <div id="lista-escalas"></div>
-        </section>
-
-        <nav class="tabs">
-            <button class="tab-btn active" onclick="tab(event, 'exames')">📋 EXAMES</button>
-            <button class="tab-btn" onclick="tab(event, 'corridas')">CORRIDAS</button>
-        </nav>
-
-        <div id="exames" class="tab-content">
-            <input type="hidden" id="ex-edit-id">
-            <div class="grid-inputs">
-                <div class="form-group"><label>Data</label><input type="date" id="ex-data"></div>
-                <div class="form-group"><label>Entrada</label><input type="time" id="ex-in"></div>
-                <div class="form-group"><label>Saída</label><input type="time" id="ex-out"></div>
-                <div class="form-group"><label>Setor</label><input type="text" id="ex-setor" list="setores" oninput="this.value=this.value.toUpperCase()"></div>
-                <div class="form-group"><label>Exame</label><input type="text" id="ex-nome" oninput="this.value=this.value.toUpperCase()"></div>
-                <div class="form-group"><label>Paciente</label><input type="text" id="ex-pac" oninput="this.value=this.value.toUpperCase()"></div>
-            </div>
-            <button class="btn-add-main" id="btn-salvar-exame" onclick="addExame()">ADICIONAR EXAME</button>
-            
-            <div class="table-responsive">
-                <table id="tbl-exames">
-                    <thead><tr><th>Data</th><th>Ent</th><th>Sai</th><th>Tempo</th><th>Setor</th><th>Ações</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+<div class="container">
+    <div class="app-header">
+        <h2>SOBREAVISO RADIOLOGIA</h2>
+        <div class="system-controls">
+            <button class="btn-sys btn-backup" onclick="fazerBackup()">💾 Backup</button>
+            <button class="btn-sys btn-restore" onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
+            <button class="btn-sys btn-print" onclick="imprimirRelatorio()">🖨️ Relatório</button>
+            <button class="btn-sys btn-requisicao" onclick="imprimirTodasFichas()">📄 Fichas</button>
+            <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
         </div>
+    </div>
 
-        <div id="corridas" class="tab-content" style="display:none">
-            <input type="hidden" id="co-edit-id">
-            <div class="grid-inputs">
-                <div class="form-group"><label>Data</label><input type="date" id="co-data"></div>
-                <div class="form-group"><label>KM Rodados</label><input type="number" step="0.1" id="co-km"></div>
-                <div class="form-group"><label>Obs</label><input type="text" id="co-obs" oninput="this.value=this.value.toUpperCase()"></div>
-            </div>
-            <button class="btn-add-main" id="btn-salvar-corrida" onclick="addCorrida()">ADICIONAR CORRIDA</button>
-            <div class="table-responsive">
-                <table id="tbl-corridas">
-                    <thead><tr><th>Data</th><th>KM</th><th>Observação</th><th>Ações</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+    <div class="user-config">
+        <label>Profissional:</label>
+        <input type="text" id="userName" placeholder="NOME DO TÉCNICO" oninput="salvarDados()">
+    </div>
+
+    <div class="escalas-container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <label style="color:#856404">PERÍODOS DE ESCALA (SOBREAVISO)</label>
+            <button onclick="addEscala()" style="background:#856404; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer">+ Adicionar Escala</button>
         </div>
+        <div id="lista-escalas"></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="tab(event, 'exames')">📋 Exames</button>
+        <button class="tab-btn" onclick="tab(event, 'corridas')">🚗 Corridas / Chamados</button>
+    </div>
+
+    <div id="exames" class="tab-content active">
+        <div class="grid-inputs">
+            <input type="hidden" id="ex-id">
+            <div class="form-group"><label>Data</label><input type="date" id="ex-data"></div>
+            <div class="form-group"><label>Horário</label><input type="time" id="ex-hora"></div>
+            <div class="form-group"><label>Setor</label><input type="text" id="ex-setor" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="form-group"><label>Exame</label><input type="text" id="ex-nome" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="form-group"><label>Paciente</label><input type="text" id="ex-pac" oninput="this.value=this.value.toUpperCase()"></div>
+        </div>
+        <button id="btn-save-ex" onclick="addExame()" style="background:#28a745; color:white; border:none; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer">Salvar Exame</button>
+        <button id="btn-cancel-ex" onclick="limparCamposExame()" style="display:none; background:#6c757d; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer">Cancelar</button>
+        
+        <table id="tbl-exames" style="margin-top:15px">
+            <thead><tr><th>Data</th><th>Hora</th><th>Setor</th><th>Exame</th><th>Paciente</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="corridas" class="tab-content">
+        <div class="grid-inputs">
+            <input type="hidden" id="co-id">
+            <div class="form-group"><label>Data</label><input type="date" id="co-data"></div>
+            <div class="form-group"><label>Entrada</label><input type="time" id="co-in"></div>
+            <div class="form-group"><label>Saída</label><input type="time" id="co-out"></div>
+            <div class="form-group"><label>KM</label><input type="number" step="0.1" id="co-km"></div>
+            <div class="form-group"><label>Setor do Chamado</label><input type="text" id="co-setor" oninput="this.value=this.value.toUpperCase()"></div>
+        </div>
+        <button id="btn-save-co" onclick="addCorrida()" style="background:#28a745; color:white; border:none; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer">Salvar Corrida</button>
+        <button id="btn-cancel-co" onclick="limparCamposCorrida()" style="display:none; background:#6c757d; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer">Cancelar</button>
+        
+        <table id="tbl-corridas" style="margin-top:15px">
+            <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Tempo</th><th>KM</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+        </table>
     </div>
 </div>
 
-<datalist id="setores"><option value="SUE"><option value="RIO NEGRO"><option value="UTI 1"><option value="UTI 2"><option value="UTI 3"><option value="UTI 4"></datalist>
-
-<div id="print-relatorio" style="display:none">
-    <div style="text-align:center; border:1px solid #000; padding:15px; margin-bottom:20px;">
-        <h2 style="margin:0">RELATÓRIO SOBREAVISO - RADIOLOGIA</h2>
-        <p id="pr-nome" style="font-size:16pt; font-weight:bold; margin:10px 0;"></p>
-        <p id="pr-periodo" style="margin:0; font-size:10pt;"></p>
+<div id="print-relatorio">
+    <div class="rel-header">
+        <h2 style="margin:0">RELATÓRIO MENSAL DE SOBREAVISO</h2>
+        <p><b>PROFISSIONAL:</b> <span id="pr-nome"></span></p>
+        <p><b>ESCALAS:</b> <span id="pr-periodo"></span></p>
     </div>
-    <table class="table-print" id="pr-tbl-ex">
-        <thead><tr><th>DATA</th><th>ENTRADA</th><th>SAÍDA</th><th>TEMPO</th><th>SETOR</th><th>EXAME</th><th>PACIENTE</th></tr></thead>
+    <table class="table-print" id="pr-tbl-principal">
+        <thead>
+            <tr><th>DATA</th><th>ENTRADA/SAÍDA</th><th>TEMPO</th><th>KM</th><th>SETOR / EXAMES</th></tr>
+        </thead>
         <tbody></tbody>
     </table>
-    <div style="margin-top:20px;">
-        <p>QTD CORRIDAS: <span id="pr-qtd-co"></span> | TOTAL KM: <span id="pr-km-co"></span></p>
-        <p>HORAS TRABALHADAS: <span id="pr-total-trabalho"></span> | TOTAL SOBREAVISO: <span id="pr-total-escala"></span></p>
-    </div>
+    <div style="border: 2px solid black; padding: 10px; font-weight: bold; font-size: 10pt; background: #f9f9f9;" id="pr-resumo-box"></div>
 </div>
 
-<div id="print-requisicoes" style="display:none"></div>
+<div id="print-requisicoes"></div>
 
 <script>
     let db = { user: "", escalas: [], exames: [], corridas: [] };
 
     function tab(e, n) {
-        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(n).style.display = 'block';
+        document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(n).classList.add('active');
         e.currentTarget.classList.add('active');
     }
 
-    // --- ESCALAS ---
-    function addEscala(data="", inT="", dataF="", outT="") {
-    const div = document.createElement('div');
-    div.className = 'escala-item';
-    div.innerHTML = `
-        <div class="form-group"><label>Data Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
-        <div class="form-group"><label>Hora Início</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
-        <div class="form-group"><label>Data Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
-        <div class="form-group"><label>Hora Fim</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
-        <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Remover</button>
-    `;
-    document.getElementById('lista-escalas').appendChild(div);
-}
+    function salvarDados() {
+        db.user = document.getElementById('userName').value;
+        db.escalas = [];
+        document.querySelectorAll('.escala-item').forEach(item => {
+            db.escalas.push({
+                data: item.querySelector('.sc-data').value,
+                in: item.querySelector('.sc-in').value,
+                dataF: item.querySelector('.sc-data-f').value,
+                out: item.querySelector('.sc-out').value
+            });
+        });
+        localStorage.setItem('radiologiaDB', JSON.stringify(db));
+        render();
+    }
 
-    // --- EXAMES ---
+    function addEscala(data="", inT="", dataF="", outT="") {
+        const div = document.createElement('div');
+        div.className = 'escala-item';
+        div.innerHTML = `
+            <div class="form-group"><label>Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
+            <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">X</button>
+        `;
+        document.getElementById('lista-escalas').appendChild(div);
+    }
+
     function addExame() {
-        const idEdit = document.getElementById('ex-edit-id').value;
-        const item = {
-            id: idEdit ? parseInt(idEdit) : Date.now(),
+        const id = document.getElementById('ex-id').value;
+        const dados = {
             data: document.getElementById('ex-data').value,
-            in: document.getElementById('ex-in').value,
-            out: document.getElementById('ex-out').value,
+            hora: document.getElementById('ex-hora').value,
             setor: document.getElementById('ex-setor').value,
             nome: document.getElementById('ex-nome').value,
-            pac: document.getElementById('ex-pac').value,
-            tempo: calcDiff(document.getElementById('ex-in').value, document.getElementById('ex-out').value)
+            pac: document.getElementById('ex-pac').value
         };
-        if(!item.data || !item.in) return alert("Preencha data e entrada");
-
-        if(idEdit) {
-            const index = db.exames.findIndex(x => x.id == idEdit);
-            db.exames[index] = item;
+        if(id) {
+            const index = db.exames.findIndex(e => e.id == id);
+            db.exames[index] = { ...db.exames[index], ...dados };
         } else {
-            db.exames.push(item);
+            db.exames.push({ id: Date.now(), ...dados });
         }
-        
-        limparExame();
+        limparCamposExame();
         salvarDados();
     }
 
-    function editarExame(id) {
-        const ex = db.exames.find(x => x.id == id);
-        document.getElementById('ex-edit-id').value = ex.id;
+    function editExame(id) {
+        const ex = db.exames.find(i => i.id == id);
+        document.getElementById('ex-id').value = ex.id;
         document.getElementById('ex-data').value = ex.data;
-        document.getElementById('ex-in').value = ex.in;
-        document.getElementById('ex-out').value = ex.out;
+        document.getElementById('ex-hora').value = ex.hora;
         document.getElementById('ex-setor').value = ex.setor;
         document.getElementById('ex-nome').value = ex.nome;
         document.getElementById('ex-pac').value = ex.pac;
-        document.getElementById('btn-salvar-exame').innerText = "ATUALIZAR EXAME";
-        document.getElementById('btn-salvar-exame').style.background = "var(--info)";
+        document.getElementById('btn-save-ex').innerText = "Atualizar Exame";
+        document.getElementById('btn-cancel-ex').style.display = "inline-block";
     }
 
-    function limparExame() {
-        document.getElementById('ex-edit-id').value = "";
-        ['ex-data','ex-in','ex-out','ex-setor','ex-nome','ex-pac'].forEach(id => document.getElementById(id).value = "");
-        document.getElementById('btn-salvar-exame').innerText = "ADICIONAR EXAME";
-        document.getElementById('btn-salvar-exame').style.background = "var(--success)";
+    function limparCamposExame() {
+        document.getElementById('ex-id').value = "";
+        document.getElementById('btn-save-ex').innerText = "Salvar Exame";
+        document.getElementById('btn-cancel-ex').style.display = "none";
     }
 
-    // --- CORRIDAS ---
     function addCorrida() {
-        const idEdit = document.getElementById('co-edit-id').value;
-        const item = {
-            id: idEdit ? parseInt(idEdit) : Date.now(),
+        const id = document.getElementById('co-id').value;
+        const dados = {
             data: document.getElementById('co-data').value,
+            in: document.getElementById('co-in').value,
+            out: document.getElementById('co-out').value,
             km: document.getElementById('co-km').value,
-            obs: document.getElementById('co-obs').value
+            setor: document.getElementById('co-setor').value,
+            tempo: calcDiffSimple(document.getElementById('co-in').value, document.getElementById('co-out').value)
         };
-        if(!item.data || !item.km) return alert("Preencha data e KM");
-
-        if(idEdit) {
-            const index = db.corridas.findIndex(x => x.id == idEdit);
-            db.corridas[index] = item;
+        if(id) {
+            const index = db.corridas.findIndex(c => c.id == id);
+            db.corridas[index] = { ...db.corridas[index], ...dados };
         } else {
-            db.corridas.push(item);
+            db.corridas.push({ id: Date.now(), ...dados });
         }
-        
-        limparCorrida();
+        limparCamposCorrida();
         salvarDados();
     }
 
-    function editarCorrida(id) {
-        const co = db.corridas.find(x => x.id == id);
-        document.getElementById('co-edit-id').value = co.id;
-        document.getElementById('co-data').value = co.data;
-        document.getElementById('co-km').value = co.km;
-        document.getElementById('co-obs').value = co.obs;
-        document.getElementById('btn-salvar-corrida').innerText = "ATUALIZAR CORRIDA";
-        document.getElementById('btn-salvar-corrida').style.background = "var(--info)";
+    function editCorrida(id) {
+        const c = db.corridas.find(i => i.id == id);
+        document.getElementById('co-id').value = c.id;
+        document.getElementById('co-data').value = c.data;
+        document.getElementById('co-in').value = c.in;
+        document.getElementById('co-out').value = c.out;
+        document.getElementById('co-km').value = c.km;
+        document.getElementById('co-setor').value = c.setor || "";
+        document.getElementById('btn-save-co').innerText = "Atualizar Corrida";
+        document.getElementById('btn-cancel-co').style.display = "inline-block";
     }
 
-    function limparCorrida() {
-        document.getElementById('co-edit-id').value = "";
-        ['co-data','co-km','co-obs'].forEach(id => document.getElementById(id).value = "");
-        document.getElementById('btn-salvar-corrida').innerText = "ADICIONAR CORRIDA";
-        document.getElementById('btn-salvar-corrida').style.background = "var(--success)";
+    function limparCamposCorrida() {
+        document.getElementById('co-id').value = "";
+        document.getElementById('btn-save-co').innerText = "Salvar Corrida";
+        document.getElementById('btn-cancel-co').style.display = "none";
     }
-
-    // --- CORE ---
-    function del(t, id) { if(confirm('Excluir?')){ db[t] = db[t].filter(i => i.id !== id); salvarDados(); } }
-
-    function salvarDados() {
-    db.user = document.getElementById('userName').value;
-    db.escalas = [];
-    document.querySelectorAll('.escala-item').forEach(item => {
-        db.escalas.push({
-            data: item.querySelector('.sc-data').value,
-            in: item.querySelector('.sc-in').value,
-            dataF: item.querySelector('.sc-data-f').value, // Novo campo
-            out: item.querySelector('.sc-out').value
-        });
-    });
-    localStorage.setItem('radiologiaDB', JSON.stringify(db));
-    render();
-}
 
     function render() {
-        document.querySelector('#tbl-exames tbody').innerHTML = db.exames.map(ex => `
-            <tr>
-                <td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td>
-                <td class="actions">
-                    <button class="btn-edit" onclick="editarExame(${ex.id})">✏️</button>
-                    <button class="btn-del" onclick="del('exames',${ex.id})">✖</button>
-                </td>
-            </tr>`).join('');
-
-        document.querySelector('#tbl-corridas tbody').innerHTML = db.corridas.map(co => `
-            <tr>
-                <td>${fmtD(co.data)}</td><td>${co.km}</td><td>${co.obs}</td>
-                <td class="actions">
-                    <button class="btn-edit" onclick="editarCorrida(${co.id})">✏️</button>
-                    <button class="btn-del" onclick="del('corridas',${co.id})">✖</button>
-                </td>
-            </tr>`).join('');
+        document.querySelector('#tbl-exames tbody').innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.hora}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td><td><button class="btn-mini" style="background:#ffc107; color:black" onclick="editExame(${ex.id})">✏️</button> <button class="btn-mini" style="background:red" onclick="del('exames',${ex.id})">X</button></td></tr>`).join('');
+        document.querySelector('#tbl-corridas tbody').innerHTML = db.corridas.map(co => `<tr><td>${fmtD(co.data)}</td><td>${co.in}</td><td>${co.out}</td><td>${co.tempo}</td><td>${co.km}</td><td><button class="btn-mini" style="background:#ffc107; color:black" onclick="editCorrida(${co.id})">✏️</button> <button class="btn-mini" style="background:red" onclick="del('corridas',${co.id})">X</button></td></tr>`).join('');
     }
 
-   // Calcula diferença entre datas e horas (Retorna total em minutos)
-function calcDiffFull(d1, t1, d2, t2) {
-    if(!d1 || !t1 || !d2 || !t2) return 0;
-    const start = new Date(`${d1}T${t1}`);
-    const end = new Date(`${d2}T${t2}`);
-    const diffMs = end - start;
-    return diffMs > 0 ? Math.floor(diffMs / 60000) : 0;
-}
-// Formata minutos em "00:00" ou "Xh Ym"
-function fmtMinutos(totalMinutos) {
-    let h = Math.floor(totalMinutos / 60);
-    let m = totalMinutos % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
+    function del(type, id) { db[type] = db[type].filter(i => i.id !== id); salvarDados(); }
+
+    function calcDiffSimple(s, e) {
+        if(!s || !e) return "00:00";
+        let [h1, m1] = s.split(':').map(Number);
+        let [h2, m2] = e.split(':').map(Number);
+        let min = (h2*60+m2) - (h1*60+m1);
+        if(min < 0) min += 1440;
+        return `${String(Math.floor(min/60)).padStart(2,'0')}:${String(min%60).padStart(2,'0')}`;
+    }
+
+    function calcDiffFull(d1, t1, d2, t2) {
+        if(!d1 || !t1 || !d2 || !t2) return 0;
+        return Math.floor((new Date(`${d2}T${t2}`) - new Date(`${d1}T${t1}`)) / 60000);
+    }
+
+    function sumHours(arr) {
+        let t = arr.reduce((acc, val) => {
+            let [h, m] = val.split(':').map(Number);
+            return acc + (h*60+m);
+        }, 0);
+        return `${Math.floor(t/60)}h ${t%60}m`;
+    }
+
+    function imprimirRelatorio() {
+        document.getElementById('pr-nome').innerText = db.user.toUpperCase();
+        document.getElementById('pr-periodo').innerText = db.escalas.map(e => `${fmtD(e.data)} a ${fmtD(e.dataF)}`).join(' | ');
+        const tbody = document.querySelector('#pr-tbl-principal tbody');
+        tbody.innerHTML = "";
+        
+        db.corridas.forEach(co => {
+            tbody.innerHTML += `<tr class="row-corrida"><td>${fmtD(co.data)}</td><td>${co.in}-${co.out}</td><td>${co.tempo}</td><td>${co.km}</td><td>SETOR: ${co.setor || '---'}</td></tr>`;
+            db.exames.filter(ex => ex.data === co.data).forEach(ex => {
+                tbody.innerHTML += `<tr><td colspan="4"></td><td style="font-size:8pt; font-style:italic">• ${ex.hora} - ${ex.nome} (${ex.pac})</td></tr>`;
+            });
+        });
+
+        // Totais
+        let totalKM = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0);
+        let totalTrabalhado = sumHours(db.corridas.map(c => c.tempo));
+        let scaleMin = db.escalas.reduce((acc, e) => acc + calcDiffFull(e.data, e.in, e.dataF, e.out), 0);
+        let totalSobreaviso = `${Math.floor(scaleMin/60)}h ${scaleMin%60}m`;
+
+        document.getElementById('pr-resumo-box').innerHTML = `
+            TOTAL SOBREAVISO (ESCALA): ${totalSobreaviso} | 
+            TOTAL TRABALHADO: ${totalTrabalhado} | 
+            TOTAL KM: ${totalKM.toFixed(1)}
+        `;
+
+        document.getElementById('print-relatorio').classList.add('active');
+        document.getElementById('print-requisicoes').classList.remove('active');
+        window.print();
+    }
+
+    function imprimirTodasFichas() {
+        const area = document.getElementById('print-requisicoes');
+        area.innerHTML = db.corridas.map(co => `
+            <div class="ficha">
+                <div class="ficha-header">FICHA DE CHAMADO / REQUISIÇÃO DE SOBREAVISO</div>
+                <div style="font-size:11pt; line-height:1.8; margin-top:20px">
+                    <b>DATA:</b> ${fmtD(co.data)} <br>
+                    <b>PROFISSIONAL:</b> ${db.user.toUpperCase()} <br>
+                    <b>SETOR DO CHAMADO:</b> ${co.setor || '---'} <br>
+                    <b>ENTRADA HOSPITAL:</b> ${co.in} | <b>SAÍDA:</b> ${co.out} <br>
+                    <b>TEMPO TOTAL:</b> ${co.tempo} | <b>KM:</b> ${co.km} <br>
+                </div>
+                <div style="position:absolute; bottom:30px; width:90%; display:flex; justify-content:space-between">
+                    <div style="border-top:1px solid black; width:45%; text-align:center; font-size:8pt">Assinatura Hospital</div>
+                    <div style="border-top:1px solid black; width:45%; text-align:center; font-size:8pt">Assinatura Técnico</div>
+                </div>
+            </div>`).join('');
+        document.getElementById('print-requisicoes').classList.add('active');
+        document.getElementById('print-relatorio').classList.remove('active');
+        window.print();
+    }
+
     function fmtD(d) { if(!d) return ""; const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; }
-
+    
     function carregar() {
-    const saved = localStorage.getItem('radiologiaDB');
-    if(saved) {
-        db = JSON.parse(saved);
-        document.getElementById('userName').value = db.user;
-        // Atualizado para passar os 4 parâmetros
-        db.escalas.forEach(e => addEscala(e.data, e.in, e.dataF || e.data, e.out));
-        render();
+        const saved = localStorage.getItem('radiologiaDB');
+        if(saved) {
+            db = JSON.parse(saved);
+            document.getElementById('userName').value = db.user;
+            db.escalas.forEach(e => addEscala(e.data, e.in, e.dataF, e.out));
+            render();
+        }
     }
-}
 
     function fazerBackup() {
         const blob = new Blob([JSON.stringify(db)], {type: "application/json"});
@@ -357,62 +374,12 @@ function fmtMinutos(totalMinutos) {
         const reader = new FileReader();
         reader.onload = e => {
             db = JSON.parse(e.target.result);
-            localStorage.setItem('radiologia_v11_edit', JSON.stringify(db));
+            localStorage.setItem('radiologiaDB', JSON.stringify(db));
             location.reload();
         };
         reader.readAsText(input.files[0]);
     }
-
-    function imprimirRelatorio() {
-    document.getElementById('pr-nome').innerText = db.user.toUpperCase();
-    // Ajuste na exibição do período no PDF
-    document.getElementById('pr-periodo').innerText = db.escalas.map(e => 
-        `${fmtD(e.data)} ${e.in} até ${fmtD(e.dataF)} ${e.out}`
-    ).join(' | ');
-    
-    const tbody = document.querySelector('#pr-tbl-ex tbody');
-    tbody.innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td></tr>`).join('');
-    
-    document.getElementById('pr-qtd-co').innerText = db.corridas.length;
-    document.getElementById('pr-km-co').innerText = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0).toFixed(1);
-    
-    // Soma horas trabalhadas (Exames)
-    let totalMinTrabalho = db.exames.reduce((acc, ex) => {
-        let [h, m] = ex.tempo.split(':').map(Number);
-        return acc + (h * 60 + m);
-    }, 0);
-    document.getElementById('pr-total-trabalho').innerText = `${Math.floor(totalMinTrabalho/60)}h ${totalMinTrabalho%60}m`;
-    
-    // Soma total de Sobreaviso (Escalas)
-    let totalMinEscala = db.escalas.reduce((acc, e) => {
-        return acc + calcDiffFull(e.data, e.in, e.dataF, e.out);
-    }, 0);
-    document.getElementById('pr-total-escala').innerText = `${Math.floor(totalMinEscala/60)}h ${totalMinEscala%60}m`;
-
-    window.printRelatorio();
-}
-
-    function imprimirTodasFichas() {
-        const area = document.getElementById('print-requisicoes');
-        area.innerHTML = db.exames.map(ex => `
-            <div class="ficha">
-                <div style="text-align:center;font-weight:bold;border-bottom:1px solid #000;padding-bottom:5px;margin-bottom:10px;">REQUISIÇÃO PARA EXAME RAIO-X / TOMOGRAFIA</div>
-                <div style="display:flex;margin-bottom:10px"><span>Data: ${fmtD(ex.data)}</span><span style="margin-left:auto">SIM [X] NÃO [ ]</span></div>
-                <div style="margin-bottom:10px">Entrada: ${ex.in} | Saída: ${ex.out}</div>
-                <div style="margin-bottom:10px">Setor: ${ex.setor}</div>
-                <div style="margin-bottom:10px">Técnico: ${db.user.toUpperCase()}</div>
-                <div style="display:flex;justify-content:space-between;margin-top:60px">
-                    <div style="border-top:1px solid #000;width:40%;text-align:center;font-size:8pt">Responsável</div>
-                    <div style="border-top:1px solid #000;width:40%;text-align:center;font-size:8pt">Técnico</div>
-                </div>
-            </div>
-        `).join('');
-        document.getElementById('print-requisicoes').classList.add('active');
-        document.getElementById('print-relatorio').classList.remove('active');
-        window.print();
-    }
-
-    window.onload = carregar;
+    carregar();
 </script>
 </body>
 </html>

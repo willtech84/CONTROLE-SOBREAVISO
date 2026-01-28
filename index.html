@@ -81,7 +81,7 @@
         <div class="system-controls">
             <button class="btn-sys btn-backup" onclick="fazerBackup()">💾 Backup</button>
             <button class="btn-sys btn-restore" onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
-            <button class="btn-sys btn-print" onclick="imprimirRelatorio()">🖨️ Relatório</button>
+            <button class="btn-sys btn-print" onclick="gerarRelatorio()">🖨️ Relatório</button>
             <button class="btn-sys btn-requisicao" onclick="imprimirTodasFichas()">📄 Fichas</button>
             <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
         </div>
@@ -239,7 +239,6 @@
         return `${String(Math.floor(diff/60)).padStart(2,'0')}:${String(diff%60).padStart(2,'0')}`;
     }
 
-    // Cálculo robusto para escalas longas
     function calcDiffEscala(d1, h1, d2, h2) {
         if(!d1 || !h1 || !d2 || !h2) return 0;
         const inicio = new Date(`${d1}T${h1}`);
@@ -257,10 +256,9 @@
         return `${Math.floor(total/60)}h ${total%60}m`;
     }
 
-    function imprimirRelatorio() {
+    function gerarRelatorio() {
         document.getElementById('pr-nome').innerText = db.user.toUpperCase();
         
-        // Formata texto das escalas no relatório
         document.getElementById('pr-periodo').innerText = db.escalas.map(e => 
             `De: ${fmtD(e.dataIn)} às ${e.horaIn} | Até: ${fmtD(e.dataOut)} às ${e.horaOut}`
         ).join('\n');
@@ -272,14 +270,9 @@
         document.getElementById('pr-km-co').innerText = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0).toFixed(1);
         document.getElementById('pr-total-trabalho').innerText = sumHours(db.exames.map(e => e.tempo));
         
-        // Soma total das escalas
         let totalMinutosEscala = db.escalas.reduce((acc, e) => acc + calcDiffEscala(e.dataIn, e.horaIn, e.dataOut, e.horaOut), 0);
         document.getElementById('pr-total-escala').innerText = `${Math.floor(totalMinutosEscala/60)}h ${totalMinutosEscala%60}m`;
 
-        window.printRelatorio();
-    }
-
-    window.printRelatorio = function() {
         document.getElementById('print-relatorio').classList.add('active');
         document.getElementById('print-requisicoes').classList.remove('active');
         window.print();
@@ -313,7 +306,6 @@
         if(saved) {
             db = JSON.parse(saved);
             document.getElementById('userName').value = db.user;
-            // Se as escalas salvas forem no formato antigo (uma data só), reconverte para o novo
             db.escalas.forEach(e => addEscala(e.dataIn || e.data, e.horaIn || e.in, e.dataOut || e.data, e.horaOut || e.out));
             render();
         }

@@ -55,7 +55,6 @@
             body { background: white; padding: 0; }
             .container, .btn-mini, .system-controls, .user-config, .escalas-container, .tabs, .grid-inputs, button { display: none !important; }
             
-            /* Relatório Geral */
             #print-relatorio.active { display: block; width: 100%; }
             .rel-header { text-align: center; border: 1px solid black; padding: 10px; margin-bottom: 15px; }
             .table-print { width: 100%; border-collapse: collapse; }
@@ -63,17 +62,8 @@
             .resumo-print { margin-top: 15px; border-collapse: collapse; width: 250px; }
             .resumo-print td { border: 1px solid black; padding: 5px; font-weight: bold; }
 
-            /* Requisições (3 por folha) */
             #print-requisicoes.active { display: block; width: 100%; }
-            .ficha { 
-                width: 100%; 
-                height: 8.5cm; /* Ajustado para caber 3 no A4 */
-                border: 1px solid black; 
-                margin-bottom: 0.5cm; 
-                padding: 10px;
-                page-break-inside: avoid;
-                font-family: Arial, sans-serif;
-            }
+            .ficha { width: 100%; height: 8.5cm; border: 1px solid black; margin-bottom: 0.5cm; padding: 10px; page-break-inside: avoid; font-family: Arial, sans-serif; }
             .ficha-header { text-align: center; font-weight: bold; font-size: 10pt; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; }
             .ficha-row { display: flex; border-bottom: 0.5px solid #ccc; padding: 4px 0; font-size: 9pt; }
             .ficha-label { font-weight: bold; width: 140px; text-transform: uppercase; font-size: 8pt; }
@@ -154,7 +144,7 @@
     <div class="rel-header">
         <h2 id="pr-titulo">RELATÓRIO SOBREAVISO - RADIOLOGIA</h2>
         <p id="pr-nome" style="font-weight:bold"></p>
-        <p id="pr-periodo" style="font-size: 9pt;"></p>
+        <p id="pr-periodo" style="font-size: 8pt; white-space: pre-line;"></p>
     </div>
     <table class="table-print" id="pr-tbl-ex">
         <thead><tr><th>DATA</th><th>ENTRADA</th><th>SAÍDA</th><th>TEMPO</th><th>SETOR</th><th>EXAME</th><th>PACIENTE</th></tr></thead>
@@ -180,28 +170,29 @@
         e.currentTarget.classList.add('active');
     }
 
-    // GESTÃO DE DADOS
     function salvarDados() {
         db.user = document.getElementById('userName').value;
         db.escalas = [];
         document.querySelectorAll('.escala-item').forEach(item => {
             db.escalas.push({
-                data: item.querySelector('.sc-data').value,
-                in: item.querySelector('.sc-in').value,
-                out: item.querySelector('.sc-out').value
+                dataIn: item.querySelector('.sc-data-in').value,
+                horaIn: item.querySelector('.sc-hora-in').value,
+                dataOut: item.querySelector('.sc-data-out').value,
+                horaOut: item.querySelector('.sc-hora-out').value
             });
         });
         localStorage.setItem('radiologiaDB', JSON.stringify(db));
         render();
     }
 
-    function addEscala(data="", inT="", outT="") {
+    function addEscala(di="", hi="", do_="", ho="") {
         const div = document.createElement('div');
         div.className = 'escala-item';
         div.innerHTML = `
-            <div class="form-group"><label>Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Hora Início</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Hora Fim</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Data Início</label><input type="date" class="sc-data-in" value="${di}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Hora Início</label><input type="time" class="sc-hora-in" value="${hi}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Data Final</label><input type="date" class="sc-data-out" value="${do_}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Hora Final</label><input type="time" class="sc-hora-out" value="${ho}" onchange="salvarDados()"></div>
             <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Remover</button>
         `;
         document.getElementById('lista-escalas').appendChild(div);
@@ -232,14 +223,12 @@
     function render() {
         const exB = document.querySelector('#tbl-exames tbody');
         exB.innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td><button class="btn-mini" style="background:red" onclick="del('exames',${ex.id})">X</button></td></tr>`).join('');
-        
         const coB = document.querySelector('#tbl-corridas tbody');
         coB.innerHTML = db.corridas.map(co => `<tr><td>${fmtD(co.data)}</td><td>${co.km} KM</td><td>${co.obs}</td><td><button class="btn-mini" style="background:red" onclick="del('corridas',${co.id})">X</button></td></tr>`).join('');
     }
 
     function del(type, id) { db[type] = db[type].filter(i => i.id !== id); salvarDados(); }
 
-    // CÁLCULOS
     function calcDiff(start, end) {
         if(!start || !end) return "00:00";
         let [h1, m1] = start.split(':').map(Number);
@@ -248,6 +237,15 @@
         if(min2 < min1) min2 += 1440;
         let diff = min2 - min1;
         return `${String(Math.floor(diff/60)).padStart(2,'0')}:${String(diff%60).padStart(2,'0')}`;
+    }
+
+    // Cálculo robusto para escalas longas
+    function calcDiffEscala(d1, h1, d2, h2) {
+        if(!d1 || !h1 || !d2 || !h2) return 0;
+        const inicio = new Date(`${d1}T${h1}`);
+        const fim = new Date(`${d2}T${h2}`);
+        const diffMs = fim - inicio;
+        return diffMs > 0 ? Math.floor(diffMs / 60000) : 0;
     }
 
     function sumHours(arr) {
@@ -259,11 +257,13 @@
         return `${Math.floor(total/60)}h ${total%60}m`;
     }
 
-    // IMPRESSÃO
     function imprimirRelatorio() {
         document.getElementById('pr-nome').innerText = db.user.toUpperCase();
-        // ALTERAÇÃO: Agora inclui a data junto com o horário de entrada e saída no relatório
-        document.getElementById('pr-periodo').innerText = db.escalas.map(e => `${fmtD(e.data)} - ${e.in} às ${e.out}`).join(' | ');
+        
+        // Formata texto das escalas no relatório
+        document.getElementById('pr-periodo').innerText = db.escalas.map(e => 
+            `De: ${fmtD(e.dataIn)} às ${e.horaIn} | Até: ${fmtD(e.dataOut)} às ${e.horaOut}`
+        ).join('\n');
         
         const tbody = document.querySelector('#pr-tbl-ex tbody');
         tbody.innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td></tr>`).join('');
@@ -272,9 +272,9 @@
         document.getElementById('pr-km-co').innerText = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0).toFixed(1);
         document.getElementById('pr-total-trabalho').innerText = sumHours(db.exames.map(e => e.tempo));
         
-        // Soma escalas
-        let escalasSoma = db.escalas.map(e => calcDiff(e.in, e.out));
-        document.getElementById('pr-total-escala').innerText = sumHours(escalasSoma);
+        // Soma total das escalas
+        let totalMinutosEscala = db.escalas.reduce((acc, e) => acc + calcDiffEscala(e.dataIn, e.horaIn, e.dataOut, e.horaOut), 0);
+        document.getElementById('pr-total-escala').innerText = `${Math.floor(totalMinutosEscala/60)}h ${totalMinutosEscala%60}m`;
 
         window.printRelatorio();
     }
@@ -306,7 +306,6 @@
         window.print();
     }
 
-    // AUXILIARES
     function fmtD(d) { if(!d) return ""; const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; }
     
     function carregar() {
@@ -314,7 +313,8 @@
         if(saved) {
             db = JSON.parse(saved);
             document.getElementById('userName').value = db.user;
-            db.escalas.forEach(e => addEscala(e.data, e.in, e.out));
+            // Se as escalas salvas forem no formato antigo (uma data só), reconverte para o novo
+            db.escalas.forEach(e => addEscala(e.dataIn || e.data, e.horaIn || e.in, e.dataOut || e.data, e.horaOut || e.out));
             render();
         }
     }
@@ -339,6 +339,5 @@
 
     carregar();
 </script>
-
 </body>
 </html>

@@ -23,8 +23,10 @@
         .btn-print { background-color: #6610f2; }
         .btn-requisicao { background-color: #e83e8c; }
 
+        /* ESCALAS */
         .escalas-container { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 20px; }
         .escala-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end; flex-wrap: wrap; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; }
+        .escala-item:last-child { border: none; margin-bottom: 0; }
 
         .form-group { display: flex; flex-direction: column; gap: 4px; }
         label { font-weight: bold; font-size: 0.75rem; color: #555; }
@@ -42,32 +44,42 @@
         th, td { border: 1px solid #dee2e6; padding: 8px; text-align: left; }
         th { background: #0056b3; color: white; }
 
-        .btn-mini { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; color: white; font-size: 0.7rem; }
+        .actions { display: flex; gap: 5px; }
+        .btn-mini { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; color: white; }
 
+        /* ÁREAS DE IMPRESSÃO */
         #print-relatorio, #print-requisicoes { display: none; }
 
         @media print {
-            @page { margin: 0.5cm; size: A4; }
+            @page { margin: 1cm; size: A4; }
             body { background: white; padding: 0; }
-            .container, button, .system-controls, .user-config, .escalas-container, .tabs, .grid-inputs { display: none !important; }
+            .container, .btn-mini, .system-controls, .user-config, .escalas-container, .tabs, .grid-inputs, button { display: none !important; }
             
+            /* Relatório Geral */
             #print-relatorio.active { display: block; width: 100%; }
-            .rel-header { text-align: center; border: 2px solid black; padding: 10px; margin-bottom: 15px; }
-            .table-print { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-            .table-print th, .table-print td { border: 1px solid black !important; padding: 5px; font-size: 8pt; }
-            .row-corrida { background-color: #eee !important; font-weight: bold; }
-            
+            .rel-header { text-align: center; border: 1px solid black; padding: 10px; margin-bottom: 15px; }
+            .table-print { width: 100%; border-collapse: collapse; }
+            .table-print th, .table-print td { border: 1px solid black !important; padding: 5px; font-size: 10pt; }
+            .resumo-print { margin-top: 15px; border-collapse: collapse; width: 250px; }
+            .resumo-print td { border: 1px solid black; padding: 5px; font-weight: bold; }
+
+            /* Requisições (3 por folha) */
             #print-requisicoes.active { display: block; width: 100%; }
             .ficha { 
                 width: 100%; 
-                height: 9.2cm; 
-                border: 1px dashed black; 
-                padding: 15px;
-                margin-bottom: 0.2cm;
+                height: 8.5cm; /* Ajustado para caber 3 no A4 */
+                border: 1px solid black; 
+                margin-bottom: 0.5cm; 
+                padding: 10px;
                 page-break-inside: avoid;
-                position: relative;
+                font-family: Arial, sans-serif;
             }
-            .ficha-header { text-align: center; font-weight: bold; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
+            .ficha-header { text-align: center; font-weight: bold; font-size: 10pt; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; }
+            .ficha-row { display: flex; border-bottom: 0.5px solid #ccc; padding: 4px 0; font-size: 9pt; }
+            .ficha-label { font-weight: bold; width: 140px; text-transform: uppercase; font-size: 8pt; }
+            .box { border: 1px solid black; width: 12px; height: 12px; display: inline-block; text-align: center; line-height: 12px; }
+            .ficha-footer { display: flex; justify-content: space-between; margin-top: 25px; }
+            .assinatura { border-top: 1px solid black; width: 45%; text-align: center; font-size: 7pt; padding-top: 3px; }
         }
     </style>
 </head>
@@ -100,41 +112,39 @@
 
     <div class="tabs">
         <button class="tab-btn active" onclick="tab(event, 'exames')">📋 Exames</button>
-        <button class="tab-btn" onclick="tab(event, 'corridas')">🚗 Corridas / Chamados</button>
+        <button class="tab-btn" onclick="tab(event, 'corridas')">🚗 Corridas</button>
     </div>
 
     <div id="exames" class="tab-content active">
         <div class="grid-inputs">
-            <input type="hidden" id="ex-id">
             <div class="form-group"><label>Data</label><input type="date" id="ex-data"></div>
-            <div class="form-group"><label>Horário</label><input type="time" id="ex-hora"></div>
-            <div class="form-group"><label>Setor</label><input type="text" id="ex-setor" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="form-group"><label>Entrada</label><input type="time" id="ex-in"></div>
+            <div class="form-group"><label>Saída</label><input type="time" id="ex-out"></div>
+            <div class="form-group">
+                <label>Setor</label>
+                <input type="text" id="ex-setor" list="setores" oninput="this.value=this.value.toUpperCase()">
+                <datalist id="setores"><option value="SUE"><option value="RIO NEGRO"><option value="UTI 1"><option value="UTI 2"><option value="UTI 3"><option value="UTI 4"></datalist>
+            </div>
             <div class="form-group"><label>Exame</label><input type="text" id="ex-nome" oninput="this.value=this.value.toUpperCase()"></div>
             <div class="form-group"><label>Paciente</label><input type="text" id="ex-pac" oninput="this.value=this.value.toUpperCase()"></div>
         </div>
-        <button id="btn-save-ex" onclick="addExame()" style="background:#28a745; color:white; border:none; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer">Salvar Exame</button>
-        <button id="btn-cancel-ex" onclick="limparCamposExame()" style="display:none; background:#6c757d; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer">Cancelar</button>
+        <button onclick="addExame()" style="background:#28a745; color:white; border:none; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer; margin-bottom:15px">+ Adicionar Exame</button>
         
-        <table id="tbl-exames" style="margin-top:15px">
-            <thead><tr><th>Data</th><th>Hora</th><th>Setor</th><th>Exame</th><th>Paciente</th><th>Ações</th></tr></thead>
+        <table id="tbl-exames">
+            <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Tempo</th><th>Setor</th><th>Ações</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
 
     <div id="corridas" class="tab-content">
         <div class="grid-inputs">
-            <input type="hidden" id="co-id">
             <div class="form-group"><label>Data</label><input type="date" id="co-data"></div>
-            <div class="form-group"><label>Entrada</label><input type="time" id="co-in"></div>
-            <div class="form-group"><label>Saída</label><input type="time" id="co-out"></div>
             <div class="form-group"><label>KM</label><input type="number" step="0.1" id="co-km"></div>
-            <div class="form-group"><label>Setor do Chamado</label><input type="text" id="co-setor" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="form-group"><label>Observação</label><input type="text" id="co-obs" oninput="this.value=this.value.toUpperCase()"></div>
         </div>
-        <button id="btn-save-co" onclick="addCorrida()" style="background:#28a745; color:white; border:none; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer">Salvar Corrida</button>
-        <button id="btn-cancel-co" onclick="limparCamposCorrida()" style="display:none; background:#6c757d; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer">Cancelar</button>
-        
+        <button onclick="addCorrida()" style="background:#28a745; color:white; border:none; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer">+ Adicionar Corrida</button>
         <table id="tbl-corridas" style="margin-top:15px">
-            <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Tempo</th><th>KM</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Data</th><th>KM</th><th>Observação</th><th>Ação</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
@@ -142,17 +152,21 @@
 
 <div id="print-relatorio">
     <div class="rel-header">
-        <h2 style="margin:0">RELATÓRIO MENSAL DE SOBREAVISO</h2>
-        <p><b>PROFISSIONAL:</b> <span id="pr-nome"></span></p>
-        <p><b>ESCALAS:</b> <span id="pr-periodo"></span></p>
+        <h2 id="pr-titulo">RELATÓRIO SOBREAVISO - RADIOLOGIA</h2>
+        <p id="pr-nome" style="font-weight:bold"></p>
+        <p id="pr-periodo" style="font-size: 9pt;"></p>
     </div>
-    <table class="table-print" id="pr-tbl-principal">
-        <thead>
-            <tr><th>DATA</th><th>ENTRADA/SAÍDA</th><th>TEMPO</th><th>KM</th><th>SETOR / EXAMES</th></tr>
-        </thead>
+    <table class="table-print" id="pr-tbl-ex">
+        <thead><tr><th>DATA</th><th>ENTRADA</th><th>SAÍDA</th><th>TEMPO</th><th>SETOR</th><th>EXAME</th><th>PACIENTE</th></tr></thead>
         <tbody></tbody>
     </table>
-    <div style="border: 2px solid black; padding: 10px; font-weight: bold; font-size: 10pt; background: #f9f9f9;" id="pr-resumo-box"></div>
+    <table class="resumo-print">
+        <tr><td>QTD CORRIDAS</td><td id="pr-qtd-co"></td></tr>
+        <tr><td>TOTAL KM</td><td id="pr-km-co"></td></tr>
+        <tr><td>HORAS TRABALHADAS</td><td id="pr-total-trabalho"></td></tr>
+        <tr><td>TOTAL SOBREAVISO</td><td id="pr-total-escala"></td></tr>
+    </table>
+    <div style="margin-top:40px; text-align:center; border-top:1px solid black; width:300px; margin-left:auto; margin-right:auto; padding-top:5px; font-size:10pt">Assinatura do Responsável</div>
 </div>
 
 <div id="print-requisicoes"></div>
@@ -166,6 +180,7 @@
         e.currentTarget.classList.add('active');
     }
 
+    // GESTÃO DE DADOS
     function salvarDados() {
         db.user = document.getElementById('userName').value;
         db.escalas = [];
@@ -173,7 +188,6 @@
             db.escalas.push({
                 data: item.querySelector('.sc-data').value,
                 in: item.querySelector('.sc-in').value,
-                dataF: item.querySelector('.sc-data-f').value,
                 out: item.querySelector('.sc-out').value
             });
         });
@@ -181,148 +195,91 @@
         render();
     }
 
-    function addEscala(data="", inT="", dataF="", outT="") {
+    function addEscala(data="", inT="", outT="") {
         const div = document.createElement('div');
         div.className = 'escala-item';
         div.innerHTML = `
             <div class="form-group"><label>Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
-            <div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
-            <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">X</button>
+            <div class="form-group"><label>Hora Início</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
+            <div class="form-group"><label>Hora Fim</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
+            <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Remover</button>
         `;
         document.getElementById('lista-escalas').appendChild(div);
     }
 
     function addExame() {
-        const id = document.getElementById('ex-id').value;
-        const dados = {
+        const item = {
+            id: Date.now(),
             data: document.getElementById('ex-data').value,
-            hora: document.getElementById('ex-hora').value,
+            in: document.getElementById('ex-in').value,
+            out: document.getElementById('ex-out').value,
             setor: document.getElementById('ex-setor').value,
             nome: document.getElementById('ex-nome').value,
-            pac: document.getElementById('ex-pac').value
+            pac: document.getElementById('ex-pac').value,
+            tempo: calcDiff(document.getElementById('ex-in').value, document.getElementById('ex-out').value)
         };
-        if(id) {
-            const index = db.exames.findIndex(e => e.id == id);
-            db.exames[index] = { ...db.exames[index], ...dados };
-        } else {
-            db.exames.push({ id: Date.now(), ...dados });
-        }
-        limparCamposExame();
+        if(!item.data || !item.in) return alert("Preencha data e entrada");
+        db.exames.push(item);
         salvarDados();
-    }
-
-    function editExame(id) {
-        const ex = db.exames.find(i => i.id == id);
-        document.getElementById('ex-id').value = ex.id;
-        document.getElementById('ex-data').value = ex.data;
-        document.getElementById('ex-hora').value = ex.hora;
-        document.getElementById('ex-setor').value = ex.setor;
-        document.getElementById('ex-nome').value = ex.nome;
-        document.getElementById('ex-pac').value = ex.pac;
-        document.getElementById('btn-save-ex').innerText = "Atualizar Exame";
-        document.getElementById('btn-cancel-ex').style.display = "inline-block";
-    }
-
-    function limparCamposExame() {
-        document.getElementById('ex-id').value = "";
-        document.getElementById('btn-save-ex').innerText = "Salvar Exame";
-        document.getElementById('btn-cancel-ex').style.display = "none";
     }
 
     function addCorrida() {
-        const id = document.getElementById('co-id').value;
-        const dados = {
-            data: document.getElementById('co-data').value,
-            in: document.getElementById('co-in').value,
-            out: document.getElementById('co-out').value,
-            km: document.getElementById('co-km').value,
-            setor: document.getElementById('co-setor').value,
-            tempo: calcDiffSimple(document.getElementById('co-in').value, document.getElementById('co-out').value)
-        };
-        if(id) {
-            const index = db.corridas.findIndex(c => c.id == id);
-            db.corridas[index] = { ...db.corridas[index], ...dados };
-        } else {
-            db.corridas.push({ id: Date.now(), ...dados });
-        }
-        limparCamposCorrida();
+        const item = { id: Date.now(), data: document.getElementById('co-data').value, km: document.getElementById('co-km').value, obs: document.getElementById('co-obs').value };
+        db.corridas.push(item);
         salvarDados();
     }
 
-    function editCorrida(id) {
-        const c = db.corridas.find(i => i.id == id);
-        document.getElementById('co-id').value = c.id;
-        document.getElementById('co-data').value = c.data;
-        document.getElementById('co-in').value = c.in;
-        document.getElementById('co-out').value = c.out;
-        document.getElementById('co-km').value = c.km;
-        document.getElementById('co-setor').value = c.setor || "";
-        document.getElementById('btn-save-co').innerText = "Atualizar Corrida";
-        document.getElementById('btn-cancel-co').style.display = "inline-block";
-    }
-
-    function limparCamposCorrida() {
-        document.getElementById('co-id').value = "";
-        document.getElementById('btn-save-co').innerText = "Salvar Corrida";
-        document.getElementById('btn-cancel-co').style.display = "none";
-    }
-
     function render() {
-        document.querySelector('#tbl-exames tbody').innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.hora}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td><td><button class="btn-mini" style="background:#ffc107; color:black" onclick="editExame(${ex.id})">✏️</button> <button class="btn-mini" style="background:red" onclick="del('exames',${ex.id})">X</button></td></tr>`).join('');
-        document.querySelector('#tbl-corridas tbody').innerHTML = db.corridas.map(co => `<tr><td>${fmtD(co.data)}</td><td>${co.in}</td><td>${co.out}</td><td>${co.tempo}</td><td>${co.km}</td><td><button class="btn-mini" style="background:#ffc107; color:black" onclick="editCorrida(${co.id})">✏️</button> <button class="btn-mini" style="background:red" onclick="del('corridas',${co.id})">X</button></td></tr>`).join('');
+        const exB = document.querySelector('#tbl-exames tbody');
+        exB.innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td><button class="btn-mini" style="background:red" onclick="del('exames',${ex.id})">X</button></td></tr>`).join('');
+        
+        const coB = document.querySelector('#tbl-corridas tbody');
+        coB.innerHTML = db.corridas.map(co => `<tr><td>${fmtD(co.data)}</td><td>${co.km} KM</td><td>${co.obs}</td><td><button class="btn-mini" style="background:red" onclick="del('corridas',${co.id})">X</button></td></tr>`).join('');
     }
 
     function del(type, id) { db[type] = db[type].filter(i => i.id !== id); salvarDados(); }
 
-    function calcDiffSimple(s, e) {
-        if(!s || !e) return "00:00";
-        let [h1, m1] = s.split(':').map(Number);
-        let [h2, m2] = e.split(':').map(Number);
-        let min = (h2*60+m2) - (h1*60+m1);
-        if(min < 0) min += 1440;
-        return `${String(Math.floor(min/60)).padStart(2,'0')}:${String(min%60).padStart(2,'0')}`;
-    }
-
-    function calcDiffFull(d1, t1, d2, t2) {
-        if(!d1 || !t1 || !d2 || !t2) return 0;
-        return Math.floor((new Date(`${d2}T${t2}`) - new Date(`${d1}T${t1}`)) / 60000);
+    // CÁLCULOS
+    function calcDiff(start, end) {
+        if(!start || !end) return "00:00";
+        let [h1, m1] = start.split(':').map(Number);
+        let [h2, m2] = end.split(':').map(Number);
+        let min1 = h1 * 60 + m1, min2 = h2 * 60 + m2;
+        if(min2 < min1) min2 += 1440;
+        let diff = min2 - min1;
+        return `${String(Math.floor(diff/60)).padStart(2,'0')}:${String(diff%60).padStart(2,'0')}`;
     }
 
     function sumHours(arr) {
-        let t = arr.reduce((acc, val) => {
-            let [h, m] = val.split(':').map(Number);
-            return acc + (h*60+m);
-        }, 0);
-        return `${Math.floor(t/60)}h ${t%60}m`;
+        let total = 0;
+        arr.forEach(t => {
+            let [h, m] = t.split(':').map(Number);
+            total += h * 60 + m;
+        });
+        return `${Math.floor(total/60)}h ${total%60}m`;
     }
 
+    // IMPRESSÃO
     function imprimirRelatorio() {
         document.getElementById('pr-nome').innerText = db.user.toUpperCase();
-        document.getElementById('pr-periodo').innerText = db.escalas.map(e => `${fmtD(e.data)} a ${fmtD(e.dataF)}`).join(' | ');
-        const tbody = document.querySelector('#pr-tbl-principal tbody');
-        tbody.innerHTML = "";
+        // ALTERAÇÃO: Agora inclui a data junto com o horário de entrada e saída no relatório
+        document.getElementById('pr-periodo').innerText = db.escalas.map(e => `${fmtD(e.data)} - ${e.in} às ${e.out}`).join(' | ');
         
-        db.corridas.forEach(co => {
-            tbody.innerHTML += `<tr class="row-corrida"><td>${fmtD(co.data)}</td><td>${co.in}-${co.out}</td><td>${co.tempo}</td><td>${co.km}</td><td>SETOR: ${co.setor || '---'}</td></tr>`;
-            db.exames.filter(ex => ex.data === co.data).forEach(ex => {
-                tbody.innerHTML += `<tr><td colspan="4"></td><td style="font-size:8pt; font-style:italic">• ${ex.hora} - ${ex.nome} (${ex.pac})</td></tr>`;
-            });
-        });
+        const tbody = document.querySelector('#pr-tbl-ex tbody');
+        tbody.innerHTML = db.exames.map(ex => `<tr><td>${fmtD(ex.data)}</td><td>${ex.in}</td><td>${ex.out}</td><td>${ex.tempo}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td></tr>`).join('');
+        
+        document.getElementById('pr-qtd-co').innerText = db.corridas.length;
+        document.getElementById('pr-km-co').innerText = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0).toFixed(1);
+        document.getElementById('pr-total-trabalho').innerText = sumHours(db.exames.map(e => e.tempo));
+        
+        // Soma escalas
+        let escalasSoma = db.escalas.map(e => calcDiff(e.in, e.out));
+        document.getElementById('pr-total-escala').innerText = sumHours(escalasSoma);
 
-        // Totais
-        let totalKM = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0);
-        let totalTrabalhado = sumHours(db.corridas.map(c => c.tempo));
-        let scaleMin = db.escalas.reduce((acc, e) => acc + calcDiffFull(e.data, e.in, e.dataF, e.out), 0);
-        let totalSobreaviso = `${Math.floor(scaleMin/60)}h ${scaleMin%60}m`;
+        window.printRelatorio();
+    }
 
-        document.getElementById('pr-resumo-box').innerHTML = `
-            TOTAL SOBREAVISO (ESCALA): ${totalSobreaviso} | 
-            TOTAL TRABALHADO: ${totalTrabalhado} | 
-            TOTAL KM: ${totalKM.toFixed(1)}
-        `;
-
+    window.printRelatorio = function() {
         document.getElementById('print-relatorio').classList.add('active');
         document.getElementById('print-requisicoes').classList.remove('active');
         window.print();
@@ -330,26 +287,26 @@
 
     function imprimirTodasFichas() {
         const area = document.getElementById('print-requisicoes');
-        area.innerHTML = db.corridas.map(co => `
+        area.innerHTML = db.exames.map(ex => `
             <div class="ficha">
-                <div class="ficha-header">FICHA DE CHAMADO / REQUISIÇÃO DE SOBREAVISO</div>
-                <div style="font-size:11pt; line-height:1.8; margin-top:20px">
-                    <b>DATA:</b> ${fmtD(co.data)} <br>
-                    <b>PROFISSIONAL:</b> ${db.user.toUpperCase()} <br>
-                    <b>SETOR DO CHAMADO:</b> ${co.setor || '---'} <br>
-                    <b>ENTRADA HOSPITAL:</b> ${co.in} | <b>SAÍDA:</b> ${co.out} <br>
-                    <b>TEMPO TOTAL:</b> ${co.tempo} | <b>KM:</b> ${co.km} <br>
+                <div class="ficha-header">REQUISIÇÃO PARA EXAME E SERVIÇOS DE RAIO-X E TOMOGRAFIA </div>
+                <div class="ficha-row"><span class="ficha-label">Data:</span> ${fmtD(ex.data)} <span style="margin-left:20px">SIM <div class="box">X</div> NÃO <div class="box"></div></span></div>
+                <div class="ficha-row"><span class="ficha-label">Requisitado Sobre Aviso:</span> </div>
+                <div class="ficha-row"><span class="ficha-label">Horário Entrada:</span> ${ex.in} <span style="margin-left:20px" class="ficha-label">Horário Saída:</span> ${ex.out}</div>
+                <div class="ficha-row"><span class="ficha-label">Setor Requisitante:</span> ${ex.setor} </div>
+                <div class="ficha-row"><span class="ficha-label">Técnico de Radiologia:</span> ${db.user.toUpperCase()} </div>
+                <div class="ficha-footer">
+                    <div class="assinatura">Assinatura do responsável </div>
+                    <div class="assinatura">Assinatura do Técnico de Radiologia </div>
                 </div>
-                <div style="position:absolute; bottom:30px; width:90%; display:flex; justify-content:space-between">
-                    <div style="border-top:1px solid black; width:45%; text-align:center; font-size:8pt">Assinatura Hospital</div>
-                    <div style="border-top:1px solid black; width:45%; text-align:center; font-size:8pt">Assinatura Técnico</div>
-                </div>
-            </div>`).join('');
+            </div>
+        `).join('');
         document.getElementById('print-requisicoes').classList.add('active');
         document.getElementById('print-relatorio').classList.remove('active');
         window.print();
     }
 
+    // AUXILIARES
     function fmtD(d) { if(!d) return ""; const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; }
     
     function carregar() {
@@ -357,7 +314,7 @@
         if(saved) {
             db = JSON.parse(saved);
             document.getElementById('userName').value = db.user;
-            db.escalas.forEach(e => addEscala(e.data, e.in, e.dataF, e.out));
+            db.escalas.forEach(e => addEscala(e.data, e.in, e.out));
             render();
         }
     }
@@ -379,7 +336,9 @@
         };
         reader.readAsText(input.files[0]);
     }
+
     carregar();
 </script>
+
 </body>
 </html>

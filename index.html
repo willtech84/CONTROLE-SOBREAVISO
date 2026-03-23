@@ -299,38 +299,68 @@
     }
 
     function imprimirRelatorio() {
-        document.getElementById('pr-nome').innerText = db.user.toUpperCase();
-        document.getElementById('pr-periodo').innerText = db.escalas.map(e => `${fmtD(e.data)} a ${fmtD(e.dataF)}`).join(' | ');
-        const tbody = document.querySelector('#pr-tbl-principal tbody');
-        tbody.innerHTML = "";
-        
+        let linhas = "";
+
         db.corridas.forEach(co => {
-            tbody.innerHTML += `<tr class="row-corrida"><td>${fmtD(co.data)}</td><td>${co.in}-${co.out}</td><td>${co.tempo}</td><td>${co.km}</td><td>SETOR: ${co.setor || '---'}</td></tr>`;
-            db.exames.filter(ex => ex.data === co.data).forEach(ex => {
-                tbody.innerHTML += `<tr><td colspan="4"></td><td style="font-size:8pt; font-style:italic">• ${ex.hora} - ${ex.nome} (${ex.pac})</td></tr>`;
+            linhas += `<tr class="row-corrida"><td>${fmtD(co.data)}</td><td>${co.in}-${co.out}</td><td>${co.tempo}</td><td>${co.km}</td><td>SETOR: ${co.setor || '---'}</td></tr>`;
+
+            const dtIn = new Date(`${co.data}T${co.in}`);
+            let dataFim = co.data;
+            if (co.out && co.in && co.out <= co.in) {
+                const d = new Date(co.data);
+                d.setDate(d.getDate() + 1);
+                dataFim = d.toISOString().slice(0, 10);
+            }
+            const dtOut = co.out ? new Date(`${dataFim}T${co.out}`) : null;
+
+            db.exames.filter(ex => {
+                const dtEx = new Date(`${ex.data}T${ex.hora}`);
+                if (dtOut) return dtEx >= dtIn && dtEx <= dtOut;
+                return ex.data === co.data && ex.hora >= co.in;
+            }).forEach(ex => {
+                linhas += `<tr><td colspan="4"></td><td style="font-size:8pt; font-style:italic">• ${ex.hora} - ${ex.nome} (${ex.pac})</td></tr>`;
             });
         });
 
-        // Totais
         let totalKM = db.corridas.reduce((s, c) => s + (parseFloat(c.km)||0), 0);
         let totalTrabalhado = sumHours(db.corridas.map(c => c.tempo));
         let scaleMin = db.escalas.reduce((acc, e) => acc + calcDiffFull(e.data, e.in, e.dataF, e.out), 0);
         let totalSobreaviso = `${Math.floor(scaleMin/60)}h ${scaleMin%60}m`;
+        let periodo = db.escalas.map(e => `${fmtD(e.data)} a ${fmtD(e.dataF)}`).join(' | ');
 
-        document.getElementById('pr-resumo-box').innerHTML = `
-            TOTAL SOBREAVISO (ESCALA): ${totalSobreaviso} | 
-            TOTAL TRABALHADO: ${totalTrabalhado} | 
-            TOTAL KM: ${totalKM.toFixed(1)}
-        `;
+        const html = `<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8">
+        <title>Relatório Sobreaviso</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; font-size: 9pt; }
+            .rel-header { text-align: center; border: 2px solid black; padding: 10px; margin-bottom: 15px; }
+            .rel-header h2 { margin: 0 0 5px 0; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+            th, td { border: 1px solid black; padding: 5px; font-size: 8pt; }
+            th { background: #003580; color: white; }
+            .row-corrida { background-color: #ddd; font-weight: bold; }
+            .resumo { border: 2px solid black; padding: 10px; font-weight: bold; font-size: 10pt; background: #f9f9f9; margin-top: 10px; }
+            @media print { @page { margin: 0.5cm; size: A4; } }
+        </style></head><body>
+        <div class="rel-header">
+            <h2>RELATÓRIO MENSAL DE SOBREAVISO</h2>
+            <p><b>PROFISSIONAL:</b> ${db.user.toUpperCase()}</p>
+            <p><b>ESCALAS:</b> ${periodo}</p>
+        </div>
+        <table>
+            <thead><tr><th>DATA</th><th>ENTRADA/SAÍDA</th><th>TEMPO</th><th>KM</th><th>SETOR / EXAMES</th></tr></thead>
+            <tbody>${linhas}</tbody>
+        </table>
+        <div class="resumo">TOTAL SOBREAVISO (ESCALA): ${totalSobreaviso} | TOTAL TRABALHADO: ${totalTrabalhado} | TOTAL KM: ${totalKM.toFixed(1)}</div>
+        <script>window.onload = () => window.print();<\/script>
+        </body></html>`;
 
-        document.getElementById('print-relatorio').classList.add('active');
-        document.getElementById('print-requisicoes').classList.remove('active');
-        window.print();
+        const w = window.open('', '_blank');
+        w.document.write(html);
+        w.document.close();
     }
 
     function imprimirTodasFichas() {
-        const area = document.getElementById('print-requisicoes');
-        area.innerHTML = db.corridas.map(co => `
+        const fichas = db.corridas.map(co => `
             <div class="ficha">
                 <div class="ficha-header">FICHA DE CHAMADO / REQUISIÇÃO DE SOBREAVISO</div>
                 <div style="font-size:11pt; line-height:1.8; margin-top:20px">
@@ -345,9 +375,22 @@
                     <div style="border-top:1px solid black; width:45%; text-align:center; font-size:8pt">Assinatura Técnico</div>
                 </div>
             </div>`).join('');
-        document.getElementById('print-requisicoes').classList.add('active');
-        document.getElementById('print-relatorio').classList.remove('active');
-        window.print();
+
+        const html = `<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8">
+        <title>Fichas de Chamado</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 10px; margin: 0; }
+            .ficha { width: 100%; height: 9.2cm; border: 1px dashed black; padding: 15px; margin-bottom: 0.2cm; page-break-inside: avoid; position: relative; }
+            .ficha-header { text-align: center; font-weight: bold; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
+            @media print { @page { margin: 0.5cm; size: A4; } }
+        </style></head><body>
+        ${fichas}
+        <script>window.onload = () => window.print();<\/script>
+        </body></html>`;
+
+        const w = window.open('', '_blank');
+        w.document.write(html);
+        w.document.close();
     }
 
     function fmtD(d) { if(!d) return ""; const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; }

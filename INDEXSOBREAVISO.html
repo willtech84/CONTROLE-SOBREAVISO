@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOBREAVISO RADIOLOGIA</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 10px; margin: 0; padding-bottom: 90px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .app-header h2 { margin: 0; color: #0056b3; font-size: 1.2rem; }
+        .system-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .btn-sys { border: none; padding: 7px 11px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8em; color: white; }
+        .btn-backup  { background: #fd7e14; }
+        .btn-restore { background: #20c997; }
+        .btn-print   { background: #6610f2; }
+        .btn-pdf     { background: #c0392b; }
+        .btn-fichas  { background: #e83e8c; }
+        .btn-gdrive  { background: #1a73e8; }
+        .btn-hist    { background: #495057; }
+
+        #backup-status { font-size: 0.72rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        #backup-status.ok      { background: #d4edda; color: #155724; }
+        #backup-status.saving  { background: #fff3cd; color: #856404; }
+        #backup-status.error   { background: #f8d7da; color: #721c24; }
+        #backup-status.offline { background: #e2e3e5; color: #383d41; }
+
+        .mes-bar { background: #e7f3ff; border: 1px solid #b6d4fe; border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .mes-bar label { font-weight: bold; font-size: 0.8rem; color: #0056b3; white-space: nowrap; }
+        .mes-bar select { padding: 5px 8px; border: 1px solid #b6d4fe; border-radius: 4px; font-size: 0.85rem; }
+        .btn-novo-mes { color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+
+        .escalas-container { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 20px; }
+        .escala-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end; flex-wrap: wrap; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label { font-weight: bold; font-size: 0.75rem; color: #555; }
+        input, select { padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+
+        .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 15px; }
+        .tab-btn { padding: 10px 15px; cursor: pointer; border: none; background: none; font-weight: bold; color: #666; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: #0056b3; border-bottom-color: #0056b3; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+        th, td { border: 1px solid #dee2e6; padding: 7px; text-align: left; }
+        th { background: #0056b3; color: white; }
+        .btn-mini { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; color: white; font-size: 0.7rem; }
+        tr.aberta td { background: #fff8e1; }
+
+        .fab { position: fixed; bottom: 22px; right: 18px; display: flex; flex-direction: column; gap: 8px; z-index: 500; }
+        .fab button { width: 52px; height: 52px; border-radius: 50%; border: none; font-size: 1.3rem; cursor: pointer; color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
+        .fab-ex { background: #28a745; }
+        .fab-co { background: #0056b3; }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; border-radius: 10px; padding: 24px; max-width: 420px; width: 93%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-box h3 { margin: 0 0 10px; color: #e67e22; }
+        .modal-box.danger h3 { color: #dc3545; }
+        .modal-box p { margin: 0 0 18px; color: #555; font-size: 0.9rem; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+        .modal-actions button { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .hist-lista { max-height: 220px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; margin-bottom: 14px; }
+        .hist-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #f0f0f0; }
+        .hist-item:hover { background: #f0f7ff; }
+        .hist-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .hist-item-info { flex: 1; }
+        .hist-item-title { font-weight: bold; font-size: 0.88rem; color: #0056b3; }
+        .hist-item-sub { font-size: 0.75rem; color: #777; }
+
+        .resumo-escala { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: 0.82rem; }
+        .resumo-escala h4 { margin: 0 0 6px; color: #0056b3; font-size: 0.85rem; }
+        .resumo-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #eee; }
+        .resumo-row:last-child { border: none; font-weight: bold; background: #e7f3ff; padding: 5px 6px; border-radius: 4px; margin-top: 4px; }
+        .resumo-total { border: 2px solid #0056b3 !important; }
+        .resumo-total h4 { font-size: 1rem !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="app-header">
+        <h2>📡 SOBREAVISO RADIOLOGIA</h2>
+        <div class="system-controls">
+            <span id="backup-status" class="offline">☁️ Drive</span>
+            <button class="btn-sys btn-gdrive"  onclick="conectarGDrive()">🔗 Drive</button>
+            <button class="btn-sys btn-backup"  onclick="fazerBackupLocal()">💾 Backup</button>
+            <button class="btn-sys btn-restore" onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
+            <button class="btn-sys btn-hist"    onclick="abrirHistorico()">🗂️ Histórico</button>
+            <button class="btn-sys btn-print"   onclick="gerarRelatorio('print')">🖨️ Relatório</button>
+            <button class="btn-sys btn-pdf"     onclick="gerarRelatorio('pdf')">📄 PDF</button>
+            <button class="btn-sys btn-fichas"  onclick="imprimirTodasFichas()">📋 Fichas</button>
+            <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
+        </div>
+    </div>
+
+    <div style="background:#e7f3ff;padding:10px;border-radius:8px;margin-bottom:12px;display:flex;gap:10px;align-items:center;">
+        <label style="white-space:nowrap;font-weight:bold;font-size:.75rem;color:#555">Profissional:</label>
+        <input type="text" id="userName" placeholder="NOME DO TÉCNICO" oninput="salvarDados()" style="flex:1">
+    </div>
+
+    <div class="mes-bar">
+        <label>📅 Mês ativo:</label>
+        <select id="sel-mes" onchange="trocarMes()"></select>
+        <button class="btn-novo-mes" style="background:#0056b3" onclick="novoMes()">+ Novo mês</button>
+        <button class="btn-novo-mes" style="background:#dc3545" onclick="excluirMesAtual()">🗑 Excluir mês</button>
+    </div>
+
+    <div class="escalas-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <label style="color:#856404;font-weight:bold;font-size:.75rem">PERÍODOS DE ESCALA (SOBREAVISO)</label>
+            <button onclick="addEscala()" style="background:#856404;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer">+ Adicionar Escala</button>
+        </div>
+        <div id="lista-escalas"></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="tab(event,'exames')">📋 Exames</button>
+        <button class="tab-btn" onclick="tab(event,'corridas')">🚗 Corridas</button>
+        <button class="tab-btn" onclick="tab(event,'resumo')">📊 Resumo</button>
+    </div>
+
+    <div id="exames" class="tab-content active">
+        <div class="grid-inputs" id="form-exame-area">
+            <input type="hidden" id="ex-id">
+            <div class="form-group"><label>Data</label><input type="date" id="ex-data"></div>
+            <div class="form-group"><label>Horário</label><input type="time" id="ex-hora"></div>
+            <div class="form-group"><label>Setor</label><input type="text" id="ex-setor" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="form-group"><label>Exame</label><input type="text" id="ex-nome" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="form-group"><label>Paciente</label><input type="text" id="ex-pac" oninput="this.value=this.value.toUpperCase()"></div>
+        </div>
+        <button id="btn-save-ex" onclick="addExame()" style="background:#28a745;color:white;border:none;padding:10px 15px;border-radius:5px;font-weight:bold;cursor:pointer">Salvar Exame</button>
+        <button id="btn-cancel-ex" onclick="limparCamposExame(true)" style="display:none;background:#6c757d;color:white;border:none;padding:10px 15px;border-radius:5px;cursor:pointer">Cancelar</button>
+        <table id="tbl-exames" style="margin-top:15px">
+            <thead><tr><th>Data</th><th>Hora</th><th>Setor</th><th>Exame</th><th>Paciente</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="corridas" class="tab-content">
+        <div class="grid-inputs" id="form-corrida-area">
+            <input type="hidden" id="co-id">
+            <div class="form-group"><label>Data</label><input type="date" id="co-data"></div>
+            <div class="form-group"><label>Entrada</label><input type="time" id="co-in"></div>
+            <div class="form-group"><label>Saída</label><input type="time" id="co-out"></div>
+            <div class="form-group"><label>KM</label><input type="number" step="0.1" id="co-km"></div>
+            <div class="form-group"><label>Setor</label><input type="text" id="co-setor" oninput="this.value=this.value.toUpperCase()"></div>
+        </div>
+        <button id="btn-save-co" onclick="addCorrida()" style="background:#28a745;color:white;border:none;padding:10px 15px;border-radius:5px;font-weight:bold;cursor:pointer">Salvar Corrida</button>
+        <button id="btn-cancel-co" onclick="limparCamposCorrida()" style="display:none;background:#6c757d;color:white;border:none;padding:10px 15px;border-radius:5px;cursor:pointer">Cancelar</button>
+        <table id="tbl-corridas" style="margin-top:15px">
+            <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Tempo</th><th>KM</th><th>Setor</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="resumo" class="tab-content">
+        <div id="resumo-conteudo"></div>
+    </div>
+</div>
+
+<!-- FAB -->
+<div class="fab">
+    <button class="fab-co" title="Nova Corrida" onclick="abrirFormCorrida()">🚗</button>
+    <button class="fab-ex" title="Novo Exame"   onclick="abrirFormExame()">➕</button>
+</div>
+
+<!-- Modal corrida em aberto -->
+<div class="modal-overlay" id="modal-corrida-aberta">
+    <div class="modal-box">
+        <h3>⚠️ Corrida sem horário de saída</h3>
+        <p>Esta corrida está <b>em aberto</b> (sem saída registrada).<br>Deseja salvar assim mesmo? Você poderá editar depois.</p>
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-corrida-aberta')" style="background:#6c757d;color:white">Cancelar</button>
+            <button onclick="confirmarCorridaAberta()" style="background:#28a745;color:white">Sim, salvar assim</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal confirmar exclusão -->
+<div class="modal-overlay" id="modal-del">
+    <div class="modal-box danger">
+        <h3>🗑️ Confirmar exclusão</h3>
+        <p id="modal-del-msg">Tem certeza que deseja excluir este registro?</p>
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-del')" style="background:#6c757d;color:white">Cancelar</button>
+            <button id="modal-del-confirm" style="background:#dc3545;color:white">Excluir</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal histórico -->
+<div class="modal-overlay" id="modal-hist">
+    <div class="modal-box" style="max-width:500px">
+        <h3 style="color:#0056b3">🗂️ Histórico de Meses</h3>
+        <p>Selecione um ou mais meses para gerar relatório consolidado:</p>
+        <div class="hist-lista" id="hist-lista"></div>
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-hist')" style="background:#6c757d;color:white">Fechar</button>
+            <button onclick="relatorioHistorico('print')" style="background:#6610f2;color:white">🖨️ Relatório</button>
+            <button onclick="relatorioHistorico('pdf')" style="background:#c0392b;color:white">📄 PDF</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal novo mês -->
+<div class="modal-overlay" id="modal-novo-mes">
+    <div class="modal-box">
+        <h3 style="color:#0056b3">📅 Novo mês</h3>
+        <p>Informe o nome/referência do novo mês:</p>
+        <input type="text" id="input-novo-mes" placeholder="Ex: Março 2026" style="width:100%;margin-bottom:14px">
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-novo-mes')" style="background:#6c757d;color:white">Cancelar</button>
+            <button onclick="criarNovoMes()" style="background:#0056b3;color:white">Criar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  DADOS: allData = { user, meses: { [id]: { label, escalas, exames, corridas } } }
+// ══════════════════════════════════════════
+let allData = { user: "", meses: {} };
+let mesAtual = null;
+
+function dbMes() { return allData.meses[mesAtual] || { escalas:[], exames:[], corridas:[] }; }
+const hoje = () => new Date().toISOString().slice(0,10);
+
+// ── Persistência ──────────────────────────
+function salvarDados() {
+    allData.user = document.getElementById('userName').value;
+    if (!mesAtual) return;
+    const m = allData.meses[mesAtual];
+    m.escalas = [];
+    document.querySelectorAll('.escala-item').forEach(item => {
+        m.escalas.push({
+            data:  item.querySelector('.sc-data').value,
+            in:    item.querySelector('.sc-in').value,
+            dataF: item.querySelector('.sc-data-f').value,
+            out:   item.querySelector('.sc-out').value
+        });
+    });
+    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+    render();
+    driveDebounce();
+}
+
+function carregar() {
+    const saved = localStorage.getItem('radiologiaDB_v2');
+    if (saved) {
+        allData = JSON.parse(saved);
+    } else {
+        // Migra formato antigo
+        const old = localStorage.getItem('radiologiaDB');
+        if (old) {
+            const o = JSON.parse(old);
+            const id = 'mes_' + Date.now();
+            allData = { user: o.user||"", meses: { [id]: { label:'Importado', escalas: o.escalas||[], exames: o.exames||[], corridas: o.corridas||[] } } };
+            localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+        }
+    }
+    document.getElementById('userName').value = allData.user || "";
+    popularSelectMes();
+    const ids = Object.keys(allData.meses);
+    if (ids.length > 0) {
+        mesAtual = ids[ids.length - 1];
+        document.getElementById('sel-mes').value = mesAtual;
+        carregarMes();
+    } else {
+        const id = 'mes_' + Date.now();
+        const label = labelMesAtual();
+        allData.meses[id] = { label, escalas:[], exames:[], corridas:[] };
+        mesAtual = id;
+        popularSelectMes();
+        document.getElementById('sel-mes').value = mesAtual;
+    }
+    preencherDataHoje();
+}
+
+function popularSelectMes() {
+    const sel = document.getElementById('sel-mes');
+    sel.innerHTML = Object.entries(allData.meses)
+        .map(([id, m]) => `<option value="${id}">${m.label}</option>`).join('');
+}
+
+function labelMesAtual() {
+    return new Date().toLocaleString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
+}
+
+function carregarMes() {
+    document.getElementById('lista-escalas').innerHTML = '';
+    const m = allData.meses[mesAtual];
+    if (m) m.escalas.forEach(e => addEscala(e.data, e.in, e.dataF, e.out));
+    render();
+}
+
+function trocarMes() {
+    mesAtual = document.getElementById('sel-mes').value;
+    carregarMes();
+}
+
+function novoMes() {
+    document.getElementById('input-novo-mes').value = labelMesAtual();
+    abrirModal('modal-novo-mes');
+}
+
+function criarNovoMes() {
+    const label = document.getElementById('input-novo-mes').value.trim();
+    if (!label) return;
+    const id = 'mes_' + Date.now();
+    allData.meses[id] = { label, escalas:[], exames:[], corridas:[] };
+    mesAtual = id;
+    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+    popularSelectMes();
+    document.getElementById('sel-mes').value = mesAtual;
+    document.getElementById('lista-escalas').innerHTML = '';
+    render();
+    fecharModal('modal-novo-mes');
+    preencherDataHoje();
+}
+
+function excluirMesAtual() {
+    const ids = Object.keys(allData.meses);
+    if (ids.length <= 1) { alert('Não é possível excluir o único mês.'); return; }
+    confirmarDel('Excluir o mês "' + allData.meses[mesAtual].label + '" e todos os seus dados?', () => {
+        delete allData.meses[mesAtual];
+        localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+        popularSelectMes();
+        mesAtual = Object.keys(allData.meses).slice(-1)[0];
+        document.getElementById('sel-mes').value = mesAtual;
+        document.getElementById('lista-escalas').innerHTML = '';
+        carregarMes();
+    });
+}
+
+function preencherDataHoje() {
+    const h = hoje();
+    document.getElementById('ex-data').value = h;
+    document.getElementById('co-data').value = h;
+}
+
+// ── Tabs ──────────────────────────────────
+function tab(e, n) {
+    document.querySelectorAll('.tab-content,.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(n).classList.add('active');
+    e.currentTarget.classList.add('active');
+    if (n === 'resumo') renderResumo();
+}
+
+// ── Escalas ───────────────────────────────
+function addEscala(data="", inT="", dataF="", outT="") {
+    const div = document.createElement('div');
+    div.className = 'escala-item';
+    div.innerHTML = `
+        <div class="form-group"><label>Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
+        <div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
+        <div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
+        <div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
+        <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer">X</button>`;
+    document.getElementById('lista-escalas').appendChild(div);
+}
+
+// ── Exames ────────────────────────────────
+function addExame() {
+    const id = document.getElementById('ex-id').value;
+    const dados = {
+        data:  document.getElementById('ex-data').value,
+        hora:  document.getElementById('ex-hora').value,
+        setor: document.getElementById('ex-setor').value,
+        nome:  document.getElementById('ex-nome').value,
+        pac:   document.getElementById('ex-pac').value
+    };
+    const m = allData.meses[mesAtual];
+    if (id) {
+        const idx = m.exames.findIndex(e => e.id == id);
+        m.exames[idx] = { ...m.exames[idx], ...dados };
+    } else {
+        m.exames.push({ id: Date.now(), ...dados });
+    }
+    const dataAtual = dados.data, setorAtual = dados.setor;
+    limparCamposExame(false);
+    document.getElementById('ex-data').value  = dataAtual;
+    document.getElementById('ex-setor').value = setorAtual;
+    salvarDados();
+}
+
+function editExame(id) {
+    const ex = dbMes().exames.find(i => i.id == id);
+    document.getElementById('ex-id').value    = ex.id;
+    document.getElementById('ex-data').value  = ex.data;
+    document.getElementById('ex-hora').value  = ex.hora;
+    document.getElementById('ex-setor').value = ex.setor;
+    document.getElementById('ex-nome').value  = ex.nome;
+    document.getElementById('ex-pac').value   = ex.pac;
+    document.getElementById('btn-save-ex').innerText = "Atualizar Exame";
+    document.getElementById('btn-cancel-ex').style.display = "inline-block";
+    abrirFormExame();
+}
+
+function limparCamposExame(resetDataSetor = true) {
+    document.getElementById('ex-id').value   = "";
+    document.getElementById('ex-hora').value = "";
+    document.getElementById('ex-nome').value = "";
+    document.getElementById('ex-pac').value  = "";
+    if (resetDataSetor) {
+        document.getElementById('ex-data').value  = hoje();
+        document.getElementById('ex-setor').value = "";
+    }
+    document.getElementById('btn-save-ex').innerText = "Salvar Exame";
+    document.getElementById('btn-cancel-ex').style.display = "none";
+}
+
+// ── Corridas ──────────────────────────────
+let _dadosCorridaPendente = null, _idCorridaPendente = null;
+
+function addCorrida() {
+    const id = document.getElementById('co-id').value;
+    const dados = {
+        data:  document.getElementById('co-data').value,
+        in:    document.getElementById('co-in').value,
+        out:   document.getElementById('co-out').value,
+        km:    document.getElementById('co-km').value,
+        setor: document.getElementById('co-setor').value,
+        tempo: calcDiffSimple(document.getElementById('co-in').value, document.getElementById('co-out').value)
+    };
+    if (!dados.out) {
+        _dadosCorridaPendente = dados; _idCorridaPendente = id;
+        abrirModal('modal-corrida-aberta');
+        return;
+    }
+    _persistirCorrida(id, dados);
+}
+
+function confirmarCorridaAberta() {
+    fecharModal('modal-corrida-aberta');
+    _persistirCorrida(_idCorridaPendente, _dadosCorridaPendente);
+}
+
+function _persistirCorrida(id, dados) {
+    const m = allData.meses[mesAtual];
+    if (id) {
+        const idx = m.corridas.findIndex(c => c.id == id);
+        m.corridas[idx] = { ...m.corridas[idx], ...dados };
+    } else {
+        m.corridas.push({ id: Date.now(), ...dados });
+    }
+    limparCamposCorrida();
+    salvarDados();
+}
+
+function editCorrida(id) {
+    const c = dbMes().corridas.find(i => i.id == id);
+    document.getElementById('co-id').value    = c.id;
+    document.getElementById('co-data').value  = c.data;
+    document.getElementById('co-in').value    = c.in;
+    document.getElementById('co-out').value   = c.out || "";
+    document.getElementById('co-km').value    = c.km;
+    document.getElementById('co-setor').value = c.setor || "";
+    document.getElementById('btn-save-co').innerText = "Atualizar Corrida";
+    document.getElementById('btn-cancel-co').style.display = "inline-block";
+    abrirFormCorrida();
+}
+
+function limparCamposCorrida() {
+    ['co-id','co-in','co-out','co-km','co-setor'].forEach(id => document.getElementById(id).value = "");
+    document.getElementById('co-data').value = hoje();
+    document.getElementById('btn-save-co').innerText = "Salvar Corrida";
+    document.getElementById('btn-cancel-co').style.display = "none";
+}
+
+// ── Exclusão com confirmação ──────────────
+let _delCallback = null;
+function del(type, id) {
+    confirmarDel(type === 'exames' ? 'Excluir este exame?' : 'Excluir esta corrida?', () => {
+        allData.meses[mesAtual][type] = allData.meses[mesAtual][type].filter(i => i.id !== id);
+        salvarDados();
+    });
+}
+function confirmarDel(msg, cb) {
+    document.getElementById('modal-del-msg').textContent = msg;
+    document.getElementById('modal-del-confirm').onclick = () => { fecharModal('modal-del'); cb(); };
+    abrirModal('modal-del');
+}
+
+// ── Render tabelas ────────────────────────
+function render() {
+    const d = dbMes();
+    document.querySelector('#tbl-exames tbody').innerHTML = d.exames.map(ex =>
+        `<tr><td>${fmtD(ex.data)}</td><td>${ex.hora}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td>
+        <td><button class="btn-mini" style="background:#ffc107;color:black" onclick="editExame(${ex.id})">✏️</button>
+        <button class="btn-mini" style="background:#dc3545;margin-left:3px" onclick="del('exames',${ex.id})">🗑</button></td></tr>`
+    ).join('');
+    document.querySelector('#tbl-corridas tbody').innerHTML = d.corridas.map(co =>
+        `<tr class="${!co.out?'aberta':''}">
+        <td>${fmtD(co.data)}</td><td>${co.in}</td>
+        <td>${co.out||'<span style="color:#e67e22;font-weight:bold">em aberto</span>'}</td>
+        <td>${co.tempo}</td><td>${co.km}</td><td>${co.setor||''}</td>
+        <td><button class="btn-mini" style="background:#ffc107;color:black" onclick="editCorrida(${co.id})">✏️</button>
+        <button class="btn-mini" style="background:#dc3545;margin-left:3px" onclick="del('corridas',${co.id})">🗑</button></td></tr>`
+    ).join('');
+}
+
+// ── Resumo por escala ─────────────────────
+function renderResumo() {
+    const d = dbMes();
+    if (!d.escalas.length) {
+        document.getElementById('resumo-conteudo').innerHTML = '<p style="color:#999;padding:20px">Nenhuma escala cadastrada.</p>';
+        return;
+    }
+    let totalKM = 0, totalTrabMin = 0, totalEscMin = 0;
+    let html = '';
+    d.escalas.forEach((esc, i) => {
+        const dtIn  = new Date(`${esc.data}T${esc.in}`);
+        const dtOut = new Date(`${esc.dataF}T${esc.out}`);
+        const escMin = calcDiffFull(esc.data, esc.in, esc.dataF, esc.out);
+        totalEscMin += escMin;
+        const corridas = d.corridas.filter(co => {
+            const dt = new Date(`${co.data}T${co.in}`);
+            return dt >= dtIn && dt <= dtOut;
+        });
+        const kmEsc   = corridas.reduce((s,c) => s + (parseFloat(c.km)||0), 0);
+        const trabMin = corridas.reduce((s,c) => { const [h,m] = (c.tempo||'0:0').split(':').map(Number); return s + h*60 + m; }, 0);
+        totalKM += kmEsc; totalTrabMin += trabMin;
+        html += `<div class="resumo-escala">
+            <h4>Escala ${i+1}: ${fmtD(esc.data)} ${esc.in} → ${fmtD(esc.dataF)} ${esc.out}</h4>
+            <div class="resumo-row"><span>⏱ Período sobreaviso</span><span>${fmtMin(escMin)}</span></div>
+            <div class="resumo-row"><span>🚗 Corridas realizadas</span><span>${corridas.length}</span></div>
+            <div class="resumo-row"><span>⏳ Tempo trabalhado</span><span>${fmtMin(trabMin)}</span></div>
+            <div class="resumo-row"><span>📍 KM rodado</span><span>${kmEsc.toFixed(1)} km</span></div>
+        </div>`;
+    });
+    html += `<div class="resumo-escala resumo-total">
+        <h4>📊 TOTAL GERAL DO MÊS</h4>
+        <div class="resumo-row"><span>⏱ Total sobreaviso</span><span>${fmtMin(totalEscMin)}</span></div>
+        <div class="resumo-row"><span>⏳ Total trabalhado</span><span>${fmtMin(totalTrabMin)}</span></div>
+        <div class="resumo-row"><span>📍 Total KM</span><span>${totalKM.toFixed(1)} km</span></div>
+        <div class="resumo-row"><span>🔬 Total exames</span><span>${d.exames.length}</span></div>
+    </div>`;
+    document.getElementById('resumo-conteudo').innerHTML = html;
+}
+
+// ── FAB ───────────────────────────────────
+function abrirFormExame() {
+    document.querySelectorAll('.tab-content,.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('exames').classList.add('active');
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    document.getElementById('form-exame-area').scrollIntoView({ behavior:'smooth', block:'start' });
+    setTimeout(() => document.getElementById('ex-hora').focus(), 400);
+}
+function abrirFormCorrida() {
+    document.querySelectorAll('.tab-content,.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('corridas').classList.add('active');
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.getElementById('form-corrida-area').scrollIntoView({ behavior:'smooth', block:'start' });
+    setTimeout(() => document.getElementById('co-in').focus(), 400);
+}
+
+// ── Utilitários ───────────────────────────
+function calcDiffSimple(s, e) {
+    if (!s || !e) return "00:00";
+    let [h1,m1] = s.split(':').map(Number), [h2,m2] = e.split(':').map(Number);
+    let min = (h2*60+m2) - (h1*60+m1);
+    if (min < 0) min += 1440;
+    return `${String(Math.floor(min/60)).padStart(2,'0')}:${String(min%60).padStart(2,'0')}`;
+}
+function calcDiffFull(d1, t1, d2, t2) {
+    if (!d1||!t1||!d2||!t2) return 0;
+    return Math.floor((new Date(`${d2}T${t2}`) - new Date(`${d1}T${t1}`)) / 60000);
+}
+function fmtMin(min) { return `${Math.floor(min/60)}h ${min%60}m`; }
+function fmtD(d) { if(!d) return ""; const [y,m,dia]=d.split('-'); return `${dia}/${m}/${y}`; }
+
+// ── Modais ────────────────────────────────
+function abrirModal(id) { document.getElementById(id).classList.add('active'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ── Histórico ─────────────────────────────
+function abrirHistorico() {
+    document.getElementById('hist-lista').innerHTML = Object.entries(allData.meses).map(([id, m]) => `
+        <div class="hist-item">
+            <input type="checkbox" id="chk_${id}" value="${id}">
+            <label for="chk_${id}" class="hist-item-info" style="cursor:pointer">
+                <div class="hist-item-title">${m.label}</div>
+                <div class="hist-item-sub">${m.corridas.length} corridas · ${m.exames.length} exames · ${m.escalas.length} escalas</div>
+            </label>
+        </div>`).join('');
+    abrirModal('modal-hist');
+}
+function relatorioHistorico(tipo) {
+    const ids = [...document.querySelectorAll('#hist-lista input:checked')].map(el => el.value);
+    if (!ids.length) { alert('Selecione ao menos um mês.'); return; }
+    fecharModal('modal-hist');
+    gerarRelatorioMeses(ids, tipo);
+}
+
+// ── Relatório / PDF ───────────────────────
+function gerarRelatorio(tipo) { gerarRelatorioMeses([mesAtual], tipo); }
+
+function buildLinhas(mesesIds) {
+    let linhas = [], totalKM = 0, totalTrabMin = 0, totalEscMin = 0, periodo = [];
+    mesesIds.forEach(mid => {
+        const m = allData.meses[mid]; if (!m) return;
+        if (mesesIds.length > 1) linhas.push({ tipo:'mes', label: m.label });
+        m.corridas.forEach(co => {
+            linhas.push({ tipo:'corrida', co });
+            totalKM += parseFloat(co.km)||0;
+            const [h,mm] = (co.tempo||'0:0').split(':').map(Number); totalTrabMin += h*60+mm;
+            const dtIn = new Date(`${co.data}T${co.in}`);
+            let dataFim = co.data;
+            if (co.out && co.in && co.out <= co.in) { const d=new Date(co.data); d.setDate(d.getDate()+1); dataFim=d.toISOString().slice(0,10); }
+            const dtOut = co.out ? new Date(`${dataFim}T${co.out}`) : null;
+            m.exames.filter(ex => {
+                const dtEx = new Date(`${ex.data}T${ex.hora}`);
+                return dtOut ? (dtEx >= dtIn && dtEx <= dtOut) : (ex.data===co.data && ex.hora>=co.in);
+            }).forEach(ex => linhas.push({ tipo:'exame', ex }));
+        });
+        m.escalas.forEach(e => { totalEscMin += calcDiffFull(e.data, e.in, e.dataF, e.out); });
+        periodo.push(...m.escalas.map(e => `${fmtD(e.data)} a ${fmtD(e.dataF)}`));
+    });
+    return { linhas, totalKM, totalTrabMin, totalEscMin, periodo: [...new Set(periodo)].join(' | ') };
+}
+
+function gerarRelatorioMeses(mesesIds, tipo) {
+    const { linhas, totalKM, totalTrabMin, totalEscMin, periodo } = buildLinhas(mesesIds);
+    const tituloMeses = mesesIds.map(id => allData.meses[id]?.label||'').join(', ');
+    const resumoTxt = `TOTAL SOBREAVISO: ${fmtMin(totalEscMin)} | TRABALHADO: ${fmtMin(totalTrabMin)} | KM: ${totalKM.toFixed(1)}`;
+
+    if (tipo === 'print') {
+        const rows = linhas.map(l => {
+            if (l.tipo==='mes')     return `<tr style="background:#0056b3;color:white"><td colspan="5" style="padding:6px;font-weight:bold">📅 ${l.label}</td></tr>`;
+            if (l.tipo==='corrida') return `<tr style="background:#ddd;font-weight:bold"><td>${fmtD(l.co.data)}</td><td>${l.co.in}-${l.co.out||'?'}</td><td>${l.co.tempo}</td><td>${l.co.km}</td><td>SETOR: ${l.co.setor||'---'}</td></tr>`;
+            return `<tr><td colspan="4"></td><td style="font-size:8pt;font-style:italic">• ${l.ex.hora} - ${l.ex.nome} (${l.ex.pac})</td></tr>`;
+        }).join('');
+        const html = `<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>Relatório</title>
+        <style>body{font-family:Arial;padding:20px;font-size:9pt}.h{text-align:center;border:2px solid black;padding:10px;margin-bottom:15px}
+        table{width:100%;border-collapse:collapse}th,td{border:1px solid black;padding:4px;font-size:8pt}th{background:#003580;color:white}
+        .res{border:2px solid black;padding:8px;font-weight:bold;margin-top:10px}@media print{@page{margin:.5cm;size:A4}}</style></head><body>
+        <div class="h"><h2 style="margin:0">RELATÓRIO MENSAL DE SOBREAVISO</h2>
+        <p><b>PROFISSIONAL:</b> ${allData.user.toUpperCase()}</p>
+        <p><b>REFERÊNCIA:</b> ${tituloMeses}</p><p><b>ESCALAS:</b> ${periodo}</p></div>
+        <table><thead><tr><th>DATA</th><th>ENTRADA/SAÍDA</th><th>TEMPO</th><th>KM</th><th>SETOR / EXAMES</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+        <div class="res">${resumoTxt}</div>
+        <script>window.onload=()=>window.print();<\/script></body></html>`;
+        const w = window.open('','_blank'); w.document.write(html); w.document.close();
+
+    } else {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        doc.setFontSize(13); doc.setFont(undefined,'bold');
+        doc.text('RELATÓRIO MENSAL DE SOBREAVISO', 105, 14, {align:'center'});
+        doc.setFontSize(9); doc.setFont(undefined,'normal');
+        doc.text(`PROFISSIONAL: ${allData.user.toUpperCase()}`, 105, 21, {align:'center'});
+        doc.text(`REFERÊNCIA: ${tituloMeses}`, 105, 26, {align:'center'});
+        if (periodo) doc.text(`ESCALAS: ${periodo}`, 105, 31, {align:'center'});
+
+        const body = linhas.map(l => {
+            if (l.tipo==='mes')     return [{content:`📅 ${l.label}`, colSpan:5, styles:{fillColor:[0,86,179],textColor:255,fontStyle:'bold'}}];
+            if (l.tipo==='corrida') return [fmtD(l.co.data), `${l.co.in}-${l.co.out||'?'}`, l.co.tempo, l.co.km||'', `SETOR: ${l.co.setor||'---'}`];
+            return ['','','','', `• ${l.ex.hora} - ${l.ex.nome} (${l.ex.pac})`];
+        });
+
+        doc.autoTable({
+            startY: periodo ? 36 : 31,
+            head: [['DATA','ENTRADA/SAÍDA','TEMPO','KM','SETOR / EXAMES']],
+            body,
+            styles: { fontSize:7, cellPadding:2 },
+            headStyles: { fillColor:[0,53,128] },
+            didParseCell: data => {
+                if (data.section==='body' && data.row.raw[1] && !Array.isArray(data.row.raw[0]) && String(data.row.raw[1]).includes('-') && data.row.raw[1] !== '') {
+                    data.cell.styles.fillColor = [221,221,221];
+                    data.cell.styles.fontStyle = 'bold';
+                }
+            }
+        });
+
+        const y = doc.lastAutoTable.finalY + 5;
+        doc.setFontSize(8); doc.setFont(undefined,'bold');
+        doc.setFillColor(249,249,249); doc.rect(14,y-3,182,9,'F'); doc.rect(14,y-3,182,9);
+        doc.text(resumoTxt, 16, y+2);
+        doc.save(`relatorio_${tituloMeses.replace(/\s+/g,'_')}.pdf`);
+    }
+}
+
+// ── Fichas ────────────────────────────────
+function imprimirTodasFichas() {
+    const d = dbMes();
+    const fichas = d.corridas.map(co => `
+        <div class="ficha"><div class="fh">FICHA DE CHAMADO / REQUISIÇÃO DE SOBREAVISO</div>
+        <div style="font-size:11pt;line-height:1.8;margin-top:20px">
+            <b>DATA:</b> ${fmtD(co.data)}<br><b>PROFISSIONAL:</b> ${allData.user.toUpperCase()}<br>
+            <b>SETOR DO CHAMADO:</b> ${co.setor||'---'}<br>
+            <b>ENTRADA:</b> ${co.in} | <b>SAÍDA:</b> ${co.out||'em aberto'}<br>
+            <b>TEMPO TOTAL:</b> ${co.tempo} | <b>KM:</b> ${co.km}<br>
+        </div>
+        <div style="position:absolute;bottom:30px;width:90%;display:flex;justify-content:space-between">
+            <div style="border-top:1px solid black;width:45%;text-align:center;font-size:8pt">Assinatura Hospital</div>
+            <div style="border-top:1px solid black;width:45%;text-align:center;font-size:8pt">Assinatura Técnico</div>
+        </div></div>`).join('');
+    const html = `<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>Fichas</title>
+    <style>body{font-family:Arial;padding:10px;margin:0}.ficha{width:100%;height:9.2cm;border:1px dashed black;padding:15px;margin-bottom:.2cm;page-break-inside:avoid;position:relative}
+    .fh{text-align:center;font-weight:bold;border-bottom:1px solid black;padding-bottom:5px;margin-bottom:10px;text-transform:uppercase}
+    @media print{@page{margin:.5cm;size:A4}}</style></head><body>
+    ${fichas}<script>window.onload=()=>window.print();<\/script></body></html>`;
+    const w = window.open('','_blank'); w.document.write(html); w.document.close();
+}
+
+// ── Google Drive ──────────────────────────
+let gdriveToken=null, gdriveFolderId=null, gdriveFileId=null, backupTimer=null;
+const GDRIVE_FOLDER='SobreavisoRadiologia', GDRIVE_FILENAME='backup_radiologia_v2.json';
+
+function setStatus(estado, msg) { const el=document.getElementById('backup-status'); el.className=estado; el.textContent=msg; }
+function driveDebounce() { if (!gdriveToken) return; clearTimeout(backupTimer); backupTimer=setTimeout(sincronizarDrive,2000); }
+
+async function conectarGDrive() {
+    try {
+        google.accounts.oauth2.initTokenClient({
+            client_id:'458282525427-o5l1n5p3e5b2q7r9k4m8j6v0c2d1e3f7.apps.googleusercontent.com',
+            scope:'https://www.googleapis.com/auth/drive.file',
+            callback: async resp => {
+                if (resp.error) { setStatus('error','❌ Erro'); return; }
+                gdriveToken = resp.access_token;
+                setStatus('saving','🔄 Conectando...');
+                await garantirPasta();
+                await buscarArquivoExistente();
+                if (gdriveFileId) {
+                    await carregarDoDrive();
+                } else {
+                    await sincronizarDrive();
+                }
+            }
+        }).requestAccessToken();
+    } catch(e) { setStatus('error','❌ '+e.message); }
+}
+
+async function carregarDoDrive() {
+    try {
+        setStatus('saving','🔄 Carregando do Drive...');
+        const r = await fetch(`https://www.googleapis.com/drive/v3/files/${gdriveFileId}?alt=media`,
+            {headers:{Authorization:`Bearer ${gdriveToken}`}});
+        if (!r.ok) throw new Error(r.status);
+        const driveData = await r.json();
+        const totalLocal = Object.values(allData.meses).reduce((s,m) => s + m.exames.length + m.corridas.length, 0);
+        const totalDrive = Object.values(driveData.meses||{}).reduce((s,m) => s + m.exames.length + m.corridas.length, 0);
+        if (totalDrive > totalLocal) {
+            const usar = confirm(`Drive tem ${totalDrive} registros, local tem ${totalLocal}.\n\nCarregar dados do Drive? (recomendado)`);
+            if (usar) {
+                allData = driveData;
+                localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+                popularSelectMes();
+                const ids = Object.keys(allData.meses);
+                mesAtual = ids[ids.length-1];
+                document.getElementById('sel-mes').value = mesAtual;
+                document.getElementById('userName').value = allData.user||'';
+                document.getElementById('lista-escalas').innerHTML='';
+                carregarMes();
+                setStatus('ok','✅ Dados do Drive carregados');
+                return;
+            }
+        }
+        await sincronizarDrive();
+    } catch(e) {
+        setStatus('error','❌ Falha ao carregar Drive');
+    }
+}
+
+async function garantirPasta() {
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${GDRIVE_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id)`,{headers:{Authorization:`Bearer ${gdriveToken}`}});
+    const d = await r.json();
+    if (d.files?.length) { gdriveFolderId=d.files[0].id; return; }
+    const cr = await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:`Bearer ${gdriveToken}`,'Content-Type':'application/json'},body:JSON.stringify({name:GDRIVE_FOLDER,mimeType:'application/vnd.google-apps.folder'})});
+    gdriveFolderId = (await cr.json()).id;
+}
+async function buscarArquivoExistente() {
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${GDRIVE_FILENAME}' and '${gdriveFolderId}' in parents and trashed=false&fields=files(id)`,{headers:{Authorization:`Bearer ${gdriveToken}`}});
+    const d = await r.json(); if (d.files?.length) gdriveFileId=d.files[0].id;
+}
+async function sincronizarDrive() {
+    if (!gdriveToken) return;
+    // Proteção: nunca sobrescrever backup com dados vazios
+    const totalRegistros = Object.values(allData.meses).reduce((s,m) => s + m.exames.length + m.corridas.length, 0);
+    if (totalRegistros === 0 && gdriveFileId) {
+        setStatus('offline','⚠️ Sem dados — sync bloqueado');
+        return;
+    }
+    setStatus('saving','🔄 Salvando...');
+    try {
+        const content = JSON.stringify(allData);
+        if (gdriveFileId) {
+            const r = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${gdriveFileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:`Bearer ${gdriveToken}`,'Content-Type':'application/json'},body:content});
+            if (!r.ok) throw new Error(r.status);
+        } else {
+            const form = new FormData();
+            form.append('metadata',new Blob([JSON.stringify({name:GDRIVE_FILENAME,parents:[gdriveFolderId]})],{type:'application/json'}));
+            form.append('file',new Blob([content],{type:'application/json'}));
+            const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:`Bearer ${gdriveToken}`},body:form});
+            if (!r.ok) throw new Error(r.status); gdriveFileId=(await r.json()).id;
+        }
+        setStatus('ok',`✅ ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`);
+    } catch(e) { setStatus('error','❌ Falha'); }
+}
+
+// ── Backup local / restaurar ──────────────
+function fazerBackupLocal() {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(allData)],{type:'application/json'}));
+    a.download = `backup_sobreaviso_${hoje()}.json`; a.click();
+}
+function restaurarBackup(input) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const p = JSON.parse(e.target.result);
+            allData = p.meses ? p : { user:p.user||"", meses:{ ['mes_'+Date.now()]:{ label:'Importado', escalas:p.escalas||[], exames:p.exames||[], corridas:p.corridas||[] } } };
+            localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+            location.reload();
+        } catch { alert('Arquivo inválido.'); }
+    };
+    reader.readAsText(input.files[0]);
+}
+
+// ── Init ──────────────────────────────────
+carregar();
+</script>
+</body>
+</html>

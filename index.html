@@ -724,7 +724,7 @@ function driveDebounce() { if (!gdriveToken) return; clearTimeout(backupTimer); 
 async function conectarGDrive() {
     try {
         google.accounts.oauth2.initTokenClient({
-            client_id:'458282525427-o5l1n5p3e5b2q7r9k4m8j6v0c2d1e3f7.apps.googleusercontent.com',
+            client_id:'622210262026-ns1eiu5l8lshm0mejb54p4e283c6vafh.apps.googleusercontent.com',
             scope:'https://www.googleapis.com/auth/drive.file',
             callback: async resp => {
                 if (resp.error) { setStatus('error','❌ Erro'); return; }

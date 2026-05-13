@@ -83,6 +83,20 @@
         .resumo-row:last-child { border: none; font-weight: bold; background: #e7f3ff; padding: 5px 6px; border-radius: 4px; margin-top: 4px; }
         .resumo-total { border: 2px solid #0056b3 !important; }
         .resumo-total h4 { font-size: 1rem !important; }
+
+        /* Escalas collapsible */
+        #escalas-body { display: none; }
+        .btn-restore-drive { background: #34a853; }
+
+        /* Modal relatório filtro */
+        .filtro-opcoes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 220px; overflow-y: auto; }
+        .filtro-opcao { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; }
+        .filtro-opcao:hover { background: #f0f7ff; }
+        .filtro-opcao input[type=radio] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .filtro-opcao label { cursor: pointer; font-size: 0.88rem; color: #333; flex: 1; }
+        .filtro-tipo-btn { display: flex; gap: 8px; margin-bottom: 12px; }
+        .filtro-tipo-btn button { flex: 1; padding: 7px; border: 2px solid #dee2e6; border-radius: 6px; background: white; cursor: pointer; font-size: 0.82rem; font-weight: bold; color: #555; }
+        .filtro-tipo-btn button.ativo { border-color: #0056b3; background: #e7f3ff; color: #0056b3; }
     </style>
 </head>
 <body>
@@ -92,12 +106,13 @@
         <h2>📡 SOBREAVISO RADIOLOGIA</h2>
         <div class="system-controls">
             <span id="backup-status" class="offline">☁️ Drive</span>
-            <button class="btn-sys btn-gdrive"  onclick="conectarGDrive()">🔗 Drive</button>
-            <button class="btn-sys btn-backup"  onclick="fazerBackupLocal()">💾 Backup</button>
-            <button class="btn-sys btn-restore" onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
+            <button class="btn-sys btn-gdrive"        onclick="conectarGDrive()">🔗 Drive</button>
+            <button class="btn-sys btn-restore-drive" onclick="restaurarDoDrive()">⬇️ Rest. Drive</button>
+            <button class="btn-sys btn-backup"        onclick="fazerBackupLocal()">💾 Backup</button>
+            <button class="btn-sys btn-restore"       onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
             <button class="btn-sys btn-hist"    onclick="abrirHistorico()">🗂️ Histórico</button>
-            <button class="btn-sys btn-print"   onclick="gerarRelatorio('print')">🖨️ Relatório</button>
-            <button class="btn-sys btn-pdf"     onclick="gerarRelatorio('pdf')">📄 PDF</button>
+            <button class="btn-sys btn-print"   onclick="abrirFiltroRelatorio('print')">🖨️ Relatório</button>
+            <button class="btn-sys btn-pdf"     onclick="abrirFiltroRelatorio('pdf')">📄 PDF</button>
             <button class="btn-sys btn-fichas"  onclick="imprimirTodasFichas()">📋 Fichas</button>
             <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
         </div>
@@ -116,11 +131,17 @@
     </div>
 
     <div class="escalas-container">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <label style="color:#856404;font-weight:bold;font-size:.75rem">PERÍODOS DE ESCALA (SOBREAVISO)</label>
-            <button onclick="addEscala()" style="background:#856404;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer">+ Adicionar Escala</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="color:#856404;font-weight:bold;font-size:.75rem">📋 ESCALAS DE SOBREAVISO (<span id="escala-count">0</span>)</label>
+            <div style="display:flex;gap:6px">
+                <button onclick="addEscala()" id="btn-add-escala" style="display:none;background:#856404;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:0.78rem">+ Adicionar</button>
+                <button onclick="toggleEscalas()" id="btn-toggle-esc" style="background:#6c5b00;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.78rem">👁 Mostrar</button>
+            </div>
         </div>
-        <div id="lista-escalas"></div>
+        <div id="escalas-body" style="display:none">
+            <div id="lista-escalas"></div>
+            <button onclick="addEscala()" style="background:#856404;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:0.78rem;margin-top:6px">+ Adicionar Escala</button>
+        </div>
     </div>
 
     <div class="tabs">
@@ -212,8 +233,39 @@
     </div>
 </div>
 
-<!-- Modal novo mês -->
-<div class="modal-overlay" id="modal-novo-mes">
+<!-- Modal filtro relatório -->
+<div class="modal-overlay" id="modal-filtro-rel">
+    <div class="modal-box" style="max-width:460px">
+        <h3 style="color:#0056b3" id="modal-filtro-titulo">📄 Gerar Relatório</h3>
+        <div class="filtro-tipo-btn">
+            <button id="btn-filtro-mes" class="ativo" onclick="alternarFiltroTipo('mes')">📅 Mês completo</button>
+            <button id="btn-filtro-esc" onclick="alternarFiltroTipo('escala')">📋 Por escala</button>
+        </div>
+        <div id="filtro-mes-area">
+            <p style="color:#555;font-size:0.88rem;margin:0 0 12px">Será gerado o relatório completo do mês ativo.</p>
+        </div>
+        <div id="filtro-esc-area" style="display:none">
+            <p style="color:#555;font-size:0.88rem;margin:0 0 8px">Selecione a escala:</p>
+            <div class="filtro-opcoes" id="filtro-escalas-lista"></div>
+        </div>
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-filtro-rel')" style="background:#6c757d;color:white">Cancelar</button>
+            <button id="btn-filtro-gerar" onclick="gerarComFiltro()" style="background:#c0392b;color:white">Gerar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal restaurar Drive -->
+<div class="modal-overlay" id="modal-rest-drive">
+    <div class="modal-box danger">
+        <h3>⬇️ Restaurar do Google Drive</h3>
+        <p>Esta ação irá <b>sobrescrever os dados locais</b> com o backup salvo no Google Drive.<br><br>Tem certeza que deseja continuar?</p>
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-rest-drive')" style="background:#6c757d;color:white">Cancelar</button>
+            <button onclick="confirmarRestaurarDrive()" style="background:#dc3545;color:white">Sim, restaurar do Drive</button>
+        </div>
+    </div>
+</div>
     <div class="modal-box">
         <h3 style="color:#0056b3">📅 Novo mês</h3>
         <p>Informe o nome/referência do novo mês:</p>
@@ -300,6 +352,7 @@ function carregarMes() {
     document.getElementById('lista-escalas').innerHTML = '';
     const m = allData.meses[mesAtual];
     if (m) m.escalas.forEach(e => addEscala(e.data, e.in, e.dataF, e.out));
+    atualizarContadorEscalas();
     render();
 }
 
@@ -357,6 +410,17 @@ function tab(e, n) {
 }
 
 // ── Escalas ───────────────────────────────
+let _escalasBertas = false;
+function toggleEscalas() {
+    _escalasBertas = !_escalasBertas;
+    document.getElementById('escalas-body').style.display = _escalasBertas ? 'block' : 'none';
+    document.getElementById('btn-toggle-esc').textContent = _escalasBertas ? '🙈 Ocultar' : '👁 Mostrar';
+    document.getElementById('btn-add-escala').style.display = _escalasBertas ? 'none' : 'none'; // mantido interno
+}
+function atualizarContadorEscalas() {
+    const n = document.querySelectorAll('.escala-item').length;
+    document.getElementById('escala-count').textContent = n;
+}
 function addEscala(data="", inT="", dataF="", outT="") {
     const div = document.createElement('div');
     div.className = 'escala-item';
@@ -365,8 +429,9 @@ function addEscala(data="", inT="", dataF="", outT="") {
         <div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
         <div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
         <div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
-        <button onclick="this.parentElement.remove();salvarDados()" style="background:#dc3545;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer">X</button>`;
+        <button onclick="this.parentElement.remove();salvarDados();atualizarContadorEscalas()" style="background:#dc3545;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer">X</button>`;
     document.getElementById('lista-escalas').appendChild(div);
+    atualizarContadorEscalas();
 }
 
 // ── Exames ────────────────────────────────
@@ -603,6 +668,46 @@ function relatorioHistorico(tipo) {
 }
 
 // ── Relatório / PDF ───────────────────────
+let _filtroTipo = 'pdf'; // 'print' ou 'pdf'
+let _filtroModo = 'mes'; // 'mes' ou 'escala'
+
+function abrirFiltroRelatorio(tipo) {
+    _filtroTipo = tipo;
+    _filtroModo = 'mes';
+    document.getElementById('modal-filtro-titulo').textContent = tipo === 'pdf' ? '📄 Gerar PDF' : '🖨️ Gerar Relatório';
+    document.getElementById('btn-filtro-gerar').style.background = tipo === 'pdf' ? '#c0392b' : '#6610f2';
+    alternarFiltroTipo('mes');
+    // Popular escalas
+    const m = allData.meses[mesAtual];
+    const escalas = m ? m.escalas : [];
+    document.getElementById('filtro-escalas-lista').innerHTML = escalas.length ? escalas.map((e, i) => `
+        <div class="filtro-opcao">
+            <input type="radio" name="filtro-esc-radio" id="fesc_${i}" value="${i}" ${i===0?'checked':''}>
+            <label for="fesc_${i}">Escala ${i+1}: ${fmtD(e.data)} ${e.in} → ${fmtD(e.dataF)} ${e.out}</label>
+        </div>`).join('') : '<p style="color:#999;font-size:0.85rem;padding:8px">Nenhuma escala cadastrada.</p>';
+    abrirModal('modal-filtro-rel');
+}
+
+function alternarFiltroTipo(modo) {
+    _filtroModo = modo;
+    document.getElementById('filtro-mes-area').style.display = modo === 'mes' ? 'block' : 'none';
+    document.getElementById('filtro-esc-area').style.display = modo === 'escala' ? 'block' : 'none';
+    document.getElementById('btn-filtro-mes').classList.toggle('ativo', modo === 'mes');
+    document.getElementById('btn-filtro-esc').classList.toggle('ativo', modo === 'escala');
+}
+
+function gerarComFiltro() {
+    fecharModal('modal-filtro-rel');
+    if (_filtroModo === 'mes') {
+        gerarRelatorioMeses([mesAtual], _filtroTipo);
+    } else {
+        const checked = document.querySelector('input[name="filtro-esc-radio"]:checked');
+        if (!checked) { alert('Selecione uma escala.'); return; }
+        const escIdx = parseInt(checked.value);
+        gerarRelatorioEscala(mesAtual, escIdx, _filtroTipo);
+    }
+}
+
 function gerarRelatorio(tipo) { gerarRelatorioMeses([mesAtual], tipo); }
 
 function buildLinhas(mesesIds) {
@@ -629,11 +734,51 @@ function buildLinhas(mesesIds) {
     return { linhas, totalKM, totalTrabMin, totalEscMin, periodo: [...new Set(periodo)].join(' | ') };
 }
 
+function buildLinhasEscala(mid, escIdx) {
+    const m = allData.meses[mid]; if (!m) return { linhas:[], totalKM:0, totalTrabMin:0, totalEscMin:0, periodo:'' };
+    const esc = m.escalas[escIdx]; if (!esc) return { linhas:[], totalKM:0, totalTrabMin:0, totalEscMin:0, periodo:'' };
+    const dtEscIn  = new Date(`${esc.data}T${esc.in}`);
+    const dtEscOut = new Date(`${esc.dataF}T${esc.out}`);
+    const totalEscMin = calcDiffFull(esc.data, esc.in, esc.dataF, esc.out);
+    const periodo = `${fmtD(esc.data)} ${esc.in} → ${fmtD(esc.dataF)} ${esc.out}`;
+    let linhas = [], totalKM = 0, totalTrabMin = 0;
+    const corridas = m.corridas.filter(co => {
+        const dt = new Date(`${co.data}T${co.in}`);
+        return dt >= dtEscIn && dt <= dtEscOut;
+    });
+    corridas.forEach(co => {
+        linhas.push({ tipo:'corrida', co });
+        totalKM += parseFloat(co.km)||0;
+        const [h,mm] = (co.tempo||'0:0').split(':').map(Number); totalTrabMin += h*60+mm;
+        const dtIn = new Date(`${co.data}T${co.in}`);
+        let dataFim = co.data;
+        if (co.out && co.in && co.out <= co.in) { const d=new Date(co.data); d.setDate(d.getDate()+1); dataFim=d.toISOString().slice(0,10); }
+        const dtOut = co.out ? new Date(`${dataFim}T${co.out}`) : null;
+        m.exames.filter(ex => {
+            const dtEx = new Date(`${ex.data}T${ex.hora}`);
+            return dtOut ? (dtEx >= dtIn && dtEx <= dtOut) : (ex.data===co.data && ex.hora>=co.in);
+        }).forEach(ex => linhas.push({ tipo:'exame', ex }));
+    });
+    return { linhas, totalKM, totalTrabMin, totalEscMin, periodo };
+}
+
+function gerarRelatorioEscala(mid, escIdx, tipo) {
+    const m = allData.meses[mid]; if (!m) return;
+    const esc = m.escalas[escIdx]; if (!esc) return;
+    const { linhas, totalKM, totalTrabMin, totalEscMin, periodo } = buildLinhasEscala(mid, escIdx);
+    const tituloMeses = m.label + ` — Escala ${escIdx+1}`;
+    const resumoTxt = `SOBREAVISO: ${fmtMin(totalEscMin)} | TRABALHADO: ${fmtMin(totalTrabMin)} | KM: ${totalKM.toFixed(1)}`;
+    _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo);
+}
+
 function gerarRelatorioMeses(mesesIds, tipo) {
     const { linhas, totalKM, totalTrabMin, totalEscMin, periodo } = buildLinhas(mesesIds);
     const tituloMeses = mesesIds.map(id => allData.meses[id]?.label||'').join(', ');
     const resumoTxt = `TOTAL SOBREAVISO: ${fmtMin(totalEscMin)} | TRABALHADO: ${fmtMin(totalTrabMin)} | KM: ${totalKM.toFixed(1)}`;
+    _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo);
+}
 
+function _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo) {
     if (tipo === 'print') {
         const rows = linhas.map(l => {
             if (l.tipo==='mes')     return `<tr style="background:#0056b3;color:white"><td colspan="5" style="padding:6px;font-weight:bold">📅 ${l.label}</td></tr>`;
@@ -810,6 +955,55 @@ async function sincronizarDrive() {
 }
 
 // ── Backup local / restaurar ──────────────
+function restaurarDoDrive() {
+    abrirModal('modal-rest-drive');
+}
+
+async function confirmarRestaurarDrive() {
+    fecharModal('modal-rest-drive');
+    if (gdriveToken) {
+        await _forcarCarregarDoDrive();
+    } else {
+        setStatus('saving','🔄 Conectando...');
+        try {
+            google.accounts.oauth2.initTokenClient({
+                client_id:'622210262026-ns1eiu5l8lshm0mejb54p4e283c6vafh.apps.googleusercontent.com',
+                scope:'https://www.googleapis.com/auth/drive.file',
+                callback: async resp => {
+                    if (resp.error) { setStatus('error','❌ Erro ao conectar'); return; }
+                    gdriveToken = resp.access_token;
+                    await garantirPasta();
+                    await buscarArquivoExistente();
+                    await _forcarCarregarDoDrive();
+                }
+            }).requestAccessToken();
+        } catch(e) { setStatus('error','❌ '+e.message); }
+    }
+}
+
+async function _forcarCarregarDoDrive() {
+    if (!gdriveFileId) { alert('Nenhum backup encontrado no Google Drive.'); setStatus('offline','⚠️ Sem backup'); return; }
+    try {
+        setStatus('saving','🔄 Restaurando do Drive...');
+        const r = await fetch(`https://www.googleapis.com/drive/v3/files/${gdriveFileId}?alt=media`,
+            {headers:{Authorization:`Bearer ${gdriveToken}`}});
+        if (!r.ok) throw new Error(r.status);
+        const driveData = await r.json();
+        allData = driveData;
+        localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+        popularSelectMes();
+        const ids = Object.keys(allData.meses);
+        mesAtual = ids[ids.length-1];
+        document.getElementById('sel-mes').value = mesAtual;
+        document.getElementById('userName').value = allData.user||'';
+        document.getElementById('lista-escalas').innerHTML='';
+        carregarMes();
+        setStatus('ok','✅ Restaurado do Drive');
+    } catch(e) {
+        setStatus('error','❌ Falha ao restaurar');
+        alert('Erro ao restaurar: ' + e.message);
+    }
+}
 function fazerBackupLocal() {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(allData)],{type:'application/json'}));

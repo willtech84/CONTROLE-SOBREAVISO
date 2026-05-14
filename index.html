@@ -9,66 +9,86 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 10px; margin: 0; padding-bottom: 90px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 10px; margin: 0; padding-bottom: 90px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .app-header h2 { margin: 0; color: #0056b3; font-size: 1.2rem; }
-        .system-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-        .btn-sys { border: none; padding: 7px 11px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8em; color: white; }
-        .btn-backup  { background: #fd7e14; }
-        .btn-restore { background: #20c997; }
-        .btn-print   { background: #6610f2; }
-        .btn-pdf     { background: #c0392b; }
-        .btn-fichas  { background: #e83e8c; }
-        .btn-gdrive  { background: #1a73e8; }
-        .btn-hist    { background: #495057; }
-
-        #backup-status { font-size: 0.72rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        /* ── HEADER ── */
+        .app-header { margin-bottom: 14px; border-bottom: 1px solid #eee; padding-bottom: 12px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+        .app-header h2 { margin: 0; color: #0056b3; font-size: 1.15rem; }
+        #backup-status { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
         #backup-status.ok      { background: #d4edda; color: #155724; }
         #backup-status.saving  { background: #fff3cd; color: #856404; }
         #backup-status.error   { background: #f8d7da; color: #721c24; }
         #backup-status.offline { background: #e2e3e5; color: #383d41; }
 
-        .mes-bar { background: #e7f3ff; border: 1px solid #b6d4fe; border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        /* Botões do sistema em grid para mobile */
+        .system-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        @media (min-width: 600px) { .system-controls { display: flex; flex-wrap: wrap; gap: 6px; } }
+        .btn-sys { border: none; padding: 8px 6px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75em; color: white; text-align: center; width: 100%; }
+        @media (min-width: 600px) { .btn-sys { width: auto; padding: 7px 11px; font-size: 0.8em; } }
+        .btn-backup       { background: #fd7e14; }
+        .btn-restore      { background: #20c997; }
+        .btn-print        { background: #6610f2; }
+        .btn-pdf          { background: #c0392b; }
+        .btn-fichas       { background: #e83e8c; }
+        .btn-gdrive       { background: #1a73e8; }
+        .btn-hist         { background: #495057; }
+        .btn-restore-drive{ background: #34a853; }
+        .btn-usuarios     { background: #7b2d8b; }
+
+        /* ── MÊS BAR ── */
+        .mes-bar { background: #e7f3ff; border: 1px solid #b6d4fe; border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .mes-bar label { font-weight: bold; font-size: 0.8rem; color: #0056b3; white-space: nowrap; }
-        .mes-bar select { padding: 5px 8px; border: 1px solid #b6d4fe; border-radius: 4px; font-size: 0.85rem; }
-        .btn-novo-mes { color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .mes-bar select { padding: 5px 8px; border: 1px solid #b6d4fe; border-radius: 4px; font-size: 0.85rem; flex: 1; min-width: 120px; }
+        .btn-novo-mes { color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.78rem; font-weight: bold; white-space: nowrap; }
 
-        .escalas-container { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 20px; }
-        .escala-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end; flex-wrap: wrap; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; }
+        /* ── PROFISSIONAL ── */
+        .prof-bar { background:#e7f3ff; padding:10px; border-radius:8px; margin-bottom:12px; display:flex; gap:10px; align-items:center; }
+        .prof-bar label { white-space:nowrap; font-weight:bold; font-size:.75rem; color:#555; }
+        .prof-bar input { flex:1; }
 
+        /* ── ESCALAS ── */
+        .escalas-container { background: #fff3cd; padding: 12px; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 16px; }
+        .escala-item { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-end; flex-wrap: wrap; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; }
+
+        /* ── FORM ── */
         .form-group { display: flex; flex-direction: column; gap: 4px; }
         label { font-weight: bold; font-size: 0.75rem; color: #555; }
         input, select { padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; }
         .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
 
+        /* ── TABS ── */
         .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 15px; }
-        .tab-btn { padding: 10px 15px; cursor: pointer; border: none; background: none; font-weight: bold; color: #666; border-bottom: 3px solid transparent; }
+        .tab-btn { padding: 10px 14px; cursor: pointer; border: none; background: none; font-weight: bold; color: #666; border-bottom: 3px solid transparent; font-size: 0.9rem; }
         .tab-btn.active { color: #0056b3; border-bottom-color: #0056b3; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* ── TABELA ── */
         table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
         th, td { border: 1px solid #dee2e6; padding: 7px; text-align: left; }
         th { background: #0056b3; color: white; }
         .btn-mini { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; color: white; font-size: 0.7rem; }
         tr.aberta td { background: #fff8e1; }
 
+        /* ── FAB ── */
         .fab { position: fixed; bottom: 22px; right: 18px; display: flex; flex-direction: column; gap: 8px; z-index: 500; }
         .fab button { width: 52px; height: 52px; border-radius: 50%; border: none; font-size: 1.3rem; cursor: pointer; color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
         .fab-ex { background: #28a745; }
         .fab-co { background: #0056b3; }
 
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        /* ── MODAIS ── */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: center; justify-content: center; padding: 10px; }
         .modal-overlay.active { display: flex; }
-        .modal-box { background: white; border-radius: 10px; padding: 24px; max-width: 420px; width: 93%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-box { background: white; border-radius: 12px; padding: 22px; max-width: 440px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
         .modal-box h3 { margin: 0 0 10px; color: #e67e22; }
         .modal-box.danger h3 { color: #dc3545; }
-        .modal-box p { margin: 0 0 18px; color: #555; font-size: 0.9rem; line-height: 1.5; }
-        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
-        .modal-actions button { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal-box p { margin: 0 0 14px; color: #555; font-size: 0.88rem; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+        .modal-actions button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
+        /* ── HISTÓRICO ── */
         .hist-lista { max-height: 220px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; margin-bottom: 14px; }
         .hist-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #f0f0f0; }
         .hist-item:hover { background: #f0f7ff; }
@@ -77,6 +97,7 @@
         .hist-item-title { font-weight: bold; font-size: 0.88rem; color: #0056b3; }
         .hist-item-sub { font-size: 0.75rem; color: #777; }
 
+        /* ── RESUMO ── */
         .resumo-escala { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: 0.82rem; }
         .resumo-escala h4 { margin: 0 0 6px; color: #0056b3; font-size: 0.85rem; }
         .resumo-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #eee; }
@@ -84,63 +105,110 @@
         .resumo-total { border: 2px solid #0056b3 !important; }
         .resumo-total h4 { font-size: 1rem !important; }
 
-        /* Escalas collapsible */
-        #escalas-body { display: none; }
-        .btn-restore-drive { background: #34a853; }
-
-        /* Modal relatório filtro */
-        .filtro-opcoes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 220px; overflow-y: auto; }
-        .filtro-opcao { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; }
+        /* ── FILTRO RELATÓRIO ── */
+        .filtro-opcoes { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; max-height: 200px; overflow-y: auto; }
+        .filtro-opcao { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; transition: background .15s; }
         .filtro-opcao:hover { background: #f0f7ff; }
-        .filtro-opcao input[type=radio] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
-        .filtro-opcao label { cursor: pointer; font-size: 0.88rem; color: #333; flex: 1; }
+        .filtro-opcao input[type=checkbox] { width: 17px; height: 17px; cursor: pointer; flex-shrink: 0; accent-color: #0056b3; }
+        .filtro-opcao label { cursor: pointer; font-size: 0.87rem; color: #333; flex: 1; }
         .filtro-tipo-btn { display: flex; gap: 8px; margin-bottom: 12px; }
-        .filtro-tipo-btn button { flex: 1; padding: 7px; border: 2px solid #dee2e6; border-radius: 6px; background: white; cursor: pointer; font-size: 0.82rem; font-weight: bold; color: #555; }
+        .filtro-tipo-btn button { flex: 1; padding: 8px; border: 2px solid #dee2e6; border-radius: 6px; background: white; cursor: pointer; font-size: 0.82rem; font-weight: bold; color: #555; transition: all .15s; }
         .filtro-tipo-btn button.ativo { border-color: #0056b3; background: #e7f3ff; color: #0056b3; }
+
+        /* ── USUÁRIOS ── */
+        .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 8px; }
+        .user-card-avatar { width: 36px; height: 36px; border-radius: 50%; background: #0056b3; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; flex-shrink: 0; }
+        .user-card-info { flex: 1; }
+        .user-card-nome { font-weight: bold; font-size: 0.9rem; color: #0056b3; }
+        .user-card-sub { font-size: 0.75rem; color: #777; }
+        .user-role-badge { font-size: 0.7rem; padding: 2px 7px; border-radius: 10px; font-weight: bold; }
+        .badge-admin { background: #ffd6e7; color: #d63384; }
+        .badge-user  { background: #d1ecf1; color: #0c5460; }
+
+        /* Login screen */
+        #login-screen { display: none; position: fixed; inset: 0; background: linear-gradient(135deg, #0056b3 0%, #003d82 100%); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        #login-screen.active { display: flex; }
+        .login-box { background: white; border-radius: 16px; padding: 30px 24px; max-width: 360px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        .login-box h2 { margin: 0 0 4px; color: #0056b3; font-size: 1.3rem; text-align: center; }
+        .login-box p { margin: 0 0 20px; color: #777; font-size: 0.82rem; text-align: center; }
+        .login-field { margin-bottom: 12px; }
+        .login-field label { display: block; font-size: 0.78rem; font-weight: bold; color: #555; margin-bottom: 4px; }
+        .login-field input { width: 100%; padding: 10px; border: 1.5px solid #ced4da; border-radius: 8px; font-size: 0.95rem; }
+        .login-field input:focus { outline: none; border-color: #0056b3; }
+        .btn-login-primary { width: 100%; padding: 11px; background: #0056b3; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 4px; }
+        .btn-login-secondary { width: 100%; padding: 9px; background: transparent; color: #0056b3; border: 1.5px solid #0056b3; border-radius: 8px; font-size: 0.88rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .login-error { color: #dc3545; font-size: 0.82rem; margin-top: 8px; text-align: center; display: none; }
     </style>
 </head>
 <body>
 
+<!-- Tela de Login -->
+<div id="login-screen">
+    <div class="login-box">
+        <h2>📡 SOBREAVISO</h2>
+        <p id="login-subtitle">Radiologia</p>
+        <div id="login-form-area">
+            <div class="login-field"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
+            <div class="login-field"><label>Senha</label><input type="password" id="login-senha" placeholder="••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+            <p class="login-error" id="login-erro">E-mail ou senha incorretos.</p>
+            <button class="btn-login-primary" onclick="fazerLogin()">Entrar</button>
+            <button class="btn-login-secondary" onclick="mostrarFormCadastro()">Criar conta</button>
+        </div>
+        <div id="cadastro-form-area" style="display:none">
+            <div class="login-field"><label>Nome completo</label><input type="text" id="cad-nome" placeholder="Seu nome"></div>
+            <div class="login-field"><label>E-mail</label><input type="email" id="cad-email" placeholder="seu@email.com"></div>
+            <div class="login-field"><label>WhatsApp</label><input type="tel" id="cad-whatsapp" placeholder="(11) 99999-9999"></div>
+            <div class="login-field"><label>Senha</label><input type="password" id="cad-senha" placeholder="Mínimo 4 caracteres"></div>
+            <p class="login-error" id="cad-erro">Preencha todos os campos.</p>
+            <button class="btn-login-primary" onclick="fazerCadastro()">Cadastrar</button>
+            <button class="btn-login-secondary" onclick="mostrarFormLogin()">Já tenho conta</button>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="app-header">
-        <h2>📡 SOBREAVISO RADIOLOGIA</h2>
+        <div class="header-top">
+            <h2>📡 SOBREAVISO RADIOLOGIA</h2>
+            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+                <span id="user-badge" style="font-size:0.72rem;background:#e7f3ff;color:#0056b3;padding:4px 8px;border-radius:12px;font-weight:bold;display:none"></span>
+                <span id="backup-status" class="offline">☁️ Drive</span>
+            </div>
+        </div>
         <div class="system-controls">
-            <span id="backup-status" class="offline">☁️ Drive</span>
             <button class="btn-sys btn-gdrive"        onclick="conectarGDrive()">🔗 Drive</button>
             <button class="btn-sys btn-restore-drive" onclick="restaurarDoDrive()">⬇️ Rest. Drive</button>
             <button class="btn-sys btn-backup"        onclick="fazerBackupLocal()">💾 Backup</button>
             <button class="btn-sys btn-restore"       onclick="document.getElementById('fileInput').click()">📂 Restaurar</button>
-            <button class="btn-sys btn-hist"    onclick="abrirHistorico()">🗂️ Histórico</button>
-            <button class="btn-sys btn-print"   onclick="abrirFiltroRelatorio('print')">🖨️ Relatório</button>
-            <button class="btn-sys btn-pdf"     onclick="abrirFiltroRelatorio('pdf')">📄 PDF</button>
-            <button class="btn-sys btn-fichas"  onclick="imprimirTodasFichas()">📋 Fichas</button>
+            <button class="btn-sys btn-hist"          onclick="abrirHistorico()">🗂️ Histórico</button>
+            <button class="btn-sys btn-print"         onclick="abrirFiltroRelatorio('print')">🖨️ Relatório</button>
+            <button class="btn-sys btn-pdf"           onclick="abrirFiltroRelatorio('pdf')">📄 PDF</button>
+            <button class="btn-sys btn-fichas"        onclick="imprimirTodasFichas()">📋 Fichas</button>
+            <button class="btn-sys btn-usuarios"      onclick="abrirUsuarios()">👤 Usuários</button>
             <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
         </div>
     </div>
 
-    <div style="background:#e7f3ff;padding:10px;border-radius:8px;margin-bottom:12px;display:flex;gap:10px;align-items:center;">
-        <label style="white-space:nowrap;font-weight:bold;font-size:.75rem;color:#555">Profissional:</label>
-        <input type="text" id="userName" placeholder="NOME DO TÉCNICO" oninput="salvarDados()" style="flex:1">
+    <div class="prof-bar">
+        <label>Profissional:</label>
+        <input type="text" id="userName" placeholder="NOME DO TÉCNICO" oninput="salvarDados()">
     </div>
 
     <div class="mes-bar">
         <label>📅 Mês ativo:</label>
         <select id="sel-mes" onchange="trocarMes()"></select>
         <button class="btn-novo-mes" style="background:#0056b3" onclick="novoMes()">+ Novo mês</button>
-        <button class="btn-novo-mes" style="background:#dc3545" onclick="excluirMesAtual()">🗑 Excluir mês</button>
+        <button class="btn-novo-mes" style="background:#dc3545" onclick="excluirMesAtual()">🗑 Excluir</button>
     </div>
 
     <div class="escalas-container">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <label style="color:#856404;font-weight:bold;font-size:.75rem">📋 ESCALAS DE SOBREAVISO (<span id="escala-count">0</span>)</label>
-            <div style="display:flex;gap:6px">
-                <button onclick="addEscala()" id="btn-add-escala" style="display:none;background:#856404;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:0.78rem">+ Adicionar</button>
-                <button onclick="toggleEscalas()" id="btn-toggle-esc" style="background:#6c5b00;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.78rem">👁 Mostrar</button>
-            </div>
+            <button onclick="toggleEscalas()" id="btn-toggle-esc" style="background:#6c5b00;color:white;border:none;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:0.78rem">👁 Mostrar</button>
         </div>
         <div id="escalas-body" style="display:none">
             <div id="lista-escalas"></div>
-            <button onclick="addEscala()" style="background:#856404;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:0.78rem;margin-top:6px">+ Adicionar Escala</button>
+            <button onclick="addEscala()" style="background:#856404;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:0.78rem;margin-top:6px">+ Adicionar Escala</button>
         </div>
     </div>
 
@@ -245,7 +313,7 @@
             <p style="color:#555;font-size:0.88rem;margin:0 0 12px">Será gerado o relatório completo do mês ativo.</p>
         </div>
         <div id="filtro-esc-area" style="display:none">
-            <p style="color:#555;font-size:0.88rem;margin:0 0 8px">Selecione a escala:</p>
+            <p style="color:#555;font-size:0.85rem;margin:0 0 8px">Selecione uma ou mais escalas:</p>
             <div class="filtro-opcoes" id="filtro-escalas-lista"></div>
         </div>
         <div class="modal-actions">
@@ -262,10 +330,13 @@
         <p>Esta ação irá <b>sobrescrever os dados locais</b> com o backup salvo no Google Drive.<br><br>Tem certeza que deseja continuar?</p>
         <div class="modal-actions">
             <button onclick="fecharModal('modal-rest-drive')" style="background:#6c757d;color:white">Cancelar</button>
-            <button onclick="confirmarRestaurarDrive()" style="background:#dc3545;color:white">Sim, restaurar do Drive</button>
+            <button onclick="confirmarRestaurarDrive()" style="background:#dc3545;color:white">Sim, restaurar</button>
         </div>
     </div>
 </div>
+
+<!-- Modal novo mês -->
+<div class="modal-overlay" id="modal-novo-mes">
     <div class="modal-box">
         <h3 style="color:#0056b3">📅 Novo mês</h3>
         <p>Informe o nome/referência do novo mês:</p>
@@ -277,15 +348,155 @@
     </div>
 </div>
 
+<!-- Modal Usuários (Admin) -->
+<div class="modal-overlay" id="modal-usuarios">
+    <div class="modal-box" style="max-width:500px">
+        <h3 style="color:#7b2d8b">👤 Gerenciar Usuários</h3>
+        <p id="modal-usuarios-info" style="margin-bottom:10px"></p>
+        <div id="modal-usuarios-lista" style="max-height:300px;overflow-y:auto;margin-bottom:14px"></div>
+        <div class="modal-actions">
+            <button onclick="fecharModal('modal-usuarios')" style="background:#6c757d;color:white">Fechar</button>
+            <button onclick="sairDaSessao()" style="background:#dc3545;color:white">🚪 Sair</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════
-//  DADOS: allData = { user, meses: { [id]: { label, escalas, exames, corridas } } }
+//  DADOS: allData = { user, meses, usuarios }
 // ══════════════════════════════════════════
-let allData = { user: "", meses: {} };
+let allData = { user: "", meses: {}, usuarios: [] };
 let mesAtual = null;
+let usuarioLogado = null;
 
 function dbMes() { return allData.meses[mesAtual] || { escalas:[], exames:[], corridas:[] }; }
 const hoje = () => new Date().toISOString().slice(0,10);
+
+// ── Sistema de Usuários ───────────────────
+function iniciarApp() {
+    const saved = localStorage.getItem('radiologiaDB_v2');
+    if (saved) allData = JSON.parse(saved);
+    if (!allData.usuarios) allData.usuarios = [];
+
+    // Verificar sessão ativa
+    const sessao = sessionStorage.getItem('sbSessao');
+    if (sessao) {
+        const u = JSON.parse(sessao);
+        const ainda = allData.usuarios.find(x => x.id === u.id);
+        if (ainda) { usuarioLogado = ainda; iniciarComUsuario(); return; }
+    }
+
+    if (allData.usuarios.length === 0) {
+        // Nenhum usuário cadastrado: vai direto sem login
+        usuarioLogado = null;
+        iniciarComUsuario();
+    } else {
+        document.getElementById('login-screen').classList.add('active');
+        document.getElementById('login-subtitle').textContent =
+            'Entre com sua conta para continuar';
+    }
+}
+
+function mostrarFormCadastro() {
+    document.getElementById('login-form-area').style.display = 'none';
+    document.getElementById('cadastro-form-area').style.display = 'block';
+}
+function mostrarFormLogin() {
+    document.getElementById('cadastro-form-area').style.display = 'none';
+    document.getElementById('login-form-area').style.display = 'block';
+}
+
+function fazerLogin() {
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const senha = document.getElementById('login-senha').value;
+    const u = allData.usuarios.find(x => x.email.toLowerCase() === email && x.senha === senha);
+    if (!u) {
+        document.getElementById('login-erro').style.display = 'block';
+        return;
+    }
+    document.getElementById('login-erro').style.display = 'none';
+    usuarioLogado = u;
+    sessionStorage.setItem('sbSessao', JSON.stringify(u));
+    document.getElementById('login-screen').classList.remove('active');
+    iniciarComUsuario();
+}
+
+function fazerCadastro() {
+    const nome = document.getElementById('cad-nome').value.trim();
+    const email = document.getElementById('cad-email').value.trim().toLowerCase();
+    const whatsapp = document.getElementById('cad-whatsapp').value.trim();
+    const senha = document.getElementById('cad-senha').value;
+    const erroEl = document.getElementById('cad-erro');
+    if (!nome || !email || !senha || senha.length < 4) {
+        erroEl.textContent = 'Preencha todos os campos (senha mín. 4 caracteres).';
+        erroEl.style.display = 'block'; return;
+    }
+    if (allData.usuarios.find(x => x.email.toLowerCase() === email)) {
+        erroEl.textContent = 'Este e-mail já está cadastrado.';
+        erroEl.style.display = 'block'; return;
+    }
+    erroEl.style.display = 'none';
+    const isAdmin = allData.usuarios.length === 0;
+    const u = { id: Date.now(), nome, email, whatsapp, senha, role: isAdmin ? 'admin' : 'user', criadoEm: new Date().toLocaleDateString('pt-BR') };
+    allData.usuarios.push(u);
+    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+    usuarioLogado = u;
+    sessionStorage.setItem('sbSessao', JSON.stringify(u));
+    document.getElementById('login-screen').classList.remove('active');
+    iniciarComUsuario();
+}
+
+function iniciarComUsuario() {
+    if (usuarioLogado) {
+        const badge = document.getElementById('user-badge');
+        badge.textContent = (usuarioLogado.role === 'admin' ? '👑 ' : '👤 ') + usuarioLogado.nome.split(' ')[0];
+        badge.style.display = 'inline';
+        // Preencher nome automaticamente se vazio
+        if (!allData.user && usuarioLogado.nome) {
+            allData.user = usuarioLogado.nome;
+        }
+    }
+    carregar();
+}
+
+function abrirUsuarios() {
+    const infoEl = document.getElementById('modal-usuarios-info');
+    const listaEl = document.getElementById('modal-usuarios-lista');
+    const isAdmin = usuarioLogado && usuarioLogado.role === 'admin';
+
+    if (!isAdmin) {
+        infoEl.innerHTML = `<b>Conta:</b> ${usuarioLogado ? usuarioLogado.nome : 'Sem login'}<br><span style="font-size:0.8rem;color:#777">Apenas administradores podem ver todos os usuários.</span>`;
+        listaEl.innerHTML = '';
+    } else {
+        infoEl.innerHTML = `<span style="font-size:0.83rem;color:#555"><b>${allData.usuarios.length}</b> usuário(s) cadastrado(s). Dados disponíveis para contato.</span>`;
+        listaEl.innerHTML = allData.usuarios.map(u => `
+            <div class="user-card">
+                <div class="user-card-avatar">${u.nome.charAt(0).toUpperCase()}</div>
+                <div class="user-card-info">
+                    <div class="user-card-nome">${u.nome} <span class="user-role-badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role==='admin'?'Admin':'Usuário'}</span></div>
+                    <div class="user-card-sub">📧 ${u.email}</div>
+                    ${u.whatsapp ? `<div class="user-card-sub">📱 ${u.whatsapp}</div>` : ''}
+                    <div class="user-card-sub">🗓 Cadastro: ${u.criadoEm||'—'}</div>
+                </div>
+                ${u.id !== usuarioLogado?.id ? `<button onclick="excluirUsuario(${u.id})" style="background:#dc3545;color:white;border:none;padding:5px 8px;border-radius:4px;cursor:pointer;font-size:0.72rem">🗑</button>` : ''}
+            </div>`).join('') || '<p style="color:#999;font-size:0.85rem">Nenhum usuário.</p>';
+    }
+    abrirModal('modal-usuarios');
+}
+
+function excluirUsuario(id) {
+    if (!confirm('Excluir este usuário?')) return;
+    allData.usuarios = allData.usuarios.filter(u => u.id !== id);
+    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
+    abrirUsuarios();
+}
+
+function sairDaSessao() {
+    sessionStorage.removeItem('sbSessao');
+    usuarioLogado = null;
+    fecharModal('modal-usuarios');
+    location.reload();
+}
 
 // ── Persistência ──────────────────────────
 function salvarDados() {
@@ -308,15 +519,17 @@ function salvarDados() {
 
 function carregar() {
     const saved = localStorage.getItem('radiologiaDB_v2');
-    if (saved) {
-        allData = JSON.parse(saved);
-    } else {
-        // Migra formato antigo
+    if (saved) allData = JSON.parse(saved);
+    if (!allData.usuarios) allData.usuarios = [];
+    if (!allData.meses) allData.meses = {};
+
+    // Migra formato antigo
+    if (!Object.keys(allData.meses).length) {
         const old = localStorage.getItem('radiologiaDB');
         if (old) {
             const o = JSON.parse(old);
             const id = 'mes_' + Date.now();
-            allData = { user: o.user||"", meses: { [id]: { label:'Importado', escalas: o.escalas||[], exames: o.exames||[], corridas: o.corridas||[] } } };
+            allData.meses[id] = { label:'Importado', escalas: o.escalas||[], exames: o.exames||[], corridas: o.corridas||[] };
             localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
         }
     }
@@ -415,11 +628,9 @@ function toggleEscalas() {
     _escalasBertas = !_escalasBertas;
     document.getElementById('escalas-body').style.display = _escalasBertas ? 'block' : 'none';
     document.getElementById('btn-toggle-esc').textContent = _escalasBertas ? '🙈 Ocultar' : '👁 Mostrar';
-    document.getElementById('btn-add-escala').style.display = _escalasBertas ? 'none' : 'none'; // mantido interno
 }
 function atualizarContadorEscalas() {
-    const n = document.querySelectorAll('.escala-item').length;
-    document.getElementById('escala-count').textContent = n;
+    document.getElementById('escala-count').textContent = document.querySelectorAll('.escala-item').length;
 }
 function addEscala(data="", inT="", dataF="", outT="") {
     const div = document.createElement('div');
@@ -429,7 +640,7 @@ function addEscala(data="", inT="", dataF="", outT="") {
         <div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
         <div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
         <div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
-        <button onclick="this.parentElement.remove();salvarDados();atualizarContadorEscalas()" style="background:#dc3545;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer">X</button>`;
+        <button onclick="this.parentElement.remove();salvarDados();atualizarContadorEscalas()" style="background:#dc3545;color:white;border:none;padding:8px;border-radius:4px;cursor:pointer">✕</button>`;
     document.getElementById('lista-escalas').appendChild(div);
     atualizarContadorEscalas();
 }
@@ -543,7 +754,6 @@ function limparCamposCorrida() {
 }
 
 // ── Exclusão com confirmação ──────────────
-let _delCallback = null;
 function del(type, id) {
     confirmarDel(type === 'exames' ? 'Excluir este exame?' : 'Excluir esta corrida?', () => {
         allData.meses[mesAtual][type] = allData.meses[mesAtual][type].filter(i => i.id !== id);
@@ -668,8 +878,8 @@ function relatorioHistorico(tipo) {
 }
 
 // ── Relatório / PDF ───────────────────────
-let _filtroTipo = 'pdf'; // 'print' ou 'pdf'
-let _filtroModo = 'mes'; // 'mes' ou 'escala'
+let _filtroTipo = 'pdf';
+let _filtroModo = 'mes';
 
 function abrirFiltroRelatorio(tipo) {
     _filtroTipo = tipo;
@@ -677,12 +887,11 @@ function abrirFiltroRelatorio(tipo) {
     document.getElementById('modal-filtro-titulo').textContent = tipo === 'pdf' ? '📄 Gerar PDF' : '🖨️ Gerar Relatório';
     document.getElementById('btn-filtro-gerar').style.background = tipo === 'pdf' ? '#c0392b' : '#6610f2';
     alternarFiltroTipo('mes');
-    // Popular escalas
     const m = allData.meses[mesAtual];
     const escalas = m ? m.escalas : [];
     document.getElementById('filtro-escalas-lista').innerHTML = escalas.length ? escalas.map((e, i) => `
         <div class="filtro-opcao">
-            <input type="radio" name="filtro-esc-radio" id="fesc_${i}" value="${i}" ${i===0?'checked':''}>
+            <input type="checkbox" id="fesc_${i}" value="${i}">
             <label for="fesc_${i}">Escala ${i+1}: ${fmtD(e.data)} ${e.in} → ${fmtD(e.dataF)} ${e.out}</label>
         </div>`).join('') : '<p style="color:#999;font-size:0.85rem;padding:8px">Nenhuma escala cadastrada.</p>';
     abrirModal('modal-filtro-rel');
@@ -701,15 +910,16 @@ function gerarComFiltro() {
     if (_filtroModo === 'mes') {
         gerarRelatorioMeses([mesAtual], _filtroTipo);
     } else {
-        const checked = document.querySelector('input[name="filtro-esc-radio"]:checked');
-        if (!checked) { alert('Selecione uma escala.'); return; }
-        const escIdx = parseInt(checked.value);
-        gerarRelatorioEscala(mesAtual, escIdx, _filtroTipo);
+        const checks = [...document.querySelectorAll('#filtro-escalas-lista input[type=checkbox]:checked')];
+        if (!checks.length) { alert('Selecione ao menos uma escala.'); return; }
+        const idxs = checks.map(c => parseInt(c.value));
+        gerarRelatorioMultiEscala(mesAtual, idxs, _filtroTipo);
     }
 }
 
 function gerarRelatorio(tipo) { gerarRelatorioMeses([mesAtual], tipo); }
 
+// ── Build de linhas ───────────────────────
 function buildLinhas(mesesIds) {
     let linhas = [], totalKM = 0, totalTrabMin = 0, totalEscMin = 0, periodo = [];
     mesesIds.forEach(mid => {
@@ -762,13 +972,19 @@ function buildLinhasEscala(mid, escIdx) {
     return { linhas, totalKM, totalTrabMin, totalEscMin, periodo };
 }
 
-function gerarRelatorioEscala(mid, escIdx, tipo) {
+function gerarRelatorioMultiEscala(mid, idxs, tipo) {
     const m = allData.meses[mid]; if (!m) return;
-    const esc = m.escalas[escIdx]; if (!esc) return;
-    const { linhas, totalKM, totalTrabMin, totalEscMin, periodo } = buildLinhasEscala(mid, escIdx);
-    const tituloMeses = m.label + ` — Escala ${escIdx+1}`;
+    let linhas = [], totalKM = 0, totalTrabMin = 0, totalEscMin = 0, periodos = [];
+    idxs.forEach(idx => {
+        const r = buildLinhasEscala(mid, idx);
+        if (idxs.length > 1) linhas.push({ tipo:'mes', label: `Escala ${idx+1}: ${r.periodo}` });
+        linhas.push(...r.linhas);
+        totalKM += r.totalKM; totalTrabMin += r.totalTrabMin; totalEscMin += r.totalEscMin;
+        periodos.push(r.periodo);
+    });
+    const titulo = m.label + (idxs.length === 1 ? ` — Escala ${idxs[0]+1}` : ` — ${idxs.length} Escalas`);
     const resumoTxt = `SOBREAVISO: ${fmtMin(totalEscMin)} | TRABALHADO: ${fmtMin(totalTrabMin)} | KM: ${totalKM.toFixed(1)}`;
-    _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo);
+    _renderRelatorio(linhas, titulo, periodos.join(' | '), resumoTxt, tipo);
 }
 
 function gerarRelatorioMeses(mesesIds, tipo) {
@@ -797,7 +1013,6 @@ function _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo) {
         <div class="res">${resumoTxt}</div>
         <script>window.onload=()=>window.print();<\/script></body></html>`;
         const w = window.open('','_blank'); w.document.write(html); w.document.close();
-
     } else {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
@@ -807,13 +1022,11 @@ function _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo) {
         doc.text(`PROFISSIONAL: ${allData.user.toUpperCase()}`, 105, 21, {align:'center'});
         doc.text(`REFERÊNCIA: ${tituloMeses}`, 105, 26, {align:'center'});
         if (periodo) doc.text(`ESCALAS: ${periodo}`, 105, 31, {align:'center'});
-
         const body = linhas.map(l => {
             if (l.tipo==='mes')     return [{content:`📅 ${l.label}`, colSpan:5, styles:{fillColor:[0,86,179],textColor:255,fontStyle:'bold'}}];
             if (l.tipo==='corrida') return [fmtD(l.co.data), `${l.co.in}-${l.co.out||'?'}`, l.co.tempo, l.co.km||'', `SETOR: ${l.co.setor||'---'}`];
             return ['','','','', `• ${l.ex.hora} - ${l.ex.nome} (${l.ex.pac})`];
         });
-
         doc.autoTable({
             startY: periodo ? 36 : 31,
             head: [['DATA','ENTRADA/SAÍDA','TEMPO','KM','SETOR / EXAMES']],
@@ -827,7 +1040,6 @@ function _renderRelatorio(linhas, tituloMeses, periodo, resumoTxt, tipo) {
                 }
             }
         });
-
         const y = doc.lastAutoTable.finalY + 5;
         doc.setFontSize(8); doc.setFont(undefined,'bold');
         doc.setFillColor(249,249,249); doc.rect(14,y-3,182,9,'F'); doc.rect(14,y-3,182,9);
@@ -877,11 +1089,7 @@ async function conectarGDrive() {
                 setStatus('saving','🔄 Conectando...');
                 await garantirPasta();
                 await buscarArquivoExistente();
-                if (gdriveFileId) {
-                    await carregarDoDrive();
-                } else {
-                    await sincronizarDrive();
-                }
+                if (gdriveFileId) { await carregarDoDrive(); } else { await sincronizarDrive(); }
             }
         }).requestAccessToken();
     } catch(e) { setStatus('error','❌ '+e.message); }
@@ -900,6 +1108,7 @@ async function carregarDoDrive() {
             const usar = confirm(`Drive tem ${totalDrive} registros, local tem ${totalLocal}.\n\nCarregar dados do Drive? (recomendado)`);
             if (usar) {
                 allData = driveData;
+                if (!allData.usuarios) allData.usuarios = [];
                 localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
                 popularSelectMes();
                 const ids = Object.keys(allData.meses);
@@ -913,9 +1122,7 @@ async function carregarDoDrive() {
             }
         }
         await sincronizarDrive();
-    } catch(e) {
-        setStatus('error','❌ Falha ao carregar Drive');
-    }
+    } catch(e) { setStatus('error','❌ Falha ao carregar Drive'); }
 }
 
 async function garantirPasta() {
@@ -925,18 +1132,16 @@ async function garantirPasta() {
     const cr = await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:`Bearer ${gdriveToken}`,'Content-Type':'application/json'},body:JSON.stringify({name:GDRIVE_FOLDER,mimeType:'application/vnd.google-apps.folder'})});
     gdriveFolderId = (await cr.json()).id;
 }
+
 async function buscarArquivoExistente() {
     const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${GDRIVE_FILENAME}' and '${gdriveFolderId}' in parents and trashed=false&fields=files(id)`,{headers:{Authorization:`Bearer ${gdriveToken}`}});
     const d = await r.json(); if (d.files?.length) gdriveFileId=d.files[0].id;
 }
+
 async function sincronizarDrive() {
     if (!gdriveToken) return;
-    // Proteção: nunca sobrescrever backup com dados vazios
     const totalRegistros = Object.values(allData.meses).reduce((s,m) => s + m.exames.length + m.corridas.length, 0);
-    if (totalRegistros === 0 && gdriveFileId) {
-        setStatus('offline','⚠️ Sem dados — sync bloqueado');
-        return;
-    }
+    if (totalRegistros === 0 && gdriveFileId) { setStatus('offline','⚠️ Sem dados — sync bloqueado'); return; }
     setStatus('saving','🔄 Salvando...');
     try {
         const content = JSON.stringify(allData);
@@ -954,31 +1159,26 @@ async function sincronizarDrive() {
     } catch(e) { setStatus('error','❌ Falha'); }
 }
 
-// ── Backup local / restaurar ──────────────
-function restaurarDoDrive() {
-    abrirModal('modal-rest-drive');
-}
+// ── Restaurar Drive ───────────────────────
+function restaurarDoDrive() { abrirModal('modal-rest-drive'); }
 
 async function confirmarRestaurarDrive() {
     fecharModal('modal-rest-drive');
-    if (gdriveToken) {
-        await _forcarCarregarDoDrive();
-    } else {
-        setStatus('saving','🔄 Conectando...');
-        try {
-            google.accounts.oauth2.initTokenClient({
-                client_id:'622210262026-ns1eiu5l8lshm0mejb54p4e283c6vafh.apps.googleusercontent.com',
-                scope:'https://www.googleapis.com/auth/drive.file',
-                callback: async resp => {
-                    if (resp.error) { setStatus('error','❌ Erro ao conectar'); return; }
-                    gdriveToken = resp.access_token;
-                    await garantirPasta();
-                    await buscarArquivoExistente();
-                    await _forcarCarregarDoDrive();
-                }
-            }).requestAccessToken();
-        } catch(e) { setStatus('error','❌ '+e.message); }
-    }
+    if (gdriveToken) { await _forcarCarregarDoDrive(); return; }
+    setStatus('saving','🔄 Conectando...');
+    try {
+        google.accounts.oauth2.initTokenClient({
+            client_id:'622210262026-ns1eiu5l8lshm0mejb54p4e283c6vafh.apps.googleusercontent.com',
+            scope:'https://www.googleapis.com/auth/drive.file',
+            callback: async resp => {
+                if (resp.error) { setStatus('error','❌ Erro ao conectar'); return; }
+                gdriveToken = resp.access_token;
+                await garantirPasta();
+                await buscarArquivoExistente();
+                await _forcarCarregarDoDrive();
+            }
+        }).requestAccessToken();
+    } catch(e) { setStatus('error','❌ '+e.message); }
 }
 
 async function _forcarCarregarDoDrive() {
@@ -990,6 +1190,7 @@ async function _forcarCarregarDoDrive() {
         if (!r.ok) throw new Error(r.status);
         const driveData = await r.json();
         allData = driveData;
+        if (!allData.usuarios) allData.usuarios = [];
         localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
         popularSelectMes();
         const ids = Object.keys(allData.meses);
@@ -1004,6 +1205,8 @@ async function _forcarCarregarDoDrive() {
         alert('Erro ao restaurar: ' + e.message);
     }
 }
+
+// ── Backup local / restaurar ──────────────
 function fazerBackupLocal() {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(allData)],{type:'application/json'}));
@@ -1014,7 +1217,8 @@ function restaurarBackup(input) {
     reader.onload = e => {
         try {
             const p = JSON.parse(e.target.result);
-            allData = p.meses ? p : { user:p.user||"", meses:{ ['mes_'+Date.now()]:{ label:'Importado', escalas:p.escalas||[], exames:p.exames||[], corridas:p.corridas||[] } } };
+            allData = p.meses ? p : { user:p.user||"", meses:{ ['mes_'+Date.now()]:{ label:'Importado', escalas:p.escalas||[], exames:p.exames||[], corridas:p.corridas||[] } }, usuarios:[] };
+            if (!allData.usuarios) allData.usuarios = [];
             localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
             location.reload();
         } catch { alert('Arquivo inválido.'); }
@@ -1023,7 +1227,7 @@ function restaurarBackup(input) {
 }
 
 // ── Init ──────────────────────────────────
-carregar();
+iniciarApp();
 </script>
 </body>
 </html>

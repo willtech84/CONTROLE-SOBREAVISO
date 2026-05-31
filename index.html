@@ -12,213 +12,87 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; padding-bottom: 100px; }
 
-        /* ── HEADER AZUL ── */
-        .app-header {
-            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
-            padding: 16px 16px 20px;
-            color: white;
-        }
+        .app-header { background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%); padding: 16px 16px 20px; color: white; }
         .header-inner { max-width: 700px; margin: 0 auto; }
         .header-top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
         .header-brand { display: flex; align-items: center; gap: 12px; }
-        .header-logo {
-            width: 52px; height: 52px; border-radius: 12px;
-            background: rgba(255,255,255,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; flex-shrink: 0;
-        }
-        .header-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.3px; line-height: 1.2; }
-        .header-subtitle { font-size: 0.72rem; opacity: 0.75; font-weight: 400; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header-logo { width: 52px; height: 52px; border-radius: 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+        .header-title { font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
+        .header-subtitle { font-size: 0.7rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
         .header-badges { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-        .badge-user-pill {
-            background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 20px; padding: 5px 10px;
-            font-size: 0.75rem; font-weight: 600; color: white;
-            display: none; align-items: center; gap: 5px;
-        }
-        .badge-drive-pill {
-            background: #2e7d32; border-radius: 20px; padding: 5px 10px;
-            font-size: 0.75rem; font-weight: 600; color: white;
-            display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
-        }
-        .badge-drive-pill.saving { background: #e65100; }
-        .badge-drive-pill.error  { background: #c62828; }
-        .badge-drive-pill.offline { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); }
+        .badge-user-pill { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 5px 10px; font-size: 0.75rem; font-weight: 600; color: white; display: none; align-items: center; gap: 5px; }
+        #backup-status { border-radius: 20px; padding: 5px 10px; font-size: 0.75rem; font-weight: 600; color: white; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        #backup-status.ok      { background: #2e7d32; }
+        #backup-status.saving  { background: #e65100; }
+        #backup-status.error   { background: #c62828; }
+        #backup-status.offline { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); }
 
-        /* ── GRID DE BOTÕES ── */
         .content-wrap { max-width: 700px; margin: 0 auto; padding: 14px 12px; }
-        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
-        .btn-action {
-            background: white; border: 1.5px solid #e8edf2; border-radius: 12px;
-            padding: 10px 4px 8px; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
-            transition: all .15s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .btn-action:active { transform: scale(0.96); background: #f0f4f8; }
-        .btn-action .btn-icon { font-size: 1.35rem; line-height: 1; }
-        .btn-action .btn-label { font-size: 0.62rem; font-weight: 600; color: #455a64; text-align: center; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.3px; }
-        .btn-action.col-blue   .btn-icon { color: #1565c0; }
-        .btn-action.col-green  .btn-icon { color: #2e7d32; }
-        .btn-action.col-orange .btn-icon { color: #e65100; }
-        .btn-action.col-purple .btn-icon { color: #6a1b9a; }
-        .btn-action.col-violet .btn-icon { color: #4527a0; }
-        .btn-action.col-pink   .btn-icon { color: #ad1457; }
-        .btn-action.col-teal   .btn-icon { color: #00695c; }
-        .btn-action.col-red    .btn-icon { color: #b71c1c; }
-        .btn-action.col-gray   .btn-icon { color: #37474f; }
 
-        /* ── CAMPO PROFISSIONAL ── */
-        .prof-card {
-            background: white; border-radius: 12px; border: 1.5px solid #e8edf2;
-            padding: 11px 14px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .prof-card .prof-icon { font-size: 1.2rem; flex-shrink: 0; color: #1565c0; }
-        .prof-card input {
-            flex: 1; border: none; outline: none; font-size: 0.9rem;
-            font-family: inherit; color: #263238; background: transparent;
-        }
+        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+        .btn-action { background: white; border: 1.5px solid #e8edf2; border-radius: 12px; padding: 10px 4px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all .15s; }
+        .btn-action:active { transform: scale(0.96); background: #f0f4f8; }
+        .btn-action .bi { font-size: 1.35rem; line-height: 1; }
+        .btn-action .bl { font-size: 0.62rem; font-weight: 600; color: #455a64; text-align: center; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.2; }
+        .c-blue .bi{color:#1565c0} .c-green .bi{color:#2e7d32} .c-orange .bi{color:#e65100} .c-teal .bi{color:#00695c}
+        .c-violet .bi{color:#4527a0} .c-pink .bi{color:#ad1457} .c-gray .bi{color:#37474f} .c-purple .bi{color:#6a1b9a}
+
+        .prof-card { background: white; border-radius: 12px; border: 1.5px solid #e8edf2; padding: 11px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .prof-card span { font-size: 1.1rem; color: #1565c0; flex-shrink: 0; }
+        .prof-card input { flex: 1; border: none; outline: none; font-size: 0.9rem; font-family: inherit; color: #263238; background: transparent; }
         .prof-card input::placeholder { color: #90a4ae; }
 
-        /* ── MÊS BAR ── */
-        .mes-card {
-            background: white; border-radius: 12px; border: 1.5px solid #e8edf2;
-            padding: 11px 14px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .mes-card .mes-icon { font-size: 1.1rem; color: #1565c0; flex-shrink: 0; }
-        .mes-card select {
-            flex: 1; min-width: 120px; border: none; outline: none;
-            font-size: 0.9rem; font-family: inherit; color: #263238;
-            background: transparent; cursor: pointer;
-        }
-        .btn-mes-new {
-            background: #1565c0; color: white; border: none;
-            padding: 7px 12px; border-radius: 8px; cursor: pointer;
-            font-size: 0.75rem; font-weight: 600; white-space: nowrap;
-            display: flex; align-items: center; gap: 4px;
-        }
-        .btn-mes-del {
-            background: white; color: #c62828; border: 1.5px solid #ef9a9a;
-            padding: 7px 9px; border-radius: 8px; cursor: pointer;
-            font-size: 0.85rem;
-        }
+        .mes-card { background: white; border-radius: 12px; border: 1.5px solid #e8edf2; padding: 11px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .mes-card .mi { font-size: 1.1rem; color: #1565c0; flex-shrink: 0; }
+        .mes-card select { flex: 1; min-width: 120px; border: none; outline: none; font-size: 0.9rem; font-family: inherit; color: #263238; background: transparent; cursor: pointer; }
+        .btn-mes-new { background: #1565c0; color: white; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; white-space: nowrap; font-family: inherit; }
+        .btn-mes-del { background: white; color: #c62828; border: 1.5px solid #ef9a9a; padding: 7px 9px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
 
-        /* ── ESCALAS ── */
-        .escalas-card {
-            background: #fffde7; border: 1.5px solid #ffe082;
-            border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .escalas-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .escalas-title { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700; color: #5d4037; text-transform: uppercase; letter-spacing: 0.4px; }
-        .escalas-badge { background: #ff8f00; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-        .btn-toggle-esc {
-            background: #4e342e; color: white; border: none;
-            padding: 6px 12px; border-radius: 8px; cursor: pointer;
-            font-size: 0.72rem; font-weight: 600; display: flex; align-items: center; gap: 5px;
-        }
-        /* escala-item grid: 4 campos + botão remover */
-        .escala-item {
-            display: grid;
-            grid-template-columns: 1fr 90px 1fr 90px 36px;
-            gap: 8px; margin-bottom: 10px;
-            align-items: flex-end;
-            border-bottom: 1px solid #ffe082; padding-bottom: 10px;
-        }
-        @media (max-width: 599px) {
-            .escala-item { grid-template-columns: 1fr 1fr; gap: 6px; }
-            .escala-item > button { grid-column: 1 / -1; justify-self: start; }
-        }
+        .escalas-card { background: #fffde7; border: 1.5px solid #ffe082; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .esc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .esc-title { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700; color: #5d4037; text-transform: uppercase; letter-spacing: 0.4px; }
+        .esc-badge { background: #ff8f00; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        .btn-toggle-esc { background: #4e342e; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.72rem; font-weight: 600; font-family: inherit; }
+        .escala-item { display: grid; grid-template-columns: 1fr 90px 1fr 90px 36px; gap: 8px; margin-bottom: 10px; align-items: flex-end; border-bottom: 1px solid #ffe082; padding-bottom: 10px; }
+        @media (max-width: 599px) { .escala-item { grid-template-columns: 1fr 1fr; gap: 6px; } .escala-item > button { grid-column: 1 / -1; justify-self: start; } }
         .form-group { display: flex; flex-direction: column; gap: 4px; }
         .form-group label { font-size: 0.68rem; font-weight: 700; color: #6d4c41; text-transform: uppercase; letter-spacing: 0.3px; }
-        .form-group input, .form-group select {
-            padding: 8px 10px; border: 1.5px solid #ffe082; border-radius: 8px;
-            font-size: 0.85rem; font-family: inherit; background: white;
-            color: #263238; outline: none;
-        }
+        .form-group input, .form-group select { padding: 8px 10px; border: 1.5px solid #ffe082; border-radius: 8px; font-size: 0.85rem; font-family: inherit; background: white; color: #263238; outline: none; }
         .form-group input:focus { border-color: #ff8f00; }
-        .btn-add-escala {
-            background: #4e342e; color: white; border: none;
-            padding: 8px 14px; border-radius: 8px; cursor: pointer;
-            font-size: 0.75rem; font-weight: 600; margin-top: 6px;
-            display: inline-flex; align-items: center; gap: 5px;
-        }
+        .btn-add-esc { background: #4e342e; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; margin-top: 6px; font-family: inherit; }
 
-        /* ── TABS ── */
-        .tabs-bar { display: flex; gap: 0; border-bottom: 2px solid #e8edf2; margin-bottom: 14px; }
-        .tab-btn {
-            padding: 10px 16px; border: none; background: none; cursor: pointer;
-            font-size: 0.85rem; font-weight: 600; color: #78909c;
-            border-bottom: 3px solid transparent; margin-bottom: -2px;
-            display: flex; align-items: center; gap: 5px; transition: color .15s;
-            font-family: inherit;
-        }
+        .tabs-bar { display: flex; border-bottom: 2px solid #e8edf2; margin-bottom: 14px; }
+        .tab-btn { padding: 10px 16px; border: none; background: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #78909c; border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit; transition: color .15s; }
         .tab-btn.active { color: #1565c0; border-bottom-color: #1565c0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        /* ── FORM INPUTS ── */
-        .form-card {
-            background: white; border-radius: 12px; border: 1.5px solid #e8edf2;
-            padding: 14px; margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
+        .form-card { background: white; border-radius: 12px; border: 1.5px solid #e8edf2; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .form-card .form-group label { color: #546e7a; }
-        .form-card .form-group input, .form-card .form-group select {
-            border: 1.5px solid #e0e7ef; border-radius: 8px;
-            padding: 9px 11px; font-size: 0.88rem;
-        }
+        .form-card .form-group input, .form-card .form-group select { border: 1.5px solid #e0e7ef; border-radius: 8px; padding: 9px 11px; font-size: 0.88rem; }
         .form-card .form-group input:focus { border-color: #1565c0; }
         .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-        .btn-save {
-            background: #2e7d32; color: white; border: none;
-            padding: 10px 18px; border-radius: 9px; cursor: pointer;
-            font-size: 0.88rem; font-weight: 600; margin-top: 12px;
-            font-family: inherit;
-        }
-        .btn-cancel-form {
-            background: #eceff1; color: #546e7a; border: none;
-            padding: 10px 14px; border-radius: 9px; cursor: pointer;
-            font-size: 0.88rem; font-weight: 600; margin-top: 12px; margin-left: 8px;
-            font-family: inherit; display: none;
-        }
+        .btn-save { background: #2e7d32; color: white; border: none; padding: 10px 18px; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-weight: 600; margin-top: 12px; font-family: inherit; }
+        .btn-cancel-form { background: #eceff1; color: #546e7a; border: none; padding: 10px 14px; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-weight: 600; margin-top: 12px; margin-left: 8px; font-family: inherit; display: none; }
 
-        /* ── TOGGLE BAR (exames) ── */
-        .tbl-toggle-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin: 14px 0 8px;
-        }
-        .tbl-toggle-label { font-size: 0.78rem; font-weight: 700; color: #455a64; display: flex; align-items: center; gap: 6px; }
-        .btn-tbl-toggle {
-            background: #1565c0; color: white; border: none;
-            padding: 5px 12px; border-radius: 7px; cursor: pointer;
-            font-size: 0.72rem; font-weight: 600; font-family: inherit;
-        }
+        .tbl-toggle-bar { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; }
+        .tbl-toggle-label { font-size: 0.78rem; font-weight: 700; color: #455a64; }
+        .btn-tbl-toggle { background: #1565c0; color: white; border: none; padding: 5px 12px; border-radius: 7px; cursor: pointer; font-size: 0.72rem; font-weight: 600; font-family: inherit; }
 
-        /* ── TABELA ── */
         .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1.5px solid #e8edf2; }
         table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        th { background: #1565c0; color: white; padding: 9px 8px; text-align: left; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.3px; }
+        th { background: #1565c0; color: white; padding: 9px 8px; text-align: left; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; }
         td { border-bottom: 1px solid #f0f4f8; padding: 8px; color: #37474f; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f7fafc; }
         tr.aberta td { background: #fff8e1; }
         .btn-mini { padding: 4px 8px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 0.68rem; font-weight: 600; }
 
-        /* ── FAB ── */
         .fab { position: fixed; bottom: 24px; right: 18px; display: flex; flex-direction: column; gap: 10px; z-index: 500; }
-        .fab button {
-            width: 54px; height: 54px; border-radius: 50%; border: none;
-            font-size: 1.4rem; cursor: pointer; color: white;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: transform .15s;
-        }
-        .fab button:active { transform: scale(0.93); }
+        .fab button { width: 54px; height: 54px; border-radius: 50%; border: none; font-size: 1.4rem; cursor: pointer; color: white; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
         .fab-ex { background: #2e7d32; }
         .fab-co { background: #1565c0; }
 
-        /* ── RESUMO ── */
         .resumo-card { background: white; border-radius: 12px; border: 1.5px solid #e8edf2; padding: 12px 14px; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .resumo-card h4 { font-size: 0.82rem; font-weight: 700; color: #1565c0; margin-bottom: 8px; }
         .resumo-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f4f8; font-size: 0.8rem; color: #455a64; }
@@ -226,30 +100,22 @@
         .resumo-total { border: 2px solid #1565c0 !important; }
         .resumo-total h4 { font-size: 0.9rem !important; }
 
-        /* ── MODAIS ── */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: white; border-radius: 16px; padding: 22px;
-            max-width: 440px; width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;
-        }
+        .modal-box { background: white; border-radius: 16px; padding: 22px; max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; }
         .modal-box h3 { margin: 0 0 10px; color: #e65100; font-size: 1rem; }
         .modal-box.danger h3 { color: #c62828; }
         .modal-box p { margin: 0 0 14px; color: #546e7a; font-size: 0.86rem; line-height: 1.55; }
         .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
         .modal-actions button { padding: 9px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: inherit; }
 
-        /* ── HISTÓRICO ── */
         .hist-lista { max-height: 220px; overflow-y: auto; border: 1.5px solid #e8edf2; border-radius: 10px; margin-bottom: 14px; }
-        .hist-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #f0f4f8; }
+        .hist-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #f0f4f8; cursor: pointer; }
         .hist-item:hover { background: #f0f7ff; }
         .hist-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: #1565c0; flex-shrink: 0; }
-        .hist-item-info { flex: 1; }
         .hist-item-title { font-weight: 700; font-size: 0.86rem; color: #1565c0; }
         .hist-item-sub { font-size: 0.72rem; color: #78909c; margin-top: 2px; }
 
-        /* ── FILTRO RELATÓRIO ── */
         .filtro-opcoes { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; max-height: 200px; overflow-y: auto; }
         .filtro-opcao { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1.5px solid #e8edf2; border-radius: 8px; cursor: pointer; }
         .filtro-opcao:hover { background: #f0f7ff; }
@@ -259,74 +125,65 @@
         .filtro-tipo-btn button { flex: 1; padding: 8px; border: 2px solid #e8edf2; border-radius: 8px; background: white; cursor: pointer; font-size: 0.8rem; font-weight: 600; color: #546e7a; font-family: inherit; }
         .filtro-tipo-btn button.ativo { border-color: #1565c0; background: #e3f2fd; color: #1565c0; }
 
-        /* ── USUÁRIOS ── */
         .user-card { display: flex; align-items: flex-start; gap: 10px; padding: 11px 12px; border: 1.5px solid #e8edf2; border-radius: 10px; margin-bottom: 8px; }
-        .user-card-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #1565c0, #0d47a1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-        .user-card-info { flex: 1; }
-        .user-card-nome { font-weight: 700; font-size: 0.88rem; color: #1565c0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .user-card-sub { font-size: 0.73rem; color: #78909c; margin-top: 2px; }
-        .user-role-badge { font-size: 0.68rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+        .user-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,#1565c0,#0d47a1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+        .user-info { flex: 1; }
+        .user-nome { font-weight: 700; font-size: 0.88rem; color: #1565c0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .user-sub { font-size: 0.73rem; color: #78909c; margin-top: 2px; }
+        .role-badge { font-size: 0.68rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
         .badge-admin { background: #fce4ec; color: #c2185b; }
         .badge-user  { background: #e0f2f1; color: #00695c; }
-        .user-contact-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+        .contact-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
         .btn-contact { padding: 5px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; }
-        .btn-whatsapp { background: #25d366; }
-        .btn-email    { background: #1a73e8; }
+        .btn-wa { background: #25d366; }
+        .btn-em { background: #1a73e8; }
 
-        /* ── LOGIN SCREEN ── */
-        #login-screen { display: none; position: fixed; inset: 0; background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        #login-screen { display: none; position: fixed; inset: 0; background: linear-gradient(135deg,#1565c0,#0d47a1); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
         #login-screen.active { display: flex; }
         .login-box { background: white; border-radius: 20px; padding: 30px 24px; max-width: 360px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.35); }
         .login-box h2 { margin: 0 0 4px; color: #1565c0; font-size: 1.3rem; text-align: center; font-weight: 700; }
-        .login-box .login-sub { margin: 0 0 22px; color: #78909c; font-size: 0.82rem; text-align: center; }
-        .login-field { margin-bottom: 12px; }
-        .login-field label { display: block; font-size: 0.75rem; font-weight: 700; color: #546e7a; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
-        .login-field input { width: 100%; padding: 11px 12px; border: 1.5px solid #e0e7ef; border-radius: 10px; font-size: 0.92rem; font-family: inherit; color: #263238; outline: none; }
-        .login-field input:focus { border-color: #1565c0; }
-        .btn-login-primary { width: 100%; padding: 12px; background: #1565c0; color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 6px; font-family: inherit; }
-        .btn-login-secondary { width: 100%; padding: 10px; background: transparent; color: #1565c0; border: 1.5px solid #1565c0; border-radius: 10px; font-size: 0.86rem; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
-        .login-error { color: #c62828; font-size: 0.8rem; margin-top: 6px; text-align: center; display: none; }
-        .login-remember { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; font-size: 0.82rem; color: #546e7a; cursor: pointer; }
-        .login-remember input { width: 16px; height: 16px; cursor: pointer; accent-color: #1565c0; }
-
-        /* login-field dentro de modais */
-        .modal-login-field { margin-bottom: 12px; }
-        .modal-login-field label { display: block; font-size: 0.75rem; font-weight: 700; color: #546e7a; margin-bottom: 5px; }
-        .modal-login-field input { width: 100%; padding: 10px 12px; border: 1.5px solid #e0e7ef; border-radius: 9px; font-size: 0.9rem; font-family: inherit; outline: none; }
-        .modal-login-field input:focus { border-color: #1565c0; }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .login-sub { margin: 0 0 22px; color: #78909c; font-size: 0.82rem; text-align: center; }
+        .lf { margin-bottom: 12px; }
+        .lf label { display: block; font-size: 0.75rem; font-weight: 700; color: #546e7a; margin-bottom: 5px; text-transform: uppercase; }
+        .lf input { width: 100%; padding: 11px 12px; border: 1.5px solid #e0e7ef; border-radius: 10px; font-size: 0.92rem; font-family: inherit; outline: none; }
+        .lf input:focus { border-color: #1565c0; }
+        .btn-lp { width: 100%; padding: 12px; background: #1565c0; color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 6px; font-family: inherit; }
+        .btn-ls { width: 100%; padding: 10px; background: transparent; color: #1565c0; border: 1.5px solid #1565c0; border-radius: 10px; font-size: 0.86rem; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+        .login-err { color: #c62828; font-size: 0.8rem; margin-top: 6px; text-align: center; display: none; }
+        .login-rem { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; font-size: 0.82rem; color: #546e7a; cursor: pointer; }
+        .login-rem input { width: 16px; height: 16px; cursor: pointer; accent-color: #1565c0; }
+        .mf { margin-bottom: 12px; }
+        .mf label { display: block; font-size: 0.75rem; font-weight: 700; color: #546e7a; margin-bottom: 5px; }
+        .mf input { width: 100%; padding: 10px 12px; border: 1.5px solid #e0e7ef; border-radius: 9px; font-size: 0.9rem; font-family: inherit; outline: none; }
+        .mf input:focus { border-color: #1565c0; }
     </style>
 </head>
 <body>
 
-<!-- Tela de Login -->
 <div id="login-screen">
     <div class="login-box">
         <h2>📡 SOBREAVISO</h2>
         <p class="login-sub" id="login-subtitle">Radiologia</p>
         <div id="login-form-area">
-            <div class="login-field"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
-            <div class="login-field"><label>Senha</label><input type="password" id="login-senha" placeholder="••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
-            <label class="login-remember"><input type="checkbox" id="login-lembrar"> Lembrar e-mail e senha</label>
-            <p class="login-error" id="login-erro">E-mail ou senha incorretos.</p>
-            <button class="btn-login-primary" onclick="fazerLogin()">Entrar</button>
-            <button class="btn-login-secondary" onclick="mostrarFormCadastro()">Criar conta</button>
+            <div class="lf"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
+            <div class="lf"><label>Senha</label><input type="password" id="login-senha" placeholder="••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+            <label class="login-rem"><input type="checkbox" id="login-lembrar"> Lembrar e-mail e senha</label>
+            <p class="login-err" id="login-erro">E-mail ou senha incorretos.</p>
+            <button class="btn-lp" onclick="fazerLogin()">Entrar</button>
+            <button class="btn-ls" onclick="mostrarFormCadastro()">Criar conta</button>
         </div>
         <div id="cadastro-form-area" style="display:none">
-            <div class="login-field"><label>Nome completo</label><input type="text" id="cad-nome" placeholder="Seu nome"></div>
-            <div class="login-field"><label>E-mail</label><input type="email" id="cad-email" placeholder="seu@email.com"></div>
-            <div class="login-field"><label>WhatsApp</label><input type="tel" id="cad-whatsapp" placeholder="(47) 99999-9999"></div>
-            <div class="login-field"><label>Senha</label><input type="password" id="cad-senha" placeholder="Mínimo 4 caracteres"></div>
-            <p class="login-error" id="cad-erro">Preencha todos os campos.</p>
-            <button class="btn-login-primary" onclick="fazerCadastro()">Cadastrar</button>
-            <button class="btn-login-secondary" onclick="mostrarFormLogin()">Já tenho conta</button>
+            <div class="lf"><label>Nome completo</label><input type="text" id="cad-nome" placeholder="Seu nome"></div>
+            <div class="lf"><label>E-mail</label><input type="email" id="cad-email" placeholder="seu@email.com"></div>
+            <div class="lf"><label>WhatsApp</label><input type="tel" id="cad-whatsapp" placeholder="(47) 99999-9999"></div>
+            <div class="lf"><label>Senha</label><input type="password" id="cad-senha" placeholder="Mínimo 4 caracteres"></div>
+            <p class="login-err" id="cad-erro">Preencha todos os campos.</p>
+            <button class="btn-lp" onclick="fazerCadastro()">Cadastrar</button>
+            <button class="btn-ls" onclick="mostrarFormLogin()">Já tenho conta</button>
         </div>
     </div>
 </div>
 
-<!-- HEADER -->
 <div class="app-header">
     <div class="header-inner">
         <div class="header-top-row">
@@ -339,80 +196,54 @@
             </div>
             <div class="header-badges">
                 <div id="user-badge" class="badge-user-pill"></div>
-                <div id="backup-status" class="badge-drive-pill offline">☁️ Drive</div>
+                <span id="backup-status" class="offline">☁️ Drive</span>
             </div>
         </div>
     </div>
 </div>
 
 <div class="content-wrap">
-
-    <!-- GRID DE BOTÕES -->
     <div class="btn-grid">
-        <button class="btn-action col-blue" onclick="conectarGDrive()">
-            <span class="btn-icon">☁️</span><span class="btn-label">Conectar Drive</span>
-        </button>
-        <button class="btn-action col-green" onclick="restaurarDoDrive()">
-            <span class="btn-icon">⬇️</span><span class="btn-label">Rest. Drive</span>
-        </button>
-        <button class="btn-action col-orange" onclick="fazerBackupLocal()">
-            <span class="btn-icon">💾</span><span class="btn-label">Backup</span>
-        </button>
-        <button class="btn-action col-teal" onclick="document.getElementById('fileInput').click()">
-            <span class="btn-icon">📂</span><span class="btn-label">Importar</span>
-        </button>
-        <button class="btn-action col-violet" onclick="abrirFiltroRelatorio('print')">
-            <span class="btn-icon">📊</span><span class="btn-label">Relatório</span>
-        </button>
-        <button class="btn-action col-pink" onclick="imprimirTodasFichas()">
-            <span class="btn-icon">📋</span><span class="btn-label">Fichas</span>
-        </button>
-        <button class="btn-action col-gray" onclick="abrirHistorico()">
-            <span class="btn-icon">🕐</span><span class="btn-label">Histórico</span>
-        </button>
-        <button class="btn-action col-purple" onclick="abrirUsuarios()">
-            <span class="btn-icon">👤</span><span class="btn-label">Usuários</span>
-        </button>
+        <button class="btn-action c-blue" onclick="conectarGDrive()"><span class="bi">☁️</span><span class="bl">Conectar Drive</span></button>
+        <button class="btn-action c-green" onclick="restaurarDoDrive()"><span class="bi">⬇️</span><span class="bl">Rest. Drive</span></button>
+        <button class="btn-action c-orange" onclick="fazerBackupLocal()"><span class="bi">💾</span><span class="bl">Backup</span></button>
+        <button class="btn-action c-teal" onclick="document.getElementById('fileInput').click()"><span class="bi">📂</span><span class="bl">Importar</span></button>
+        <button class="btn-action c-violet" onclick="abrirFiltroRelatorio('print')"><span class="bi">📊</span><span class="bl">Relatório</span></button>
+        <button class="btn-action c-pink" onclick="imprimirTodasFichas()"><span class="bi">📋</span><span class="bl">Fichas</span></button>
+        <button class="btn-action c-gray" onclick="abrirHistorico()"><span class="bi">🕐</span><span class="bl">Histórico</span></button>
+        <button class="btn-action c-purple" onclick="abrirUsuarios()"><span class="bi">👤</span><span class="bl">Usuários</span></button>
         <input type="file" id="fileInput" style="display:none" onchange="restaurarBackup(this)">
     </div>
 
-    <!-- PROFISSIONAL -->
     <div class="prof-card">
-        <span class="prof-icon">👤</span>
-        <input type="text" id="userName" placeholder="entrega dia 21/05" oninput="salvarDados()">
+        <span>👤</span>
+        <input type="text" id="userName" placeholder="Nome do profissional" oninput="salvarDados()">
     </div>
 
-    <!-- MÊS -->
     <div class="mes-card">
-        <span class="mes-icon">📅</span>
+        <span class="mi">📅</span>
         <select id="sel-mes" onchange="trocarMes()"></select>
         <button class="btn-mes-new" onclick="novoMes()">+ Novo Mês</button>
         <button class="btn-mes-del" onclick="excluirMesAtual()">🗑</button>
     </div>
 
-    <!-- ESCALAS -->
     <div class="escalas-card">
-        <div class="escalas-header">
-            <div class="escalas-title">
-                📋 Escalas de Sobreaviso
-                <span class="escalas-badge" id="escala-count">0</span>
-            </div>
+        <div class="esc-header">
+            <div class="esc-title">📋 Escalas de Sobreaviso <span class="esc-badge" id="escala-count">0</span></div>
             <button class="btn-toggle-esc" id="btn-toggle-esc" onclick="toggleEscalas()">👁 Mostrar</button>
         </div>
         <div id="escalas-body" style="display:none">
             <div id="lista-escalas"></div>
-            <button class="btn-add-escala" onclick="addEscala()">+ Adicionar Escala</button>
+            <button class="btn-add-esc" onclick="addEscala()">+ Adicionar Escala</button>
         </div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs-bar">
         <button class="tab-btn active" onclick="tab(event,'exames')">📋 Exames</button>
         <button class="tab-btn" onclick="tab(event,'corridas')">🚗 Corridas</button>
         <button class="tab-btn" onclick="tab(event,'resumo')">📊 Resumo</button>
     </div>
 
-    <!-- TAB EXAMES -->
     <div id="exames" class="tab-content active">
         <div class="form-card">
             <input type="hidden" id="ex-id">
@@ -440,7 +271,6 @@
         </div>
     </div>
 
-    <!-- TAB CORRIDAS -->
     <div id="corridas" class="tab-content">
         <div class="form-card">
             <input type="hidden" id="co-id">
@@ -462,460 +292,348 @@
         </div>
     </div>
 
-    <!-- TAB RESUMO -->
-    <div id="resumo" class="tab-content">
-        <div id="resumo-conteudo"></div>
-    </div>
+    <div id="resumo" class="tab-content"><div id="resumo-conteudo"></div></div>
+</div>
 
-</div><!-- /content-wrap -->
-
-<!-- FAB -->
 <div class="fab">
-    <button class="fab-co" title="Nova Corrida" onclick="abrirFormCorrida()">🚗</button>
-    <button class="fab-ex" title="Novo Exame" onclick="abrirFormExame()">➕</button>
+    <button class="fab-co" onclick="abrirFormCorrida()">🚗</button>
+    <button class="fab-ex" onclick="abrirFormExame()">➕</button>
 </div>
 
-<!-- Modal corrida em aberto -->
+<!-- Modais -->
 <div class="modal-overlay" id="modal-corrida-aberta">
-    <div class="modal-box">
-        <h3>⚠️ Corrida sem horário de saída</h3>
-        <p>Esta corrida está <b>em aberto</b> (sem saída registrada). Deseja salvar assim mesmo?</p>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-corrida-aberta')" style="background:#eceff1;color:#546e7a">Cancelar</button>
-            <button onclick="confirmarCorridaAberta()" style="background:#2e7d32;color:white">Sim, salvar</button>
-        </div>
-    </div>
+    <div class="modal-box"><h3>⚠️ Corrida sem horário de saída</h3>
+    <p>Esta corrida está <b>em aberto</b>. Deseja salvar assim mesmo?</p>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-corrida-aberta')" style="background:#eceff1;color:#546e7a">Cancelar</button>
+        <button onclick="confirmarCorridaAberta()" style="background:#2e7d32;color:white">Sim, salvar</button>
+    </div></div>
 </div>
 
-<!-- Modal confirmar exclusão -->
 <div class="modal-overlay" id="modal-del">
-    <div class="modal-box danger">
-        <h3>🗑️ Confirmar exclusão</h3>
-        <p id="modal-del-msg">Tem certeza que deseja excluir este registro?</p>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-del')" style="background:#eceff1;color:#546e7a">Cancelar</button>
-            <button id="modal-del-confirm" style="background:#c62828;color:white">Excluir</button>
-        </div>
-    </div>
+    <div class="modal-box danger"><h3>🗑️ Confirmar exclusão</h3>
+    <p id="modal-del-msg">Tem certeza?</p>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-del')" style="background:#eceff1;color:#546e7a">Cancelar</button>
+        <button id="modal-del-confirm" style="background:#c62828;color:white">Excluir</button>
+    </div></div>
 </div>
 
-<!-- Modal histórico -->
 <div class="modal-overlay" id="modal-hist">
-    <div class="modal-box" style="max-width:500px">
-        <h3 style="color:#1565c0">🗂️ Histórico de Meses</h3>
-        <p>Selecione um ou mais meses para gerar relatório consolidado:</p>
-        <div class="hist-lista" id="hist-lista"></div>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-hist')" style="background:#eceff1;color:#546e7a">Fechar</button>
-            <button onclick="relatorioHistorico('print')" style="background:#4527a0;color:white">🖨️ Relatório</button>
-            <button onclick="relatorioHistorico('pdf')" style="background:#c62828;color:white">📄 PDF</button>
-        </div>
-    </div>
+    <div class="modal-box" style="max-width:500px"><h3 style="color:#1565c0">🗂️ Histórico de Meses</h3>
+    <p>Selecione um ou mais meses:</p>
+    <div class="hist-lista" id="hist-lista"></div>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-hist')" style="background:#eceff1;color:#546e7a">Fechar</button>
+        <button onclick="relatorioHistorico('print')" style="background:#4527a0;color:white">🖨️ Relatório</button>
+        <button onclick="relatorioHistorico('pdf')" style="background:#c62828;color:white">📄 PDF</button>
+    </div></div>
 </div>
 
-<!-- Modal filtro relatório -->
 <div class="modal-overlay" id="modal-filtro-rel">
-    <div class="modal-box" style="max-width:460px">
-        <h3 style="color:#1565c0" id="modal-filtro-titulo">📄 Gerar Relatório</h3>
-        <div class="filtro-tipo-btn">
-            <button id="btn-filtro-mes" class="ativo" onclick="alternarFiltroTipo('mes')">📅 Mês completo</button>
-            <button id="btn-filtro-esc" onclick="alternarFiltroTipo('escala')">📋 Por escala</button>
-        </div>
-        <div id="filtro-mes-area">
-            <p style="margin:0 0 12px">Será gerado o relatório completo do mês ativo.</p>
-        </div>
-        <div id="filtro-esc-area" style="display:none">
-            <p style="margin:0 0 8px">Selecione uma ou mais escalas:</p>
-            <div class="filtro-opcoes" id="filtro-escalas-lista"></div>
-        </div>
-        <div style="margin-bottom:14px;padding:10px;background:#f8f9fa;border-radius:10px;border:1.5px solid #e8edf2">
-            <label style="font-size:0.75rem;font-weight:700;color:#546e7a;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px">📬 Data de entrega (opcional)</label>
-            <input type="date" id="filtro-data-entrega" style="width:100%;padding:9px;border:1.5px solid #e0e7ef;border-radius:8px;font-size:0.88rem;font-family:inherit">
-        </div>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-filtro-rel')" style="background:#eceff1;color:#546e7a">Cancelar</button>
-            <button id="btn-filtro-gerar" onclick="gerarComFiltro()" style="background:#c62828;color:white">Gerar</button>
-        </div>
+    <div class="modal-box" style="max-width:460px"><h3 style="color:#1565c0" id="modal-filtro-titulo">📄 Gerar Relatório</h3>
+    <div class="filtro-tipo-btn">
+        <button id="btn-filtro-mes" class="ativo" onclick="alternarFiltroTipo('mes')">📅 Mês completo</button>
+        <button id="btn-filtro-esc" onclick="alternarFiltroTipo('escala')">📋 Por escala</button>
     </div>
+    <div id="filtro-mes-area"><p>Relatório completo do mês ativo.</p></div>
+    <div id="filtro-esc-area" style="display:none">
+        <p>Selecione uma ou mais escalas:</p>
+        <div class="filtro-opcoes" id="filtro-escalas-lista"></div>
+    </div>
+    <div style="margin-bottom:14px;padding:10px;background:#f8f9fa;border-radius:10px;border:1.5px solid #e8edf2">
+        <label style="font-size:0.75rem;font-weight:700;color:#546e7a;display:block;margin-bottom:6px">📬 Data de entrega (opcional)</label>
+        <input type="date" id="filtro-data-entrega" style="width:100%;padding:9px;border:1.5px solid #e0e7ef;border-radius:8px;font-size:0.88rem;font-family:inherit">
+    </div>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-filtro-rel')" style="background:#eceff1;color:#546e7a">Cancelar</button>
+        <button id="btn-filtro-gerar" onclick="gerarComFiltro()" style="background:#c62828;color:white">Gerar</button>
+    </div></div>
 </div>
 
-<!-- Modal restaurar Drive -->
 <div class="modal-overlay" id="modal-rest-drive">
-    <div class="modal-box danger">
-        <h3>⬇️ Restaurar do Google Drive</h3>
-        <p>Esta ação irá <b>sobrescrever os dados locais</b> com o backup salvo no Google Drive. Tem certeza?</p>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-rest-drive')" style="background:#eceff1;color:#546e7a">Cancelar</button>
-            <button onclick="confirmarRestaurarDrive()" style="background:#c62828;color:white">Sim, restaurar</button>
-        </div>
-    </div>
+    <div class="modal-box danger"><h3>⬇️ Restaurar do Google Drive</h3>
+    <p>Irá <b>sobrescrever os dados locais</b>. Tem certeza?</p>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-rest-drive')" style="background:#eceff1;color:#546e7a">Cancelar</button>
+        <button onclick="confirmarRestaurarDrive()" style="background:#c62828;color:white">Sim, restaurar</button>
+    </div></div>
 </div>
 
-<!-- Modal novo mês -->
 <div class="modal-overlay" id="modal-novo-mes">
-    <div class="modal-box">
-        <h3 style="color:#1565c0">📅 Novo mês</h3>
-        <p>Informe o nome/referência do novo mês:</p>
-        <input type="text" id="input-novo-mes" placeholder="Ex: Junho 2026" style="width:100%;padding:10px;border:1.5px solid #e0e7ef;border-radius:9px;font-size:0.9rem;font-family:inherit;margin-bottom:14px">
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-novo-mes')" style="background:#eceff1;color:#546e7a">Cancelar</button>
-            <button onclick="criarNovoMes()" style="background:#1565c0;color:white">Criar</button>
-        </div>
-    </div>
+    <div class="modal-box"><h3 style="color:#1565c0">📅 Novo mês</h3>
+    <p>Nome do novo mês:</p>
+    <input type="text" id="input-novo-mes" placeholder="Ex: Junho 2026" style="width:100%;padding:10px;border:1.5px solid #e0e7ef;border-radius:9px;font-size:0.9rem;font-family:inherit;margin-bottom:14px;outline:none">
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-novo-mes')" style="background:#eceff1;color:#546e7a">Cancelar</button>
+        <button onclick="criarNovoMes()" style="background:#1565c0;color:white">Criar</button>
+    </div></div>
 </div>
 
-<!-- Modal Usuários -->
 <div class="modal-overlay" id="modal-usuarios">
-    <div class="modal-box" style="max-width:500px">
-        <h3 style="color:#6a1b9a">👤 Gerenciar Usuários</h3>
-        <p id="modal-usuarios-info" style="margin-bottom:10px"></p>
-        <div id="modal-usuarios-lista" style="max-height:380px;overflow-y:auto;margin-bottom:14px"></div>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-usuarios')" style="background:#eceff1;color:#546e7a">Fechar</button>
-            <button onclick="sairDaSessao()" style="background:#c62828;color:white">🚪 Sair</button>
-        </div>
-    </div>
+    <div class="modal-box" style="max-width:500px"><h3 style="color:#6a1b9a">👤 Gerenciar Usuários</h3>
+    <p id="modal-usuarios-info" style="margin-bottom:10px"></p>
+    <div id="modal-usuarios-lista" style="max-height:380px;overflow-y:auto;margin-bottom:14px"></div>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-usuarios')" style="background:#eceff1;color:#546e7a">Fechar</button>
+        <button onclick="sairDaSessao()" style="background:#c62828;color:white">🚪 Sair</button>
+    </div></div>
 </div>
 
-<!-- Modal Config Drive -->
 <div class="modal-overlay" id="modal-config-drive">
-    <div class="modal-box" style="max-width:400px">
-        <h3 style="color:#1565c0">☁️ Configurar Google Drive</h3>
-        <p>Salve seu e-mail do Google para conectar mais rápido:</p>
-        <div class="modal-login-field" style="margin-bottom:16px">
-            <label>E-mail Google</label>
-            <input type="email" id="drive-email-salvo" placeholder="seu@gmail.com">
-        </div>
-        <div class="modal-actions">
-            <button onclick="fecharModal('modal-config-drive')" style="background:#eceff1;color:#546e7a">Cancelar</button>
-            <button onclick="salvarEmailDrive()" style="background:#1565c0;color:white">💾 Salvar e Conectar</button>
-        </div>
-    </div>
+    <div class="modal-box" style="max-width:400px"><h3 style="color:#1565c0">☁️ Configurar Google Drive</h3>
+    <p>Salve seu e-mail do Google para conectar mais rápido:</p>
+    <div class="mf"><label>E-mail Google</label><input type="email" id="drive-email-salvo" placeholder="seu@gmail.com"></div>
+    <div class="modal-actions">
+        <button onclick="fecharModal('modal-config-drive')" style="background:#eceff1;color:#546e7a">Cancelar</button>
+        <button onclick="salvarEmailDrive()" style="background:#1565c0;color:white">💾 Salvar e Conectar</button>
+    </div></div>
 </div>
 
 <script>
-let allData = { user: "", meses: {}, usuarios: [] };
+'use strict';
+let allData = { user:'', meses:{}, usuarios:[] };
 let mesAtual = null;
 let usuarioLogado = null;
 
 function dbMes() { return allData.meses[mesAtual] || { escalas:[], exames:[], corridas:[] }; }
 const hoje = () => new Date().toISOString().slice(0,10);
 
-// ── Login / Usuários ──────────────────────
+/* ── LOGIN ── */
 function iniciarApp() {
-    const saved = localStorage.getItem('radiologiaDB_v2');
-    if (saved) allData = JSON.parse(saved);
-    if (!allData.usuarios) allData.usuarios = [];
-
+    try { const s=localStorage.getItem('radiologiaDB_v2'); if(s) allData=JSON.parse(s); } catch(e){}
+    if (!allData.usuarios) allData.usuarios=[];
     const sessao = sessionStorage.getItem('sbSessao');
     if (sessao) {
-        const u = JSON.parse(sessao);
-        const ainda = allData.usuarios.find(x => x.id === u.id);
-        if (ainda) { usuarioLogado = ainda; iniciarComUsuario(); return; }
+        try {
+            const u=JSON.parse(sessao);
+            const ainda=allData.usuarios.find(x=>x.id===u.id);
+            if (ainda) { usuarioLogado=ainda; iniciarComUsuario(); return; }
+        } catch(e){}
     }
-    if (allData.usuarios.length === 0) {
-        usuarioLogado = null; iniciarComUsuario();
-    } else {
+    if (allData.usuarios.length===0) { iniciarComUsuario(); }
+    else {
         document.getElementById('login-screen').classList.add('active');
-        document.getElementById('login-subtitle').textContent = 'Entre com sua conta para continuar';
-        const creds = localStorage.getItem('sbCreds');
-        if (creds) {
-            const { email, senha } = JSON.parse(creds);
-            document.getElementById('login-email').value = email || '';
-            document.getElementById('login-senha').value = senha || '';
-            document.getElementById('login-lembrar').checked = true;
-        }
+        document.getElementById('login-subtitle').textContent='Entre com sua conta para continuar';
+        try {
+            const creds=localStorage.getItem('sbCreds');
+            if (creds) {
+                const {email,senha}=JSON.parse(creds);
+                document.getElementById('login-email').value=email||'';
+                document.getElementById('login-senha').value=senha||'';
+                document.getElementById('login-lembrar').checked=true;
+            }
+        } catch(e){}
     }
 }
 
 function mostrarFormCadastro() {
-    document.getElementById('login-form-area').style.display = 'none';
-    document.getElementById('cadastro-form-area').style.display = 'block';
+    document.getElementById('login-form-area').style.display='none';
+    document.getElementById('cadastro-form-area').style.display='block';
 }
 function mostrarFormLogin() {
-    document.getElementById('cadastro-form-area').style.display = 'none';
-    document.getElementById('login-form-area').style.display = 'block';
+    document.getElementById('cadastro-form-area').style.display='none';
+    document.getElementById('login-form-area').style.display='block';
 }
 
 function fazerLogin() {
-    const email = document.getElementById('login-email').value.trim().toLowerCase();
-    const senha = document.getElementById('login-senha').value;
-    const lembrar = document.getElementById('login-lembrar').checked;
-    const u = allData.usuarios.find(x => x.email.toLowerCase() === email && x.senha === senha);
-    if (!u) { document.getElementById('login-erro').style.display = 'block'; return; }
-    document.getElementById('login-erro').style.display = 'none';
-    if (lembrar) localStorage.setItem('sbCreds', JSON.stringify({ email, senha }));
+    const email=document.getElementById('login-email').value.trim().toLowerCase();
+    const senha=document.getElementById('login-senha').value;
+    const lembrar=document.getElementById('login-lembrar').checked;
+    const u=allData.usuarios.find(x=>x.email.toLowerCase()===email && x.senha===senha);
+    if (!u) { document.getElementById('login-erro').style.display='block'; return; }
+    document.getElementById('login-erro').style.display='none';
+    if (lembrar) localStorage.setItem('sbCreds',JSON.stringify({email,senha}));
     else localStorage.removeItem('sbCreds');
-    usuarioLogado = u;
-    sessionStorage.setItem('sbSessao', JSON.stringify(u));
+    usuarioLogado=u;
+    sessionStorage.setItem('sbSessao',JSON.stringify(u));
     document.getElementById('login-screen').classList.remove('active');
     iniciarComUsuario();
 }
 
 function fazerCadastro() {
-    const nome = document.getElementById('cad-nome').value.trim();
-    const email = document.getElementById('cad-email').value.trim().toLowerCase();
-    const whatsapp = document.getElementById('cad-whatsapp').value.trim();
-    const senha = document.getElementById('cad-senha').value;
-    const erroEl = document.getElementById('cad-erro');
-    if (!nome || !email || !senha || senha.length < 4) {
-        erroEl.textContent = 'Preencha todos os campos (senha mín. 4 caracteres).';
-        erroEl.style.display = 'block'; return;
-    }
-    if (allData.usuarios.find(x => x.email.toLowerCase() === email)) {
-        erroEl.textContent = 'Este e-mail já está cadastrado.';
-        erroEl.style.display = 'block'; return;
-    }
-    erroEl.style.display = 'none';
-    const isAdmin = allData.usuarios.length === 0;
-    const u = { id: Date.now(), nome, email, whatsapp, senha, role: isAdmin ? 'admin' : 'user', criadoEm: new Date().toLocaleDateString('pt-BR') };
+    const nome=document.getElementById('cad-nome').value.trim();
+    const email=document.getElementById('cad-email').value.trim().toLowerCase();
+    const whatsapp=document.getElementById('cad-whatsapp').value.trim();
+    const senha=document.getElementById('cad-senha').value;
+    const erroEl=document.getElementById('cad-erro');
+    if (!nome||!email||!senha||senha.length<4) { erroEl.textContent='Preencha todos os campos (senha mín. 4 caracteres).'; erroEl.style.display='block'; return; }
+    if (allData.usuarios.find(x=>x.email.toLowerCase()===email)) { erroEl.textContent='E-mail já cadastrado.'; erroEl.style.display='block'; return; }
+    erroEl.style.display='none';
+    const u={ id:Date.now(), nome, email, whatsapp, senha, role:allData.usuarios.length===0?'admin':'user', criadoEm:new Date().toLocaleDateString('pt-BR') };
     allData.usuarios.push(u);
-    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
-    usuarioLogado = u;
-    sessionStorage.setItem('sbSessao', JSON.stringify(u));
+    salvarLS();
+    usuarioLogado=u;
+    sessionStorage.setItem('sbSessao',JSON.stringify(u));
     document.getElementById('login-screen').classList.remove('active');
     iniciarComUsuario();
 }
 
 function iniciarComUsuario() {
     if (usuarioLogado) {
-        const badge = document.getElementById('user-badge');
-        badge.innerHTML = (usuarioLogado.role === 'admin' ? '🛡 ' : '👤 ') + usuarioLogado.nome.split(' ')[0];
-        badge.style.display = 'inline-flex';
-        if (!allData.user && usuarioLogado.nome) allData.user = usuarioLogado.nome;
+        const b=document.getElementById('user-badge');
+        b.textContent=(usuarioLogado.role==='admin'?'🛡 ':'👤 ')+usuarioLogado.nome.split(' ')[0];
+        b.style.display='inline-flex';
+        if (!allData.user && usuarioLogado.nome) allData.user=usuarioLogado.nome;
     }
     carregar();
 }
 
-function abrirUsuarios() {
-    const infoEl = document.getElementById('modal-usuarios-info');
-    const listaEl = document.getElementById('modal-usuarios-lista');
-    const isAdmin = usuarioLogado && usuarioLogado.role === 'admin';
+function sairDaSessao() {
+    sessionStorage.removeItem('sbSessao');
+    usuarioLogado=null;
+    fecharModal('modal-usuarios');
+    location.reload();
+}
 
+function abrirUsuarios() {
+    const infoEl=document.getElementById('modal-usuarios-info');
+    const listaEl=document.getElementById('modal-usuarios-lista');
+    const isAdmin=usuarioLogado && usuarioLogado.role==='admin';
     if (!isAdmin) {
-        const u = usuarioLogado;
-        infoEl.innerHTML = '<b>Minha conta</b>';
-        listaEl.innerHTML = u ? `
-            <div class="user-card">
-                <div class="user-card-avatar">${u.nome.charAt(0).toUpperCase()}</div>
-                <div class="user-card-info">
-                    <div class="user-card-nome">${u.nome} <span class="user-role-badge badge-user">Usuário</span></div>
-                    <div class="user-card-sub">📧 ${u.email}</div>
-                    ${u.whatsapp ? `<div class="user-card-sub">📱 ${u.whatsapp}</div>` : ''}
-                </div>
-            </div>` : '';
+        const u=usuarioLogado;
+        infoEl.innerHTML='<b>Minha conta</b>';
+        listaEl.innerHTML=u?`<div class="user-card"><div class="user-avatar">${u.nome.charAt(0).toUpperCase()}</div><div class="user-info"><div class="user-nome">${u.nome} <span class="role-badge badge-user">Usuário</span></div><div class="user-sub">📧 ${u.email}</div>${u.whatsapp?`<div class="user-sub">📱 ${u.whatsapp}</div>`:''}</div></div>`:'';
     } else {
-        infoEl.innerHTML = `<span style="font-size:0.83rem;color:#546e7a"><b>${allData.usuarios.length}</b> usuário(s) cadastrado(s).</span>`;
-        listaEl.innerHTML = allData.usuarios.map(u => {
-            const waNum = u.whatsapp ? u.whatsapp.replace(/\D/g,'') : '';
-            const waBtnHtml = waNum ? `<a class="btn-contact btn-whatsapp" href="https://wa.me/55${waNum}" target="_blank">💬 WhatsApp</a>` : '';
-            const emailBtnHtml = u.email ? `<a class="btn-contact btn-email" href="mailto:${u.email}" target="_blank">✉️ E-mail</a>` : '';
-            const deleteBtnHtml = u.id !== usuarioLogado?.id
-                ? `<button onclick="excluirUsuario(${u.id})" style="background:#c62828;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.72rem;font-weight:600;align-self:flex-start;flex-shrink:0">🗑</button>`
-                : '';
-            return `
-            <div class="user-card">
-                <div class="user-card-avatar">${u.nome.charAt(0).toUpperCase()}</div>
-                <div class="user-card-info">
-                    <div class="user-card-nome">${u.nome} <span class="user-role-badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role==='admin'?'Admin':'Usuário'}</span></div>
-                    <div class="user-card-sub">📧 ${u.email}</div>
-                    ${u.whatsapp ? `<div class="user-card-sub">📱 ${u.whatsapp}</div>` : ''}
-                    <div class="user-card-sub">🗓 Cadastro: ${u.criadoEm||'—'}</div>
-                    <div class="user-contact-btns">${waBtnHtml}${emailBtnHtml}</div>
-                </div>
-                ${deleteBtnHtml}
-            </div>`;
-        }).join('') || '<p style="color:#90a4ae;font-size:0.85rem">Nenhum usuário.</p>';
+        infoEl.innerHTML=`<span style="font-size:0.83rem;color:#546e7a"><b>${allData.usuarios.length}</b> usuário(s) cadastrado(s).</span>`;
+        listaEl.innerHTML=allData.usuarios.map(u=>{
+            const waNum=u.whatsapp?u.whatsapp.replace(/\D/g,''):'';
+            const waBt=waNum?`<a class="btn-contact btn-wa" href="https://wa.me/55${waNum}" target="_blank">💬 WhatsApp</a>`:'';
+            const emBt=u.email?`<a class="btn-contact btn-em" href="mailto:${u.email}" target="_blank">✉️ E-mail</a>`:'';
+            const delBt=u.id!==usuarioLogado?.id?`<button onclick="excluirUsuario(${u.id})" style="background:#c62828;color:white;border:none;padding:5px 9px;border-radius:6px;cursor:pointer;font-size:0.72rem;font-weight:600;flex-shrink:0;align-self:flex-start">🗑</button>`:'';
+            return `<div class="user-card"><div class="user-avatar">${u.nome.charAt(0).toUpperCase()}</div><div class="user-info"><div class="user-nome">${u.nome} <span class="role-badge ${u.role==='admin'?'badge-admin':'badge-user'}">${u.role==='admin'?'Admin':'Usuário'}</span></div><div class="user-sub">📧 ${u.email}</div>${u.whatsapp?`<div class="user-sub">📱 ${u.whatsapp}</div>`:''}<div class="user-sub">🗓 ${u.criadoEm||'—'}</div><div class="contact-btns">${waBt}${emBt}</div></div>${delBt}</div>`;
+        }).join('')||'<p style="color:#90a4ae;font-size:0.85rem">Nenhum usuário.</p>';
     }
     abrirModal('modal-usuarios');
 }
 
 function excluirUsuario(id) {
     if (!confirm('Excluir este usuário?')) return;
-    allData.usuarios = allData.usuarios.filter(u => u.id !== id);
-    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
-    abrirUsuarios();
+    allData.usuarios=allData.usuarios.filter(u=>u.id!==id);
+    salvarLS(); abrirUsuarios();
 }
 
-function sairDaSessao() {
-    sessionStorage.removeItem('sbSessao');
-    usuarioLogado = null;
-    fecharModal('modal-usuarios');
-    location.reload();
-}
+/* ── DADOS ── */
+function salvarLS() { localStorage.setItem('radiologiaDB_v2',JSON.stringify(allData)); }
 
-// ── Persistência ──────────────────────────
 function salvarDados() {
-    allData.user = document.getElementById('userName').value;
+    allData.user=document.getElementById('userName').value;
     if (!mesAtual) return;
-    const m = allData.meses[mesAtual];
-    m.escalas = [];
-    document.querySelectorAll('.escala-item').forEach(item => {
-        m.escalas.push({
-            data:  item.querySelector('.sc-data').value,
-            in:    item.querySelector('.sc-in').value,
-            dataF: item.querySelector('.sc-data-f').value,
-            out:   item.querySelector('.sc-out').value
-        });
+    const m=allData.meses[mesAtual];
+    m.escalas=[];
+    document.querySelectorAll('.escala-item').forEach(item=>{
+        m.escalas.push({ data:item.querySelector('.sc-data').value, in:item.querySelector('.sc-in').value, dataF:item.querySelector('.sc-data-f').value, out:item.querySelector('.sc-out').value });
     });
-    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
-    render();
-    driveDebounce();
+    salvarLS(); render(); driveDebounce();
 }
 
 function carregar() {
-    const saved = localStorage.getItem('radiologiaDB_v2');
-    if (saved) allData = JSON.parse(saved);
-    if (!allData.usuarios) allData.usuarios = [];
-    if (!allData.meses) allData.meses = {};
+    try { const s=localStorage.getItem('radiologiaDB_v2'); if(s) allData=JSON.parse(s); } catch(e){}
+    if (!allData.usuarios) allData.usuarios=[];
+    if (!allData.meses) allData.meses={};
     if (!Object.keys(allData.meses).length) {
-        const old = localStorage.getItem('radiologiaDB');
-        if (old) {
-            const o = JSON.parse(old);
-            const id = 'mes_' + Date.now();
-            allData.meses[id] = { label:'Importado', escalas:o.escalas||[], exames:o.exames||[], corridas:o.corridas||[] };
-            localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
-        }
+        const old=localStorage.getItem('radiologiaDB');
+        if (old) { try { const o=JSON.parse(old); const id='mes_'+Date.now(); allData.meses[id]={label:'Importado',escalas:o.escalas||[],exames:o.exames||[],corridas:o.corridas||[]}; salvarLS(); } catch(e){} }
     }
-    document.getElementById('userName').value = allData.user || "";
+    document.getElementById('userName').value=allData.user||'';
     popularSelectMes();
-    const ids = Object.keys(allData.meses);
-    if (ids.length > 0) {
-        mesAtual = ids[ids.length - 1];
-        document.getElementById('sel-mes').value = mesAtual;
-        carregarMes();
-    } else {
-        const id = 'mes_' + Date.now();
-        allData.meses[id] = { label: labelMesAtual(), escalas:[], exames:[], corridas:[] };
-        mesAtual = id;
-        popularSelectMes();
-        document.getElementById('sel-mes').value = mesAtual;
-    }
+    const ids=Object.keys(allData.meses);
+    if (ids.length>0) { mesAtual=ids[ids.length-1]; document.getElementById('sel-mes').value=mesAtual; carregarMes(); }
+    else { const id='mes_'+Date.now(); allData.meses[id]={label:labelMesAtual(),escalas:[],exames:[],corridas:[]}; mesAtual=id; popularSelectMes(); document.getElementById('sel-mes').value=mesAtual; }
     preencherDataHoje();
 }
 
 function popularSelectMes() {
-    const sel = document.getElementById('sel-mes');
-    sel.innerHTML = Object.entries(allData.meses).map(([id,m]) => `<option value="${id}">${m.label}</option>`).join('');
+    document.getElementById('sel-mes').innerHTML=Object.entries(allData.meses).map(([id,m])=>`<option value="${id}">${m.label}</option>`).join('');
 }
-function labelMesAtual() {
-    return new Date().toLocaleString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
-}
-function carregarMes() {
-    document.getElementById('lista-escalas').innerHTML = '';
-    const m = allData.meses[mesAtual];
-    if (m) m.escalas.forEach(e => addEscala(e.data, e.in, e.dataF, e.out));
-    atualizarContadorEscalas();
-    render();
-}
-function trocarMes() { mesAtual = document.getElementById('sel-mes').value; carregarMes(); }
-function novoMes() { document.getElementById('input-novo-mes').value = labelMesAtual(); abrirModal('modal-novo-mes'); }
+function labelMesAtual() { return new Date().toLocaleString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase()); }
+function carregarMes() { document.getElementById('lista-escalas').innerHTML=''; const m=allData.meses[mesAtual]; if(m)m.escalas.forEach(e=>addEscala(e.data,e.in,e.dataF,e.out)); atualizarContadorEscalas(); render(); }
+function trocarMes() { mesAtual=document.getElementById('sel-mes').value; carregarMes(); }
+function novoMes() { document.getElementById('input-novo-mes').value=labelMesAtual(); abrirModal('modal-novo-mes'); }
 function criarNovoMes() {
-    const label = document.getElementById('input-novo-mes').value.trim();
+    const label=document.getElementById('input-novo-mes').value.trim();
     if (!label) return;
-    const id = 'mes_' + Date.now();
-    allData.meses[id] = { label, escalas:[], exames:[], corridas:[] };
-    mesAtual = id;
-    localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
-    popularSelectMes();
-    document.getElementById('sel-mes').value = mesAtual;
-    document.getElementById('lista-escalas').innerHTML = '';
-    render(); fecharModal('modal-novo-mes'); preencherDataHoje();
+    const id='mes_'+Date.now();
+    allData.meses[id]={label,escalas:[],exames:[],corridas:[]};
+    mesAtual=id; salvarLS(); popularSelectMes(); document.getElementById('sel-mes').value=mesAtual;
+    document.getElementById('lista-escalas').innerHTML=''; render(); fecharModal('modal-novo-mes'); preencherDataHoje();
 }
 function excluirMesAtual() {
-    const ids = Object.keys(allData.meses);
-    if (ids.length <= 1) { alert('Não é possível excluir o único mês.'); return; }
-    confirmarDel('Excluir o mês "' + allData.meses[mesAtual].label + '" e todos os seus dados?', () => {
-        delete allData.meses[mesAtual];
-        localStorage.setItem('radiologiaDB_v2', JSON.stringify(allData));
-        popularSelectMes();
-        mesAtual = Object.keys(allData.meses).slice(-1)[0];
-        document.getElementById('sel-mes').value = mesAtual;
-        document.getElementById('lista-escalas').innerHTML = '';
-        carregarMes();
+    const ids=Object.keys(allData.meses);
+    if (ids.length<=1) { alert('Não é possível excluir o único mês.'); return; }
+    confirmarDel('Excluir o mês "'+allData.meses[mesAtual].label+'" e todos os seus dados?',()=>{
+        delete allData.meses[mesAtual]; salvarLS(); popularSelectMes();
+        mesAtual=Object.keys(allData.meses).slice(-1)[0];
+        document.getElementById('sel-mes').value=mesAtual;
+        document.getElementById('lista-escalas').innerHTML=''; carregarMes();
     });
 }
-function preencherDataHoje() {
-    const h = hoje();
-    document.getElementById('ex-data').value = h;
-    document.getElementById('co-data').value = h;
+function preencherDataHoje() { const h=hoje(); document.getElementById('ex-data').value=h; document.getElementById('co-data').value=h; }
+
+/* ── TABS ── */
+function tab(e,n) {
+    document.querySelectorAll('.tab-content,.tab-btn').forEach(el=>el.classList.remove('active'));
+    document.getElementById(n).classList.add('active'); e.currentTarget.classList.add('active');
+    if (n==='resumo') renderResumo();
 }
 
-// ── Tabs ──────────────────────────────────
-function tab(e, n) {
-    document.querySelectorAll('.tab-content,.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById(n).classList.add('active');
-    e.currentTarget.classList.add('active');
-    if (n === 'resumo') renderResumo();
-}
-
-// ── Escalas ───────────────────────────────
-let _escalasBertas = false;
+/* ── ESCALAS ── */
+let _escAberto=false;
 function toggleEscalas() {
-    _escalasBertas = !_escalasBertas;
-    document.getElementById('escalas-body').style.display = _escalasBertas ? 'block' : 'none';
-    document.getElementById('btn-toggle-esc').innerHTML = _escalasBertas ? '🙈 Ocultar' : '👁 Mostrar';
+    _escAberto=!_escAberto;
+    document.getElementById('escalas-body').style.display=_escAberto?'block':'none';
+    document.getElementById('btn-toggle-esc').textContent=_escAberto?'🙈 Ocultar':'👁 Mostrar';
 }
-function atualizarContadorEscalas() {
-    document.getElementById('escala-count').textContent = document.querySelectorAll('.escala-item').length;
-}
-function addEscala(data="", inT="", dataF="", outT="") {
-    const div = document.createElement('div');
-    div.className = 'escala-item';
-    div.innerHTML = `
-        <div class="form-group"><label>Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>
-        <div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>
-        <div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>
-        <div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>
-        <button onclick="this.parentElement.remove();salvarDados();atualizarContadorEscalas()" style="background:#c62828;color:white;border:none;padding:8px;border-radius:7px;cursor:pointer;align-self:flex-end">✕</button>`;
-    document.getElementById('lista-escalas').appendChild(div);
-    atualizarContadorEscalas();
+function atualizarContadorEscalas() { document.getElementById('escala-count').textContent=document.querySelectorAll('.escala-item').length; }
+function addEscala(data,inT,dataF,outT) {
+    data=data||''; inT=inT||''; dataF=dataF||''; outT=outT||'';
+    const div=document.createElement('div'); div.className='escala-item';
+    div.innerHTML=`<div class="form-group"><label>Início</label><input type="date" class="sc-data" value="${data}" onchange="salvarDados()"></div>`+
+        `<div class="form-group"><label>Hora</label><input type="time" class="sc-in" value="${inT}" onchange="salvarDados()"></div>`+
+        `<div class="form-group"><label>Fim</label><input type="date" class="sc-data-f" value="${dataF}" onchange="salvarDados()"></div>`+
+        `<div class="form-group"><label>Hora</label><input type="time" class="sc-out" value="${outT}" onchange="salvarDados()"></div>`+
+        `<button onclick="this.parentElement.remove();salvarDados();atualizarContadorEscalas()" style="background:#c62828;color:white;border:none;padding:8px;border-radius:7px;cursor:pointer;align-self:flex-end">✕</button>`;
+    document.getElementById('lista-escalas').appendChild(div); atualizarContadorEscalas();
 }
 
-// ── Exames ────────────────────────────────
+/* ── EXAMES ── */
 function addExame() {
-    const id = document.getElementById('ex-id').value;
-    const dados = { data:document.getElementById('ex-data').value, hora:document.getElementById('ex-hora').value, setor:document.getElementById('ex-setor').value, nome:document.getElementById('ex-nome').value, pac:document.getElementById('ex-pac').value };
-    const m = allData.meses[mesAtual];
+    const id=document.getElementById('ex-id').value;
+    const dados={data:document.getElementById('ex-data').value,hora:document.getElementById('ex-hora').value,setor:document.getElementById('ex-setor').value,nome:document.getElementById('ex-nome').value,pac:document.getElementById('ex-pac').value};
+    const m=allData.meses[mesAtual];
     if (id) { const idx=m.exames.findIndex(e=>e.id==id); m.exames[idx]={...m.exames[idx],...dados}; }
-    else m.exames.push({ id:Date.now(), ...dados });
-    const dataAtual=dados.data, setorAtual=dados.setor;
+    else m.exames.push({id:Date.now(),...dados});
+    const dd=dados.data, ss=dados.setor;
     limparCamposExame(false);
-    document.getElementById('ex-data').value = dataAtual;
-    document.getElementById('ex-setor').value = setorAtual;
+    document.getElementById('ex-data').value=dd; document.getElementById('ex-setor').value=ss;
     salvarDados();
 }
 function editExame(id) {
     const ex=dbMes().exames.find(i=>i.id==id);
-    document.getElementById('ex-id').value=ex.id;
-    document.getElementById('ex-data').value=ex.data;
-    document.getElementById('ex-hora').value=ex.hora;
-    document.getElementById('ex-setor').value=ex.setor;
-    document.getElementById('ex-nome').value=ex.nome;
-    document.getElementById('ex-pac').value=ex.pac;
-    document.getElementById('btn-save-ex').innerText="Atualizar Exame";
-    document.getElementById('btn-cancel-ex').style.display="inline-block";
+    document.getElementById('ex-id').value=ex.id; document.getElementById('ex-data').value=ex.data;
+    document.getElementById('ex-hora').value=ex.hora; document.getElementById('ex-setor').value=ex.setor;
+    document.getElementById('ex-nome').value=ex.nome; document.getElementById('ex-pac').value=ex.pac;
+    document.getElementById('btn-save-ex').innerText='Atualizar Exame';
+    document.getElementById('btn-cancel-ex').style.display='inline-block';
     abrirFormExame();
 }
-function limparCamposExame(resetDataSetor=true) {
-    document.getElementById('ex-id').value="";
-    document.getElementById('ex-hora').value="";
-    document.getElementById('ex-nome').value="";
-    document.getElementById('ex-pac').value="";
-    if (resetDataSetor) { document.getElementById('ex-data').value=hoje(); document.getElementById('ex-setor').value=""; }
-    document.getElementById('btn-save-ex').innerText="Salvar Exame";
-    document.getElementById('btn-cancel-ex').style.display="none";
+function limparCamposExame(r) {
+    document.getElementById('ex-id').value=''; document.getElementById('ex-hora').value='';
+    document.getElementById('ex-nome').value=''; document.getElementById('ex-pac').value='';
+    if (r!==false) { document.getElementById('ex-data').value=hoje(); document.getElementById('ex-setor').value=''; }
+    document.getElementById('btn-save-ex').innerText='Salvar Exame';
+    document.getElementById('btn-cancel-ex').style.display='none';
 }
 
-// ── Corridas ──────────────────────────────
-let _dadosCorridaPendente=null, _idCorridaPendente=null;
+/* ── CORRIDAS ── */
+let _pendDados=null, _pendId=null;
 function addCorrida() {
     const id=document.getElementById('co-id').value;
     const dados={data:document.getElementById('co-data').value,in:document.getElementById('co-in').value,out:document.getElementById('co-out').value,km:document.getElementById('co-km').value,setor:document.getElementById('co-setor').value,tempo:calcDiffSimple(document.getElementById('co-in').value,document.getElementById('co-out').value)};
-    if (!dados.out) { _dadosCorridaPendente=dados; _idCorridaPendente=id; abrirModal('modal-corrida-aberta'); return; }
+    if (!dados.out) { _pendDados=dados; _pendId=id; abrirModal('modal-corrida-aberta'); return; }
     _persistirCorrida(id,dados);
 }
-function confirmarCorridaAberta() { fecharModal('modal-corrida-aberta'); _persistirCorrida(_idCorridaPendente,_dadosCorridaPendente); }
+function confirmarCorridaAberta() { fecharModal('modal-corrida-aberta'); _persistirCorrida(_pendId,_pendDados); }
 function _persistirCorrida(id,dados) {
     const m=allData.meses[mesAtual];
     if (id) { const idx=m.corridas.findIndex(c=>c.id==id); m.corridas[idx]={...m.corridas[idx],...dados}; }
@@ -924,129 +642,116 @@ function _persistirCorrida(id,dados) {
 }
 function editCorrida(id) {
     const c=dbMes().corridas.find(i=>i.id==id);
-    document.getElementById('co-id').value=c.id;
-    document.getElementById('co-data').value=c.data;
-    document.getElementById('co-in').value=c.in;
-    document.getElementById('co-out').value=c.out||"";
-    document.getElementById('co-km').value=c.km;
-    document.getElementById('co-setor').value=c.setor||"";
-    document.getElementById('btn-save-co').innerText="Atualizar Corrida";
-    document.getElementById('btn-cancel-co').style.display="inline-block";
+    document.getElementById('co-id').value=c.id; document.getElementById('co-data').value=c.data;
+    document.getElementById('co-in').value=c.in; document.getElementById('co-out').value=c.out||'';
+    document.getElementById('co-km').value=c.km; document.getElementById('co-setor').value=c.setor||'';
+    document.getElementById('btn-save-co').innerText='Atualizar Corrida';
+    document.getElementById('btn-cancel-co').style.display='inline-block';
     abrirFormCorrida();
 }
 function limparCamposCorrida() {
-    ['co-id','co-in','co-out','co-km','co-setor'].forEach(id=>document.getElementById(id).value="");
+    ['co-id','co-in','co-out','co-km','co-setor'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('co-data').value=hoje();
-    document.getElementById('btn-save-co').innerText="Salvar Corrida";
-    document.getElementById('btn-cancel-co').style.display="none";
+    document.getElementById('btn-save-co').innerText='Salvar Corrida';
+    document.getElementById('btn-cancel-co').style.display='none';
 }
 
-// ── Exclusão ──────────────────────────────
+/* ── EXCLUSÃO ── */
 function del(type,id) { confirmarDel(type==='exames'?'Excluir este exame?':'Excluir esta corrida?',()=>{ allData.meses[mesAtual][type]=allData.meses[mesAtual][type].filter(i=>i.id!==id); salvarDados(); }); }
-function confirmarDel(msg,cb) {
-    document.getElementById('modal-del-msg').textContent=msg;
-    document.getElementById('modal-del-confirm').onclick=()=>{ fecharModal('modal-del'); cb(); };
-    abrirModal('modal-del');
-}
+function confirmarDel(msg,cb) { document.getElementById('modal-del-msg').textContent=msg; document.getElementById('modal-del-confirm').onclick=()=>{fecharModal('modal-del');cb();}; abrirModal('modal-del'); }
 
-// ── Toggle exames ─────────────────────────
-let _tblExAberta=false;
+/* ── TOGGLE TABELA EXAMES ── */
+let _tblEx=false;
 function toggleTabelaExames() {
-    _tblExAberta=!_tblExAberta;
-    document.getElementById('tbl-exames-wrapper').style.display=_tblExAberta?'block':'none';
-    document.getElementById('btn-toggle-tbl-ex').textContent=_tblExAberta?'🙈 Ocultar':'👁 Mostrar';
+    _tblEx=!_tblEx;
+    document.getElementById('tbl-exames-wrapper').style.display=_tblEx?'block':'none';
+    document.getElementById('btn-toggle-tbl-ex').textContent=_tblEx?'🙈 Ocultar':'👁 Mostrar';
 }
 
-// ── Render ────────────────────────────────
+/* ── RENDER ── */
 function render() {
     const d=dbMes();
     document.querySelector('#tbl-exames tbody').innerHTML=d.exames.map(ex=>
-        `<tr><td>${fmtD(ex.data)}</td><td>${ex.hora}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td>
-        <td><button class="btn-mini" style="background:#f9a825;color:black" onclick="editExame(${ex.id})">✏️</button>
-        <button class="btn-mini" style="background:#c62828;margin-left:3px" onclick="del('exames',${ex.id})">🗑</button></td></tr>`
+        `<tr><td>${fmtD(ex.data)}</td><td>${ex.hora}</td><td>${ex.setor}</td><td>${ex.nome}</td><td>${ex.pac}</td><td>`+
+        `<button class="btn-mini" style="background:#f9a825;color:#000" onclick="editExame(${ex.id})">✏️</button> `+
+        `<button class="btn-mini" style="background:#c62828" onclick="del('exames',${ex.id})">🗑</button></td></tr>`
     ).join('');
-    const ce=document.getElementById('exames-count'); if(ce) ce.textContent=d.exames.length;
+    const ce=document.getElementById('exames-count'); if(ce)ce.textContent=d.exames.length;
     document.querySelector('#tbl-corridas tbody').innerHTML=d.corridas.map(co=>
-        `<tr class="${!co.out?'aberta':''}">
-        <td>${fmtD(co.data)}</td><td>${co.in}</td>
-        <td>${co.out||'<span style="color:#e65100;font-weight:600">em aberto</span>'}</td>
-        <td>${co.tempo}</td><td>${co.km}</td><td>${co.setor||''}</td>
-        <td><button class="btn-mini" style="background:#f9a825;color:black" onclick="editCorrida(${co.id})">✏️</button>
-        <button class="btn-mini" style="background:#c62828;margin-left:3px" onclick="del('corridas',${co.id})">🗑</button></td></tr>`
+        `<tr class="${!co.out?'aberta':''}"><td>${fmtD(co.data)}</td><td>${co.in}</td>`+
+        `<td>${co.out||'<span style="color:#e65100;font-weight:600">em aberto</span>'}</td>`+
+        `<td>${co.tempo}</td><td>${co.km}</td><td>${co.setor||''}</td><td>`+
+        `<button class="btn-mini" style="background:#f9a825;color:#000" onclick="editCorrida(${co.id})">✏️</button> `+
+        `<button class="btn-mini" style="background:#c62828" onclick="del('corridas',${co.id})">🗑</button></td></tr>`
     ).join('');
 }
 
-// ── Resumo ────────────────────────────────
+/* ── RESUMO ── */
 function renderResumo() {
     const d=dbMes();
     if (!d.escalas.length) { document.getElementById('resumo-conteudo').innerHTML='<p style="color:#90a4ae;padding:20px">Nenhuma escala cadastrada.</p>'; return; }
-    let totalKM=0,totalTrabMin=0,totalEscMin=0,html='';
+    let tKM=0,tTrab=0,tEsc=0,html='';
     d.escalas.forEach((esc,i)=>{
-        const escMin=calcDiffFull(esc.data,esc.in,esc.dataF,esc.out); totalEscMin+=escMin;
+        const em=calcDiffFull(esc.data,esc.in,esc.dataF,esc.out); tEsc+=em;
         const dtIn=new Date(`${esc.data}T${esc.in}`),dtOut=new Date(`${esc.dataF}T${esc.out}`);
-        const corridas=d.corridas.filter(co=>{ const dt=new Date(`${co.data}T${co.in}`); return dt>=dtIn&&dt<=dtOut; });
-        const kmEsc=corridas.reduce((s,c)=>s+(parseFloat(c.km)||0),0);
-        const trabMin=corridas.reduce((s,c)=>{ const [h,m]=(c.tempo||'0:0').split(':').map(Number); return s+h*60+m; },0);
-        totalKM+=kmEsc; totalTrabMin+=trabMin;
-        html+=`<div class="resumo-card"><h4>Escala ${i+1}: ${fmtD(esc.data)} ${esc.in} → ${fmtD(esc.dataF)} ${esc.out}</h4>
-            <div class="resumo-row"><span>⏱ Período sobreaviso</span><span>${fmtMin(escMin)}</span></div>
-            <div class="resumo-row"><span>🚗 Corridas realizadas</span><span>${corridas.length}</span></div>
-            <div class="resumo-row"><span>⏳ Tempo trabalhado</span><span>${fmtMin(trabMin)}</span></div>
-            <div class="resumo-row"><span>📍 KM rodado</span><span>${kmEsc.toFixed(1)} km</span></div></div>`;
+        const cors=d.corridas.filter(co=>{const dt=new Date(`${co.data}T${co.in}`);return dt>=dtIn&&dt<=dtOut;});
+        const km=cors.reduce((s,c)=>s+(parseFloat(c.km)||0),0);
+        const tr=cors.reduce((s,c)=>{const[h,m]=(c.tempo||'0:0').split(':').map(Number);return s+h*60+m;},0);
+        tKM+=km; tTrab+=tr;
+        html+=`<div class="resumo-card"><h4>Escala ${i+1}: ${fmtD(esc.data)} ${esc.in} → ${fmtD(esc.dataF)} ${esc.out}</h4>`+
+            `<div class="resumo-row"><span>⏱ Período sobreaviso</span><span>${fmtMin(em)}</span></div>`+
+            `<div class="resumo-row"><span>🚗 Corridas</span><span>${cors.length}</span></div>`+
+            `<div class="resumo-row"><span>⏳ Tempo trabalhado</span><span>${fmtMin(tr)}</span></div>`+
+            `<div class="resumo-row"><span>📍 KM rodado</span><span>${km.toFixed(1)} km</span></div></div>`;
     });
-    html+=`<div class="resumo-card resumo-total"><h4>📊 TOTAL GERAL DO MÊS</h4>
-        <div class="resumo-row"><span>⏱ Total sobreaviso</span><span>${fmtMin(totalEscMin)}</span></div>
-        <div class="resumo-row"><span>⏳ Total trabalhado</span><span>${fmtMin(totalTrabMin)}</span></div>
-        <div class="resumo-row"><span>📍 Total KM</span><span>${totalKM.toFixed(1)} km</span></div>
-        <div class="resumo-row"><span>🔬 Total exames</span><span>${d.exames.length}</span></div></div>`;
+    html+=`<div class="resumo-card resumo-total"><h4>📊 TOTAL GERAL DO MÊS</h4>`+
+        `<div class="resumo-row"><span>⏱ Total sobreaviso</span><span>${fmtMin(tEsc)}</span></div>`+
+        `<div class="resumo-row"><span>⏳ Total trabalhado</span><span>${fmtMin(tTrab)}</span></div>`+
+        `<div class="resumo-row"><span>📍 Total KM</span><span>${tKM.toFixed(1)} km</span></div>`+
+        `<div class="resumo-row"><span>🔬 Total exames</span><span>${d.exames.length}</span></div></div>`;
     document.getElementById('resumo-conteudo').innerHTML=html;
 }
 
-// ── FAB ───────────────────────────────────
+/* ── FABs ── */
 function abrirFormExame() {
     document.querySelectorAll('.tab-content,.tab-btn').forEach(el=>el.classList.remove('active'));
-    document.getElementById('exames').classList.add('active');
-    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    document.getElementById('exames').classList.add('active'); document.querySelectorAll('.tab-btn')[0].classList.add('active');
     document.getElementById('exames').scrollIntoView({behavior:'smooth',block:'start'});
     setTimeout(()=>document.getElementById('ex-hora').focus(),400);
 }
 function abrirFormCorrida() {
     document.querySelectorAll('.tab-content,.tab-btn').forEach(el=>el.classList.remove('active'));
-    document.getElementById('corridas').classList.add('active');
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.getElementById('corridas').classList.add('active'); document.querySelectorAll('.tab-btn')[1].classList.add('active');
     document.getElementById('corridas').scrollIntoView({behavior:'smooth',block:'start'});
     setTimeout(()=>document.getElementById('co-in').focus(),400);
 }
 
-// ── Utils ─────────────────────────────────
-function calcDiffSimple(s,e){if(!s||!e)return"00:00";let[h1,m1]=s.split(':').map(Number),[h2,m2]=e.split(':').map(Number);let min=(h2*60+m2)-(h1*60+m1);if(min<0)min+=1440;return`${String(Math.floor(min/60)).padStart(2,'0')}:${String(min%60).padStart(2,'0')}`;}
-function calcDiffFull(d1,t1,d2,t2){if(!d1||!t1||!d2||!t2)return 0;return Math.floor((new Date(`${d2}T${t2}`)-new Date(`${d1}T${t1}`))/60000);}
-function fmtMin(min){return`${Math.floor(min/60)}h ${min%60}m`;}
-function fmtD(d){if(!d)return"";const[y,m,dia]=d.split('-');return`${dia}/${m}/${y}`;}
+/* ── UTILS ── */
+function calcDiffSimple(s,e){if(!s||!e)return'00:00';const[h1,m1]=s.split(':').map(Number),[h2,m2]=e.split(':').map(Number);let min=(h2*60+m2)-(h1*60+m1);if(min<0)min+=1440;return String(Math.floor(min/60)).padStart(2,'0')+':'+String(min%60).padStart(2,'0');}
+function calcDiffFull(d1,t1,d2,t2){if(!d1||!t1||!d2||!t2)return 0;return Math.floor((new Date(d2+'T'+t2)-new Date(d1+'T'+t1))/60000);}
+function fmtMin(min){return Math.floor(min/60)+'h '+( min%60)+'m';}
+function fmtD(d){if(!d)return'';const[y,m,dia]=d.split('-');return dia+'/'+m+'/'+y;}
 
-// ── Modais ────────────────────────────────
+/* ── MODAIS ── */
 function abrirModal(id){document.getElementById(id).classList.add('active');}
 function fecharModal(id){document.getElementById(id).classList.remove('active');}
 
-// ── Histórico ─────────────────────────────
+/* ── HISTÓRICO ── */
 function abrirHistorico() {
-    document.getElementById('hist-lista').innerHTML=Object.entries(allData.meses).map(([id,m])=>`
-        <div class="hist-item">
-            <input type="checkbox" id="chk_${id}" value="${id}">
-            <label for="chk_${id}" class="hist-item-info" style="cursor:pointer">
-                <div class="hist-item-title">${m.label}</div>
-                <div class="hist-item-sub">${m.corridas.length} corridas · ${m.exames.length} exames · ${m.escalas.length} escalas</div>
-            </label>
-        </div>`).join('');
+    document.getElementById('hist-lista').innerHTML=Object.entries(allData.meses).map(([id,m])=>
+        `<div class="hist-item"><input type="checkbox" id="chk_${id}" value="${id}">`+
+        `<label for="chk_${id}" style="flex:1;cursor:pointer"><div class="hist-item-title">${m.label}</div>`+
+        `<div class="hist-item-sub">${m.corridas.length} corridas · ${m.exames.length} exames · ${m.escalas.length} escalas</div></label></div>`
+    ).join('');
     abrirModal('modal-hist');
 }
 function relatorioHistorico(tipo) {
     const ids=[...document.querySelectorAll('#hist-lista input:checked')].map(el=>el.value);
-    if(!ids.length){alert('Selecione ao menos um mês.');return;}
+    if (!ids.length){alert('Selecione ao menos um mês.');return;}
     fecharModal('modal-hist'); gerarRelatorioMeses(ids,tipo);
 }
 
-// ── Relatório ─────────────────────────────
+/* ── RELATÓRIO ── */
 let _filtroTipo='pdf', _filtroModo='mes';
 function abrirFiltroRelatorio(tipo) {
     _filtroTipo=tipo; _filtroModo='mes';
@@ -1055,9 +760,8 @@ function abrirFiltroRelatorio(tipo) {
     document.getElementById('filtro-data-entrega').value=hoje();
     alternarFiltroTipo('mes');
     const m=allData.meses[mesAtual]; const escalas=m?m.escalas:[];
-    document.getElementById('filtro-escalas-lista').innerHTML=escalas.length?escalas.map((e,i)=>`
-        <div class="filtro-opcao"><input type="checkbox" id="fesc_${i}" value="${i}">
-        <label for="fesc_${i}">Escala ${i+1}: ${fmtD(e.data)} ${e.in} → ${fmtD(e.dataF)} ${e.out}</label></div>`).join('')
+    document.getElementById('filtro-escalas-lista').innerHTML=escalas.length
+        ?escalas.map((e,i)=>`<div class="filtro-opcao"><input type="checkbox" id="fesc_${i}" value="${i}"><label for="fesc_${i}">Escala ${i+1}: ${fmtD(e.data)} ${e.in} → ${fmtD(e.dataF)} ${e.out}</label></div>`).join('')
         :'<p style="color:#90a4ae;font-size:0.85rem;padding:8px">Nenhuma escala cadastrada.</p>';
     abrirModal('modal-filtro-rel');
 }
@@ -1071,81 +775,220 @@ function alternarFiltroTipo(modo) {
 function gerarComFiltro() {
     fecharModal('modal-filtro-rel');
     const dataEntrega=document.getElementById('filtro-data-entrega').value;
-    if(_filtroModo==='mes') { gerarRelatorioMeses([mesAtual],_filtroTipo,dataEntrega); }
-    else {
-        const checks=[...document.querySelectorAll('#filtro-escalas-lista input[type=checkbox]:checked')];
-        if(!checks.length){alert('Selecione ao menos uma escala.');return;}
-        gerarRelatorioMultiEscala(mesAtual,checks.map(c=>parseInt(c.value)),_filtroTipo,dataEntrega);
-    }
+    if (_filtroModo==='mes') { gerarRelatorioMeses([mesAtual],_filtroTipo,dataEntrega); return; }
+    const checks=[...document.querySelectorAll('#filtro-escalas-lista input[type=checkbox]:checked')];
+    if (!checks.length){alert('Selecione ao menos uma escala.');return;}
+    gerarRelatorioMultiEscala(mesAtual,checks.map(c=>parseInt(c.value)),_filtroTipo,dataEntrega);
 }
 
 function buildLinhas(mesesIds) {
-    let linhas=[],totalKM=0,totalTrabMin=0,totalEscMin=0,periodo=[];
+    let linhas=[],tKM=0,tTrab=0,tEsc=0,periodo=[];
     mesesIds.forEach(mid=>{
         const m=allData.meses[mid]; if(!m)return;
-        if(mesesIds.length>1) linhas.push({tipo:'mes',label:m.label});
+        if (mesesIds.length>1) linhas.push({tipo:'mes',label:m.label});
         m.corridas.forEach(co=>{
-            linhas.push({tipo:'corrida',co}); totalKM+=parseFloat(co.km)||0;
-            const[h,mm]=(co.tempo||'0:0').split(':').map(Number); totalTrabMin+=h*60+mm;
-            const dtIn=new Date(`${co.data}T${co.in}`);
+            linhas.push({tipo:'corrida',co}); tKM+=parseFloat(co.km)||0;
+            const[h,mm]=(co.tempo||'0:0').split(':').map(Number); tTrab+=h*60+mm;
+            const dtIn=new Date(co.data+'T'+co.in);
             let dataFim=co.data;
-            if(co.out&&co.in&&co.out<=co.in){const d=new Date(co.data);d.setDate(d.getDate()+1);dataFim=d.toISOString().slice(0,10);}
-            const dtOut=co.out?new Date(`${dataFim}T${co.out}`):null;
-            m.exames.filter(ex=>{const dtEx=new Date(`${ex.data}T${ex.hora}`);return dtOut?(dtEx>=dtIn&&dtEx<=dtOut):(ex.data===co.data&&ex.hora>=co.in);}).forEach(ex=>linhas.push({tipo:'exame',ex}));
+            if (co.out&&co.in&&co.out<=co.in){const d=new Date(co.data);d.setDate(d.getDate()+1);dataFim=d.toISOString().slice(0,10);}
+            const dtOut=co.out?new Date(dataFim+'T'+co.out):null;
+            m.exames.filter(ex=>{const dtEx=new Date(ex.data+'T'+ex.hora);return dtOut?(dtEx>=dtIn&&dtEx<=dtOut):(ex.data===co.data&&ex.hora>=co.in);}).forEach(ex=>linhas.push({tipo:'exame',ex}));
         });
-        m.escalas.forEach(e=>{totalEscMin+=calcDiffFull(e.data,e.in,e.dataF,e.out);});
-        periodo.push(...m.escalas.map(e=>`${fmtD(e.data)} a ${fmtD(e.dataF)}`));
+        m.escalas.forEach(e=>{tEsc+=calcDiffFull(e.data,e.in,e.dataF,e.out);});
+        periodo.push(...m.escalas.map(e=>fmtD(e.data)+' a '+fmtD(e.dataF)));
     });
-    return{linhas,totalKM,totalTrabMin,totalEscMin,periodo:[...new Set(periodo)].join(' | ')};
+    return{linhas,tKM,tTrab,tEsc,periodo:[...new Set(periodo)].join(' | ')};
 }
 function buildLinhasEscala(mid,escIdx) {
-    const m=allData.meses[mid]; if(!m)return{linhas:[],totalKM:0,totalTrabMin:0,totalEscMin:0,periodo:''};
-    const esc=m.escalas[escIdx]; if(!esc)return{linhas:[],totalKM:0,totalTrabMin:0,totalEscMin:0,periodo:''};
-    const dtEscIn=new Date(`${esc.data}T${esc.in}`),dtEscOut=new Date(`${esc.dataF}T${esc.out}`);
-    const totalEscMin=calcDiffFull(esc.data,esc.in,esc.dataF,esc.out);
-    const periodo=`${fmtD(esc.data)} ${esc.in} → ${fmtD(esc.dataF)} ${esc.out}`;
-    let linhas=[],totalKM=0,totalTrabMin=0;
-    const corridas=m.corridas.filter(co=>{const dt=new Date(`${co.data}T${co.in}`);return dt>=dtEscIn&&dt<=dtEscOut;});
-    corridas.forEach(co=>{
-        linhas.push({tipo:'corrida',co}); totalKM+=parseFloat(co.km)||0;
-        const[h,mm]=(co.tempo||'0:0').split(':').map(Number); totalTrabMin+=h*60+mm;
-        const dtIn=new Date(`${co.data}T${co.in}`);
+    const m=allData.meses[mid]; if(!m)return{linhas:[],tKM:0,tTrab:0,tEsc:0,periodo:''};
+    const esc=m.escalas[escIdx]; if(!esc)return{linhas:[],tKM:0,tTrab:0,tEsc:0,periodo:''};
+    const dtEscIn=new Date(esc.data+'T'+esc.in),dtEscOut=new Date(esc.dataF+'T'+esc.out);
+    const tEsc=calcDiffFull(esc.data,esc.in,esc.dataF,esc.out);
+    const periodo=fmtD(esc.data)+' '+esc.in+' → '+fmtD(esc.dataF)+' '+esc.out;
+    let linhas=[],tKM=0,tTrab=0;
+    m.corridas.filter(co=>{const dt=new Date(co.data+'T'+co.in);return dt>=dtEscIn&&dt<=dtEscOut;}).forEach(co=>{
+        linhas.push({tipo:'corrida',co}); tKM+=parseFloat(co.km)||0;
+        const[h,mm]=(co.tempo||'0:0').split(':').map(Number); tTrab+=h*60+mm;
+        const dtIn=new Date(co.data+'T'+co.in);
         let dataFim=co.data;
-        if(co.out&&co.in&&co.out<=co.in){const d=new Date(co.data);d.setDate(d.getDate()+1);dataFim=d.toISOString().slice(0,10);}
-        const dtOut=co.out?new Date(`${dataFim}T${co.out}`):null;
-        m.exames.filter(ex=>{const dtEx=new Date(`${ex.data}T${ex.hora}`);return dtOut?(dtEx>=dtIn&&dtEx<=dtOut):(ex.data===co.data&&ex.hora>=co.in);}).forEach(ex=>linhas.push({tipo:'exame',ex}));
+        if (co.out&&co.in&&co.out<=co.in){const d=new Date(co.data);d.setDate(d.getDate()+1);dataFim=d.toISOString().slice(0,10);}
+        const dtOut=co.out?new Date(dataFim+'T'+co.out):null;
+        m.exames.filter(ex=>{const dtEx=new Date(ex.data+'T'+ex.hora);return dtOut?(dtEx>=dtIn&&dtEx<=dtOut):(ex.data===co.data&&ex.hora>=co.in);}).forEach(ex=>linhas.push({tipo:'exame',ex}));
     });
-    return{linhas,totalKM,totalTrabMin,totalEscMin,periodo};
+    return{linhas,tKM,tTrab,tEsc,periodo};
 }
-function gerarRelatorioMultiEscala(mid,idxs,tipo,dataEntrega='') {
+function gerarRelatorioMultiEscala(mid,idxs,tipo,dataEntrega) {
     const m=allData.meses[mid]; if(!m)return;
-    let linhas=[],totalKM=0,totalTrabMin=0,totalEscMin=0,periodos=[];
+    let linhas=[],tKM=0,tTrab=0,tEsc=0,periodos=[];
     idxs.forEach(idx=>{
         const r=buildLinhasEscala(mid,idx);
-        if(idxs.length>1) linhas.push({tipo:'mes',label:`Escala ${idx+1}: ${r.periodo}`});
-        linhas.push(...r.linhas); totalKM+=r.totalKM; totalTrabMin+=r.totalTrabMin; totalEscMin+=r.totalEscMin; periodos.push(r.periodo);
+        if (idxs.length>1) linhas.push({tipo:'mes',label:'Escala '+(idx+1)+': '+r.periodo});
+        linhas.push(...r.linhas); tKM+=r.tKM; tTrab+=r.tTrab; tEsc+=r.tEsc; periodos.push(r.periodo);
     });
-    const titulo=m.label+(idxs.length===1?` — Escala ${idxs[0]+1}`:` — ${idxs.length} Escalas`);
-    _renderRelatorio(linhas,titulo,periodos.join(' | '),`SOBREAVISO: ${fmtMin(totalEscMin)} | TRABALHADO: ${fmtMin(totalTrabMin)} | KM: ${totalKM.toFixed(1)}`,tipo,dataEntrega);
+    const titulo=m.label+(idxs.length===1?' — Escala '+(idxs[0]+1):' — '+idxs.length+' Escalas');
+    _renderRelatorio(linhas,titulo,periodos.join(' | '),'SOBREAVISO: '+fmtMin(tEsc)+' | TRABALHADO: '+fmtMin(tTrab)+' | KM: '+tKM.toFixed(1),tipo,dataEntrega||'');
 }
-function gerarRelatorioMeses(mesesIds,tipo,dataEntrega='') {
-    const{linhas,totalKM,totalTrabMin,totalEscMin,periodo}=buildLinhas(mesesIds);
-    const tituloMeses=mesesIds.map(id=>allData.meses[id]?.label||'').join(', ');
-    _renderRelatorio(linhas,tituloMeses,periodo,`TOTAL SOBREAVISO: ${fmtMin(totalEscMin)} | TRABALHADO: ${fmtMin(totalTrabMin)} | KM: ${totalKM.toFixed(1)}`,tipo,dataEntrega);
+function gerarRelatorioMeses(mesesIds,tipo,dataEntrega) {
+    const{linhas,tKM,tTrab,tEsc,periodo}=buildLinhas(mesesIds);
+    const titulo=mesesIds.map(id=>allData.meses[id]?.label||'').join(', ');
+    _renderRelatorio(linhas,titulo,periodo,'TOTAL SOBREAVISO: '+fmtMin(tEsc)+' | TRABALHADO: '+fmtMin(tTrab)+' | KM: '+tKM.toFixed(1),tipo,dataEntrega||'');
 }
-function _renderRelatorio(linhas,tituloMeses,periodo,resumoTxt,tipo,dataEntrega='') {
-    const entregaStr=dataEntrega?`<p><b>DATA DE ENTREGA:</b> ${fmtD(dataEntrega)}</p>`:'';
-    if(tipo==='print') {
+function _renderRelatorio(linhas,titulo,periodo,resumoTxt,tipo,dataEntrega) {
+    const entStr=dataEntrega?'<p><b>DATA DE ENTREGA:</b> '+fmtD(dataEntrega)+'</p>':'';
+    if (tipo==='print') {
         const rows=linhas.map(l=>{
-            if(l.tipo==='mes') return`<tr style="background:#1565c0;color:white"><td colspan="5" style="padding:6px;font-weight:bold">📅 ${l.label}</td></tr>`;
-            if(l.tipo==='corrida') return`<tr style="background:#ddd;font-weight:bold"><td>${fmtD(l.co.data)}</td><td>${l.co.in}-${l.co.out||'?'}</td><td>${l.co.tempo}</td><td>${l.co.km}</td><td>SETOR: ${l.co.seto
-        setStatus('ok',`☁️ ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`);
+            if(l.tipo==='mes')return '<tr style="background:#1565c0;color:white"><td colspan="5" style="padding:6px;font-weight:bold">📅 '+l.label+'</td></tr>';
+            if(l.tipo==='corrida')return '<tr style="background:#ddd;font-weight:bold"><td>'+fmtD(l.co.data)+'</td><td>'+l.co.in+'-'+(l.co.out||'?')+'</td><td>'+l.co.tempo+'</td><td>'+l.co.km+'</td><td>SETOR: '+(l.co.setor||'---')+'</td></tr>';
+            return '<tr><td colspan="4"></td><td style="font-size:8pt;font-style:italic">• '+l.ex.hora+' - '+l.ex.nome+' ('+l.ex.pac+')</td></tr>';
+        }).join('');
+        const html='<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>Relatório</title>'+
+            '<style>body{font-family:Arial;padding:20px;font-size:9pt}.h{text-align:center;border:2px solid black;padding:10px;margin-bottom:15px}'+
+            'table{width:100%;border-collapse:collapse}th,td{border:1px solid black;padding:4px;font-size:8pt}th{background:#1565c0;color:white}'+
+            '.res{border:2px solid black;padding:8px;font-weight:bold;margin-top:10px}@media print{@page{margin:.5cm;size:A4}}</style></head><body>'+
+            '<div class="h"><h2 style="margin:0">RELATÓRIO MENSAL DE SOBREAVISO</h2>'+
+            '<p><b>PROFISSIONAL:</b> '+allData.user.toUpperCase()+'</p>'+
+            '<p><b>REFERÊNCIA:</b> '+titulo+'</p><p><b>ESCALAS:</b> '+periodo+'</p>'+entStr+'</div>'+
+            '<table><thead><tr><th>DATA</th><th>ENTRADA/SAÍDA</th><th>TEMPO</th><th>KM</th><th>SETOR / EXAMES</th></tr></thead>'+
+            '<tbody>'+rows+'</tbody></table><div class="res">'+resumoTxt+'</div>'+
+            '<script>window.onload=()=>window.print();<\/script></body></html>';
+        const w=window.open('','_blank'); w.document.write(html); w.document.close();
+    } else {
+        const{jsPDF}=window.jspdf;
+        const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+        doc.setFontSize(13); doc.setFont(undefined,'bold');
+        doc.text('RELATÓRIO MENSAL DE SOBREAVISO',105,14,{align:'center'});
+        doc.setFontSize(9); doc.setFont(undefined,'normal');
+        doc.text('PROFISSIONAL: '+allData.user.toUpperCase(),105,21,{align:'center'});
+        doc.text('REFERÊNCIA: '+titulo,105,26,{align:'center'});
+        let sy=31;
+        if(periodo){doc.text('ESCALAS: '+periodo,105,sy,{align:'center'});sy+=5;}
+        if(dataEntrega){doc.setFont(undefined,'bold');doc.text('DATA DE ENTREGA: '+fmtD(dataEntrega),105,sy,{align:'center'});doc.setFont(undefined,'normal');sy+=5;}
+        const body=linhas.map(l=>{
+            if(l.tipo==='mes')return[{content:'📅 '+l.label,colSpan:5,styles:{fillColor:[21,101,192],textColor:255,fontStyle:'bold'}}];
+            if(l.tipo==='corrida')return[fmtD(l.co.data),l.co.in+'-'+(l.co.out||'?'),l.co.tempo,l.co.km||'','SETOR: '+(l.co.setor||'---')];
+            return['','','','','• '+l.ex.hora+' - '+l.ex.nome+' ('+l.ex.pac+')'];
+        });
+        doc.autoTable({startY:sy,head:[['DATA','ENTRADA/SAÍDA','TEMPO','KM','SETOR / EXAMES']],body,styles:{fontSize:7,cellPadding:2},headStyles:{fillColor:[21,101,192]},
+            didParseCell:d=>{if(d.section==='body'&&d.row.raw[1]&&!Array.isArray(d.row.raw[0])&&String(d.row.raw[1]).includes('-')&&d.row.raw[1]!==''){d.cell.styles.fillColor=[221,221,221];d.cell.styles.fontStyle='bold';}}
+        });
+        const y=doc.lastAutoTable.finalY+5;
+        doc.setFontSize(8); doc.setFont(undefined,'bold');
+        doc.setFillColor(240,244,248); doc.rect(14,y-3,182,9,'F'); doc.rect(14,y-3,182,9);
+        doc.text(resumoTxt,16,y+2);
+        doc.save('relatorio_'+titulo.replace(/\s+/g,'_')+'.pdf');
+    }
+}
+
+/* ── FICHAS ── */
+function imprimirTodasFichas() {
+    const d=dbMes();
+    const fichas=d.corridas.map(co=>
+        '<div class="ficha"><div class="fh">FICHA DE CHAMADO / REQUISIÇÃO DE SOBREAVISO</div>'+
+        '<div style="font-size:11pt;line-height:1.8;margin-top:20px">'+
+        '<b>DATA:</b> '+fmtD(co.data)+'<br><b>PROFISSIONAL:</b> '+allData.user.toUpperCase()+'<br>'+
+        '<b>SETOR DO CHAMADO:</b> '+(co.setor||'---')+'<br>'+
+        '<b>ENTRADA:</b> '+co.in+' | <b>SAÍDA:</b> '+(co.out||'em aberto')+'<br>'+
+        '<b>TEMPO TOTAL:</b> '+co.tempo+' | <b>KM:</b> '+co.km+'</div>'+
+        '<div style="position:absolute;bottom:30px;width:90%;display:flex;justify-content:space-between">'+
+        '<div style="border-top:1px solid black;width:45%;text-align:center;font-size:8pt">Assinatura Hospital</div>'+
+        '<div style="border-top:1px solid black;width:45%;text-align:center;font-size:8pt">Assinatura Técnico</div>'+
+        '</div></div>'
+    ).join('');
+    const html='<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>Fichas</title>'+
+        '<style>body{font-family:Arial;padding:10px;margin:0}.ficha{width:100%;height:9.2cm;border:1px dashed black;padding:15px;margin-bottom:.2cm;page-break-inside:avoid;position:relative}'+
+        '.fh{text-align:center;font-weight:bold;border-bottom:1px solid black;padding-bottom:5px;margin-bottom:10px;text-transform:uppercase}'+
+        '@media print{@page{margin:.5cm;size:A4}}</style></head><body>'+
+        fichas+'<script>window.onload=()=>window.print();<\/script></body></html>';
+    const w=window.open('','_blank'); w.document.write(html); w.document.close();
+}
+
+/* ── GOOGLE DRIVE ── */
+let gToken=null, gFolderId=null, gFileId=null, gTimer=null;
+const GF='SobreavisoRadiologia', GN='backup_radiologia_v2.json';
+
+function setStatus(estado,msg){const el=document.getElementById('backup-status');el.className=estado;el.textContent=msg;}
+function driveDebounce(){if(!gToken)return;clearTimeout(gTimer);gTimer=setTimeout(sincronizarDrive,2000);}
+
+function conectarGDrive() {
+    if (gToken){sincronizarDrive();return;}
+    document.getElementById('drive-email-salvo').value=localStorage.getItem('driveEmail')||'';
+    abrirModal('modal-config-drive');
+}
+function salvarEmailDrive() {
+    const email=document.getElementById('drive-email-salvo').value.trim();
+    if (email) localStorage.setItem('driveEmail',email);
+    fecharModal('modal-config-drive'); _iniciarConexaoDrive();
+}
+function _iniciarConexaoDrive() {
+    try {
+        google.accounts.oauth2.initTokenClient({
+            client_id:'622210262026-ns1eiu5l8lshm0mejb54p4e283c6vafh.apps.googleusercontent.com',
+            scope:'https://www.googleapis.com/auth/drive.file',
+            hint:localStorage.getItem('driveEmail')||undefined,
+            callback:async resp=>{
+                if(resp.error){setStatus('error','❌ Erro');return;}
+                gToken=resp.access_token; setStatus('saving','🔄 Conectando...');
+                await garantirPasta(); await buscarArquivo();
+                if(gFileId){await carregarDoDrive();}else{await sincronizarDrive();}
+            }
+        }).requestAccessToken();
+    } catch(e){setStatus('error','❌ '+e.message);}
+}
+async function carregarDoDrive() {
+    try {
+        setStatus('saving','🔄 Carregando...');
+        const r=await fetch('https://www.googleapis.com/drive/v3/files/'+gFileId+'?alt=media',{headers:{Authorization:'Bearer '+gToken}});
+        if(!r.ok)throw new Error(r.status);
+        const dd=await r.json();
+        const tL=Object.values(allData.meses).reduce((s,m)=>s+m.exames.length+m.corridas.length,0);
+        const tD=Object.values(dd.meses||{}).reduce((s,m)=>s+m.exames.length+m.corridas.length,0);
+        if(tD>tL&&confirm('Drive tem '+tD+' registros, local tem '+tL+'.\n\nCarregar dados do Drive? (recomendado)')){
+            allData=dd; if(!allData.usuarios)allData.usuarios=[]; salvarLS();
+            popularSelectMes(); const ids=Object.keys(allData.meses); mesAtual=ids[ids.length-1];
+            document.getElementById('sel-mes').value=mesAtual; document.getElementById('userName').value=allData.user||'';
+            document.getElementById('lista-escalas').innerHTML=''; carregarMes();
+            setStatus('ok','✅ Drive carregado'); return;
+        }
+        await sincronizarDrive();
+    } catch(e){setStatus('error','❌ Falha ao carregar');}
+}
+async function garantirPasta() {
+    const r=await fetch("https://www.googleapis.com/drive/v3/files?q=name='"+GF+"' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id)",{headers:{Authorization:'Bearer '+gToken}});
+    const d=await r.json();
+    if(d.files?.length){gFolderId=d.files[0].id;return;}
+    const cr=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},body:JSON.stringify({name:GF,mimeType:'application/vnd.google-apps.folder'})});
+    gFolderId=(await cr.json()).id;
+}
+async function buscarArquivo() {
+    const r=await fetch("https://www.googleapis.com/drive/v3/files?q=name='"+GN+"' and '"+gFolderId+"' in parents and trashed=false&fields=files(id)",{headers:{Authorization:'Bearer '+gToken}});
+    const d=await r.json(); if(d.files?.length)gFileId=d.files[0].id;
+}
+async function sincronizarDrive() {
+    if(!gToken)return;
+    const tot=Object.values(allData.meses).reduce((s,m)=>s+m.exames.length+m.corridas.length,0);
+    if(tot===0&&gFileId){setStatus('offline','⚠️ Sem dados');return;}
+    setStatus('saving','🔄 Salvando...');
+    try {
+        const content=JSON.stringify(allData);
+        if(gFileId){
+            const r=await fetch('https://www.googleapis.com/upload/drive/v3/files/'+gFileId+'?uploadType=media',{method:'PATCH',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},body:content});
+            if(!r.ok)throw new Error(r.status);
+        } else {
+            const form=new FormData();
+            form.append('metadata',new Blob([JSON.stringify({name:GN,parents:[gFolderId]})],{type:'application/json'}));
+            form.append('file',new Blob([content],{type:'application/json'}));
+            const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:'Bearer '+gToken},body:form});
+            if(!r.ok)throw new Error(r.status); gFileId=(await r.json()).id;
+        }
+        setStatus('ok','☁️ '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
     } catch(e){setStatus('error','❌ Falha');}
 }
+
 function restaurarDoDrive(){abrirModal('modal-rest-drive');}
 async function confirmarRestaurarDrive() {
     fecharModal('modal-rest-drive');
-    if(gdriveToken){await _forcarCarregarDoDrive();return;}
+    if(gToken){await _forcarCarregarDoDrive();return;}
     setStatus('saving','🔄 Conectando...');
     try {
         google.accounts.oauth2.initTokenClient({
@@ -1154,44 +997,41 @@ async function confirmarRestaurarDrive() {
             hint:localStorage.getItem('driveEmail')||undefined,
             callback:async resp=>{
                 if(resp.error){setStatus('error','❌ Erro');return;}
-                gdriveToken=resp.access_token;
-                await garantirPasta(); await buscarArquivoExistente(); await _forcarCarregarDoDrive();
+                gToken=resp.access_token;
+                await garantirPasta(); await buscarArquivo(); await _forcarCarregarDoDrive();
             }
         }).requestAccessToken();
     } catch(e){setStatus('error','❌ '+e.message);}
 }
 async function _forcarCarregarDoDrive() {
-    if(!gdriveFileId){alert('Nenhum backup encontrado no Google Drive.');setStatus('offline','⚠️ Sem backup');return;}
+    if(!gFileId){alert('Nenhum backup encontrado no Google Drive.');setStatus('offline','⚠️ Sem backup');return;}
     try {
         setStatus('saving','🔄 Restaurando...');
-        const r=await fetch(`https://www.googleapis.com/drive/v3/files/${gdriveFileId}?alt=media`,{headers:{Authorization:`Bearer ${gdriveToken}`}});
+        const r=await fetch('https://www.googleapis.com/drive/v3/files/'+gFileId+'?alt=media',{headers:{Authorization:'Bearer '+gToken}});
         if(!r.ok)throw new Error(r.status);
-        const driveData=await r.json();
-        allData=driveData; if(!allData.usuarios)allData.usuarios=[];
-        localStorage.setItem('radiologiaDB_v2',JSON.stringify(allData));
+        const dd=await r.json();
+        allData=dd; if(!allData.usuarios)allData.usuarios=[]; salvarLS();
         popularSelectMes(); const ids=Object.keys(allData.meses); mesAtual=ids[ids.length-1];
-        document.getElementById('sel-mes').value=mesAtual;
-        document.getElementById('userName').value=allData.user||'';
+        document.getElementById('sel-mes').value=mesAtual; document.getElementById('userName').value=allData.user||'';
         document.getElementById('lista-escalas').innerHTML=''; carregarMes();
         setStatus('ok','✅ Restaurado');
     } catch(e){setStatus('error','❌ Falha');alert('Erro: '+e.message);}
 }
 
-// ── Backup local ──────────────────────────
+/* ── BACKUP LOCAL ── */
 function fazerBackupLocal() {
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([JSON.stringify(allData)],{type:'application/json'}));
-    a.download=`backup_sobreaviso_${hoje()}.json`; a.click();
+    a.download='backup_sobreaviso_'+hoje()+'.json'; a.click();
 }
 function restaurarBackup(input) {
     const reader=new FileReader();
     reader.onload=e=>{
         try {
             const p=JSON.parse(e.target.result);
-            allData=p.meses?p:{user:p.user||"",meses:{['mes_'+Date.now()]:{label:'Importado',escalas:p.escalas||[],exames:p.exames||[],corridas:p.corridas||[]}},usuarios:[]};
-            if(!allData.usuarios)allData.usuarios=[];
-            localStorage.setItem('radiologiaDB_v2',JSON.stringify(allData)); location.reload();
-        } catch{alert('Arquivo inválido.');}
+            allData=p.meses?p:{user:p.user||'',meses:{['mes_'+Date.now()]:{label:'Importado',escalas:p.escalas||[],exames:p.exames||[],corridas:p.corridas||[]}},usuarios:[]};
+            if(!allData.usuarios)allData.usuarios=[]; salvarLS(); location.reload();
+        } catch(e){alert('Arquivo inválido.');}
     };
     reader.readAsText(input.files[0]);
 }
